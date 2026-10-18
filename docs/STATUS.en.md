@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 66 tests on Windows/MSYS Python 3.11 and WSL Debian 13 Python 3.13; compileall and `bash -n` on both; `git diff --check` clean. Unit passes WSL `systemd-analyze verify` on a temporary copy with ExecStart substituted. `systemd-analyze security --offline`: MEDIUM, exposure score 6.7, residual UMask 0027.
 - **Not verified**: BitBake/Yocto parse/build, QEMU image boot, getty mask in image, unit runtime behavior, real READY image artifact, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows 10 AMD64 + WSL2 Debian 13; 20 logical CPUs, 30 GiB WSL RAM, GCC and QEMU x86_64 installed. BitBake unavailable. No Yocto checkout/fetch performed.
-- **Git**: `main` synchronized with `origin/main` at `2bf1827a5bc92a082cee0d2cf6982c79b1dd2870`. ZIPs and `.pi-loop*` remain untracked and excluded from commits.
+- **Git**: `main` synchronized with `origin/main`; baseline refreshed in commit `32cb352`. ZIPs and `.pi-loop*` remain untracked/excluded.
 - **Next**: select release/BSP and provide BitBake on Linux before metadata parse/build; do not claim reproducibility/boot until README acceptance evidence exists.
