@@ -43,6 +43,20 @@ class ImageArtifactVerifierTests(unittest.TestCase):
             self.assertEqual(mismatch.returncode, 1)
             self.assertIn("SHA-256 mismatch", mismatch.stderr)
 
+    def test_accepts_symlink_and_path_with_spaces_without_mutating_artifact(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            image = root / "READY image.wic"
+            image_bytes = b"fixture image with spaces\\n"
+            image.write_bytes(image_bytes)
+            alias = root / "verified alias.wic"
+            alias.symlink_to(image)
+            digest = hashlib.sha256(image_bytes).hexdigest()
+            result = self.run_script(alias, digest)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(digest, result.stdout.lower())
+            self.assertEqual(image.read_bytes(), image_bytes)
+
     def test_script_shell_syntax(self):
         result = subprocess.run(["bash", "-n", str(SCRIPT)], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
