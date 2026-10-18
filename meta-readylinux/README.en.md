@@ -12,6 +12,12 @@ Minimal Yocto layer scaffold for READY Linux. It is not yet a complete image and
 
 ## Verification and acceptance (Linux build host required)
 
+Run the read-only Debian host probe before using a configured OE tree; it reports missing command prerequisites, installs nothing, and fetches no sources:
+
+```sh
+bash scripts/check-yocto-host.sh
+```
+
 Use a Linux host with a checked-out, release-pinned Poky/OE-Core tree. Add required OE layers plus `meta-readylinux` in `bblayers.conf`. Do not mix release series. This layer intentionally does not clone repositories or download source. `bitbake -p` validates metadata without building the image. A full image build needs normal Yocto/OE source downloads unless already cached; run only when explicitly provisioning a build host.
 
 ```sh

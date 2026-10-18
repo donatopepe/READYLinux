@@ -1,11 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Current baseline, cross-platform validation
+## 2026-10-18 — Read-only Yocto prerequisites probe
 
-- Windows/MSYS, Python 3.11: `python -m unittest discover -s tests -v` — PASS, 66 tests.
-- WSL2 Debian 13, Python 3.13: `python3 -m unittest discover -s tests -v` — PASS, 66 tests.
-- On both: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` and `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh scripts/validate-systemd-unit.sh scripts/verify-image-artifact.sh` — PASS.
-- `systemd-analyze verify` on a temporary unit copy with substituted ExecStart — PASS; not image integration/runtime validation.
-- `systemd-analyze security --offline`: exposure score 6.7, MEDIUM; residual UMask 0027 documented.
-- `git diff --check` — PASS.
-- BitBake unavailable; no Yocto parse/build/QEMU boot or real image hash.
+- `scripts/check-yocto-host.sh` reports distro/arch/CPU, required host commands, key package versions, BitBake/QEMU and BUILDDIR; no install/download.
+- Focused `python -m unittest tests.test_yocto_host_check -v` — PASS, 4 tests on Windows and WSL.
+- WSL Debian 13: 19/19 required host commands found; GCC 14.2.0, Python 3.13.5, QEMU 10.0.13; BitBake/bitbake-layers and BUILDDIR absent. Exit 1 correctly means incomplete preflight.
+- Full suite PASS: 70 tests on Windows/Python 3.11 and WSL/Python 3.13; compileall and shell syntax on both; `git diff --check` PASS.
