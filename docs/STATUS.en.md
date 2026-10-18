@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 46 tests, compileall, shell syntax, and `git diff --check` pass. Helper without `BUILDDIR` returns expected exit 2.
 - **Not verified**: BitBake parse in real OE environment, image build/QEMU boot, actual getty mask, package mapping, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11, BitBake unavailable; no downloads/installations.
-- **Git**: `main` was synced at `6b211ab` at unit start; helper verified and ready to publish. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; helper published in commit `b43586a`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: full suite and publish; then validate metadata on a configured Linux host.
