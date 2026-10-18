@@ -168,6 +168,26 @@ class YoctoScaffoldTests(unittest.TestCase):
         required = {packaged[module] for module in stdlib - local_modules}
         self.assertTrue(required.issubset(declared), f"Missing RDEPENDS: {sorted(required - declared)}")
 
+    def test_systemd_service_hardening_is_fully_described_in_bilingual_readmes(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        readmes = (
+            (LAYER / "README.md").read_text(encoding="utf-8"),
+            (LAYER / "README.en.md").read_text(encoding="utf-8"),
+        )
+        documented_claims = (
+            "NoNewPrivileges", "private tmp", "protected home/system/clock/kernel settings",
+            "restricted SUID/SGID", "ready", "getty@tty1.service",
+        )
+        for claim in documented_claims:
+            self.assertIn(claim.lower(), " ".join(readmes).lower())
+        for directive in (
+            "NoNewPrivileges=yes", "PrivateTmp=yes", "ProtectHome=yes", "ProtectSystem=strict",
+            "ProtectClock=yes", "ProtectKernelLogs=yes", "ProtectControlGroups=yes",
+            "ProtectKernelModules=yes", "ProtectKernelTunables=yes", "ProtectHostname=yes",
+            "RestrictSUIDSGID=yes", "LockPersonality=yes", "RemoveIPC=yes",
+        ):
+            self.assertIn(directive, service)
+
     def test_console_service_starts_on_tty1_and_is_enabled(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
