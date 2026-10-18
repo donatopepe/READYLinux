@@ -127,6 +127,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("readylinux-console", image)
 
+    def test_layer_docs_define_reproducibility_evidence(self):
+        italian = (LAYER / "README.md").read_text(encoding="utf-8")
+        english = (LAYER / "README.en.md").read_text(encoding="utf-8")
+        for requirement in ("Poky/OE-Core commit", "MACHINE", "bitbake -p", "checksums", "QEMU"):
+            self.assertIn(requirement, italian)
+            self.assertIn(requirement, english)
+
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
         self.assertIn("BitBake and QEMU unavailable", readme)
