@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Yocto build command sequence
+## 2026-10-18 — Yocto build evidence template
 
-- IT/EN README now show order: `oe-init-build-env` → MACHINE in local.conf → add-layer → parse-only helper → explicit image build.
-- Static test checks command order and presence of MACHINE.
-- `python -m unittest discover -s tests -v` — PASS, 54 tests; compileall, `bash -n`, `git diff --check` — PASS.
-- BitBake unavailable.
+- IT/EN templates `docs/YOCTO_BUILD_EVIDENCE_TEMPLATE*.md` capture OE/layer provenance, distro/MACHINE, BitBake, config/image checksums, parse/build logs, QEMU boot, smoke checks.
+- `python -m unittest discover -s tests -v` — PASS, 55 tests.
+- compileall, `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh`, `git diff --check` — PASS.
+- No build/boot run: BitBake and QEMU unavailable.

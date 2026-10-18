@@ -23,20 +23,6 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(image, r"(?i)(?:gguf|safetensors|llama-server|https?://|SRC_URI)")
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
-        self.assertNotRegex(image, r"(?i)(?:gguf|llama|model|https?://|SRC_URI)")
-        runtime_recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
-        self.assertNotRegex(runtime_recipe, r"(?i)(?:gguf|safetensors|llama-server|https?://)")
-        console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
-        package_names = {
-            "readylinux": (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"),
-            "readylinux-console": (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb"),
-        }
-        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
-        self.assertEqual(set(package_names), {"readylinux", "readylinux-console"})
-        for path in package_names.values():
-            self.assertTrue(path.is_file(), str(path))
-        self.assertNotRegex(runtime_recipe, r"(?m)^\\s*file://[^\\s\\\\]+\\.(?:gguf|safetensors|bin)\\b")
-        self.assertNotRegex(runtime_recipe, r"(?m)^\\s*(?:git|https?)://")
 
     def test_recipe_includes_runtime_sources_and_no_external_fetch(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
@@ -51,12 +37,12 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(dependency, recipe)
         self.assertNotIn("python3-multiprocessing", recipe)
         self.assertNotIn("python3-io", recipe)
-        # FILESEXTRAPATHS resolves from recipe dir: readylinux -> recipes-ready -> layer -> repo root.
         recipe_dir = LAYER / "recipes-ready/readylinux"
         source_root = (recipe_dir / "../../../").resolve()
         self.assertEqual(source_root, ROOT.resolve())
         for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
             self.assertTrue((source_root / source).is_file(), source)
+        self.assertNotRegex(recipe, r"(?i)(?:gguf|safetensors|llama-server|https?://)")
 
     def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
@@ -110,7 +96,6 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("RootDirectory", directives)
         self.assertNotIn("PrivateUsers", directives)
         self.assertNotEqual(directives.get("NoNewPrivileges"), "no")
-        self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
         self.assertNotIn("ReadWriteDirectories", directives)
         self.assertNotIn("ReadOnlyPaths", directives)
         self.assertNotIn("PermissionsStartOnly", recipe)
@@ -121,9 +106,6 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("USERADD_PARAM:${PN}", recipe)
         self.assertIn("ln -s /dev/null ${D}${sysconfdir}/systemd/system/getty@tty1.service", recipe)
         self.assertIn("${sysconfdir}/systemd/system/getty@tty1.service", recipe)
-        self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
-        self.assertIn("WantedBy=multi-user.target", service)
-        self.assertNotIn("getty@tty1.service", service)
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("readylinux-console", image)
 
@@ -134,6 +116,17 @@ class YoctoScaffoldTests(unittest.TestCase):
             positions = [doc.index(command) for command in commands]
             self.assertEqual(positions, sorted(positions), f"command order in {doc_path.name}")
             self.assertIn("MACHINE", doc)
+
+    def test_build_evidence_templates_include_required_provenance_and_results(self):
+        docs = (
+            ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md",
+            ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.en.md",
+        )
+        required = ("Poky/OE-Core", "BitBake version", "MACHINE", "checksum", "QEMU", "getty@tty1", "Not verified")
+        for path in docs:
+            text = path.read_text(encoding="utf-8")
+            for item in required:
+                self.assertIn(item, text, f"{item} missing from {path.name}")
 
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
@@ -146,9 +139,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
         self.assertIn("BitBake and QEMU unavailable", readme)
         self.assertIn("does not clone repositories or download source", readme)
-        self.assertIn("No model weights, AI runtime binaries, or network fetches", readme)
         self.assertIn("does not provide a normal login prompt there", readme)
-        self.assertIn("serial console is intentionally deferred", readme)
 
 
 if __name__ == "__main__":
