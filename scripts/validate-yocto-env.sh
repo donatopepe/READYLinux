@@ -29,5 +29,8 @@ if ! grep -Fq "${layer_dir}" "${build_dir}/conf/bblayers.conf"; then
 fi
 
 printf 'Build directory: %s\nLayer: %s\n' "${build_dir}" "${layer_dir}"
-echo "Running metadata parse only (no fetch/image build): bitbake -p"
-bitbake -p
+echo "Running metadata parse only in build directory (no fetch/image build): bitbake -p"
+(
+    cd "${build_dir}"
+    bitbake -p
+)

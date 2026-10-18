@@ -1,10 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Yocto helper robustness
+## 2026-10-18 — Helper BitBake working directory
 
-- `python -m unittest tests.test_yocto_validation_script -v` — PASS, 8 tests.
-- Preflight checks `BUILDDIR`, `bitbake`, configs and layer registration; symlink builddir accepted via `pwd -P` canonicalization.
-- Happy path invokes only fake `bitbake -p` after preflight.
-- `python -m unittest discover -s tests -v` — PASS, 51 tests.
-- `compileall`, `bash -n` on scripts, `git diff --check` — PASS.
-- Real BitBake unavailable; metadata parse not performed.
+- Helper invokes `bitbake -p` from canonical `BUILDDIR`, not caller's cwd.
+- Happy-path test uses fake BitBake executable and checks cwd; symlink builddir and preflight branches also covered.
+- `python -m unittest discover -s tests -v` — PASS, 51 tests; compileall, `bash -n` on all scripts, and `git diff --check` — PASS.
+- Real BitBake unavailable.

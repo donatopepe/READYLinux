@@ -31,7 +31,7 @@ class YoctoValidationScriptTests(unittest.TestCase):
         bindir.mkdir()
         if with_bitbake:
             fake = bindir / "bitbake"
-            fake.write_text("#!/bin/sh\nprintf 'FAKE_BITBAKE %s\\n' \"$*\"\n", encoding="utf-8")
+            fake.write_text("#!/bin/sh\nprintf 'FAKE_BITBAKE %s %s\\n' \"$*\" \"$PWD\"\n", encoding="utf-8")
             fake.chmod(0o755)
         env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": str(builddir)}
         return subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True), temp_path
@@ -95,7 +95,7 @@ class YoctoValidationScriptTests(unittest.TestCase):
             result, fake_root = self.run_with_builddir(builddir)
             self.addCleanup(fake_root.cleanup)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("FAKE_BITBAKE -p", result.stdout)
+        self.assertIn(f"FAKE_BITBAKE -p /tmp/{builddir.name}", result.stdout)
 
     def test_script_checks_build_confs_and_layer_registration(self):
         text = SCRIPT.read_text(encoding="utf-8")
