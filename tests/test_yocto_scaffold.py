@@ -92,6 +92,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("AUTOREV", runtime + service)
         self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
 
+    def test_runtime_recipe_copies_each_declared_local_source_to_packaged_destination(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        src_uri = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', recipe)
+        self.assertIsNotNone(src_uri)
+        declared = {Path(item).name for item in re.findall(r"file://([^\s\\]+)", src_uri.group(1))}
+        installed = set(re.findall(r"install -m 0644 \$\{WORKDIR\}/([^\s]+) \$\{D\}\$\{datadir\}/readylinux/([^\s]+)", recipe))
+        self.assertEqual({source for source, _destination in installed}, declared)
+        self.assertEqual({destination for _source, destination in installed}, declared)
+        for basename in declared:
+            self.assertIn(f"{basename} ", recipe)
+        self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
+
     def test_recipe_installed_paths_are_covered_by_package_files(self):
         runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         console = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
