@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 62 tests pass on Windows and WSL; compileall/shell syntax pass on both; unit accepted by WSL Debian 13 `systemd-analyze verify`.
 - **Not verified**: BitBake/Yocto parse/build, QEMU image boot, getty mask inside image, full runtime policy, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows 10 AMD64 + WSL2 Debian 13, 20 logical CPUs, about 30 GiB WSL RAM; GCC/QEMU x86_64 installed. BitBake absent; no Yocto checkout/download performed.
-- **Git**: `main` synchronized with `origin/main`; systemd validation helper published in `77c6704`. ZIPs and `.pi-loop*` excluded.
+- **Git**: `main` was synced at `e102b32`; systemd static validation added and tested on Windows/WSL, publish pending. Exclude ZIPs and `.pi-loop*`.
 - **Next**: run full suite on Windows and WSL and publish; consider non-invasive BitBake provisioning for Debian.

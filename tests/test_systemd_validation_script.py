@@ -1,4 +1,5 @@
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -12,13 +13,16 @@ class SystemdValidationScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_helper_fails_closed_if_systemd_analyze_is_missing(self):
-        result = subprocess.run(
-            ["bash", str(SCRIPT)],
-            cwd=ROOT,
-            env={"PATH": "/usr/bin:/bin"},
-            capture_output=True,
-            text=True,
-        )
+        with tempfile.TemporaryDirectory() as temp:
+            empty_bin = Path(temp) / "bin"
+            empty_bin.mkdir()
+            result = subprocess.run(
+                ["bash", "-c", f"PATH='{empty_bin}'; export PATH; exec '/bin/bash' '{SCRIPT}'"],
+                cwd=ROOT,
+                env={"PATH": f"{empty_bin}:/usr/bin:/bin"},
+                capture_output=True,
+                text=True,
+            )
         self.assertEqual(result.returncode, 2)
         self.assertIn("systemd-analyze is unavailable", result.stderr)
         self.assertNotIn("Verifying READY", result.stdout)
