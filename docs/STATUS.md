@@ -7,5 +7,5 @@ Aggiornato: 2026-10-18.
 - **Verificato localmente**: 58 test, compileall, `bash -n`, `git diff --check`; positive/negative sample-schema checks senza validator esterno.
 - **Non verificato**: parse reale OE, build/boot QEMU, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake assente, nessun download/installazione.
-- **Git**: `main` era a `61f0c12`; test schema negative cases pass, publish in corso. ZIP/`.pi-loop*` esclusi.
+- **Git**: `main` sincronizzato con `origin/main`; test record invalidi pubblicati in `1ee71e7`. ZIP/`.pi-loop*` esclusi.
 - **Prossimo**: validazione riproducibile su host Linux con commit OE/layer, distro, MACHINE, build log, checksum immagine e boot QEMU raccolti secondo `meta-readylinux/README.md`.
