@@ -31,6 +31,9 @@ bash scripts/validate-yocto-env.sh
 bitbake readylinux-image
 # After build, verify copied/downloaded artifact integrity before boot:
 bash scripts/verify-image-artifact.sh /path/to/image.wic <sha256-from-trusted-build-record>
+# Boot only with matching kernel + target-specific kernel cmdline; no networking/host share:
+READY_QEMU_KERNEL=/path/to/Image READY_QEMU_APPEND='console=ttyS0 root=/dev/vda' \\
+  bash scripts/boot-image-qemu.sh /path/to/image.wic <sha256-from-trusted-build-record> pc
 ```
 
 No model weights, AI runtime binaries, or network fetches are included by the image recipe; model/runtime provisioning remains a separate explicit step. The generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until a real BSP/target is selected because device names and login policy vary. Run local systemd unit syntax validation on a Linux host (this does not verify image integration or runtime behavior):

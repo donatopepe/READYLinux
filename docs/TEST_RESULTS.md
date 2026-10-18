@@ -1,8 +1,9 @@
 # Risultati test
 
-## 2026-10-18 — Probe prerequisiti Yocto read-only
+## 2026-10-18 — Helper boot QEMU isolato
 
-- `scripts/check-yocto-host.sh` rileva distro/arch/CPU, comandi host richiesti, versioni pacchetti chiave, BitBake/QEMU e BUILDDIR; non installa né scarica.
-- Test mirati `python -m unittest tests.test_yocto_host_check -v` — PASS, 4 test su Windows e WSL.
-- WSL Debian 13: 19/19 comandi host richiesti trovati; GCC 14.2.0, Python 3.13.5, QEMU 10.0.13; BitBake/bitbake-layers e BUILDDIR assenti. Exit 1 significa preflight incompleto.
-- Suite completa: PASS, 70 test su Windows/Python 3.11 e WSL/Python 3.13; compileall e shell syntax su entrambi, `git diff --check` PASS.
+- `scripts/boot-image-qemu.sh` richiede artifact/hash validi, kernel matching e cmdline espliciti; machine allowlist (`pc`, `q35`, `microvm`); nessuna rete/host share/monitor.
+- Verifica SHA prima del boot e usa overlay qcow2 temporaneo sopra base raw, per non modificare l'immagine originale.
+- Test negativi input/tool/machine/hash e policy isolata; nessun QEMU boot reale (image/kernel READY assenti).
+- Windows/Python 3.11 suite — PASS, 74 test; WSL Debian 13/Python 3.13 suite — PASS, 74 test.
+- Compileall e shell syntax su entrambi — PASS; `git diff --check` — PASS.
