@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 58 tests, compileall, `bash -n`, `git diff --check`; example manifest clearly marked not-verified/placeholders.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` was at `814e064`; manifest placeholder consistency tested, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; sample-placeholder guard published in `734391c`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: reproducible Linux-host validation with OE/layer commits, distro, MACHINE, build log, image checksum, and QEMU boot evidence per `meta-readylinux/README.en.md`.
