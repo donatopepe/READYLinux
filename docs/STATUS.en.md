@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 85 tests on Windows (1 systemd-analyze skip) and WSL; compileall/shell/diff pass. Recipe install paths, FILES ownership, static metadata audit covered.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present, BitBake absent; no Yocto checkout/fetch.
-- **Git**: `main` was at `4c2dfa0`; recipe metadata audit verified, publish in progress. ZIPs ignored; `.pi-loop.json` remains local.
+- **Git**: `main` synchronized with `origin/main`; package install-path audit published in `49e17b2`. ZIPs ignored; `.pi-loop.json` remains local.
 - **Next**: choose release/BSP and provision BitBake before parse/build. Do not claim reproducibility/boot without README acceptance evidence.
