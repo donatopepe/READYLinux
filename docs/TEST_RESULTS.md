@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Hardening servizio console
+## 2026-10-18 — Esclusività tty1
 
-- Modificato servizio per utente non privilegiato `ready`, `StateDirectory=/var/lib/readylinux`, `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=strict`, `ProtectHome` e sole scritture autorizzate sullo state.
-- Ricetta useradd crea gruppo/utente di sistema.
-- `python -m unittest discover -s tests -v` — PASS, 43 test; `compileall`, `bash -n` e `git diff --check` — PASS. Test statici verificano User, state persistente e hardening dichiarato.
-- BitBake/QEMU non disponibili: nessun parse/build/boot verificato.
+- Ricetta console installa symlink `/etc/systemd/system/getty@tty1.service -> /dev/null` perché READY usa tty1.
+- Test mirato `python -m unittest tests.test_yocto_scaffold -v` — PASS prima della verifica completa.
+- `python -m unittest discover -s tests -v` — PASS, 43 test; compileall, `bash -n` e `git diff --check` — PASS.
+- BitBake/QEMU assenti: nessuna verifica reale mascheramento o boot.

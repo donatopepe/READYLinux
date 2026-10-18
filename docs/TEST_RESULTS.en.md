@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Console service hardening
+## 2026-10-18 — tty1 exclusivity
 
-- Service now uses unprivileged `ready`, `StateDirectory=/var/lib/readylinux`, `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=strict`, `ProtectHome`, and explicit writable state path.
-- useradd recipe creates system group/user.
-- `python -m unittest discover -s tests -v` — PASS, 43 tests; `compileall`, `bash -n`, and `git diff --check` — PASS. Static tests verify User, persistent state, and declared hardening.
-- BitBake/QEMU unavailable: no metadata parse/build/boot verification.
+- Console recipe installs `/etc/systemd/system/getty@tty1.service -> /dev/null` because READY owns tty1.
+- Focused `python -m unittest tests.test_yocto_scaffold -v` — PASS before full verification.
+- `python -m unittest discover -s tests -v` — PASS, 43 tests; compileall, `bash -n`, and `git diff --check` — PASS.
+- BitBake/QEMU unavailable: no real getty mask or boot verification.

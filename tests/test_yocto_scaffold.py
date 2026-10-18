@@ -75,6 +75,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("inherit systemd useradd allarch", recipe)
         self.assertIn('GROUPADD_PARAM:${PN} = "--system ready"', recipe)
         self.assertIn("USERADD_PARAM:${PN}", recipe)
+        self.assertIn("ln -s /dev/null ${D}${sysconfdir}/systemd/system/getty@tty1.service", recipe)
+        self.assertIn("${sysconfdir}/systemd/system/getty@tty1.service", recipe)
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("readylinux-console", image)
 

@@ -18,6 +18,8 @@ RDEPENDS:${PN} += "readylinux systemd"
 do_install() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/readylinux-console.service ${D}${systemd_system_unitdir}/readylinux-console.service
+    install -d ${D}${sysconfdir}/systemd/system
+    ln -s /dev/null ${D}${sysconfdir}/systemd/system/getty@tty1.service
 }
 
-FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service"
+FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"
