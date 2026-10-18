@@ -28,6 +28,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         for dependency in ("python3-core", "python3-io", "python3-json", "python3-netclient", "python3-shell"):
             self.assertIn(dependency, recipe)
         self.assertNotIn("python3-multiprocessing", recipe)
+        # FILESEXTRAPATHS resolves from recipe dir: readylinux -> recipes-ready -> layer -> repo root.
+        recipe_dir = LAYER / "recipes-ready/readylinux"
+        source_root = (recipe_dir / "../../../").resolve()
+        self.assertEqual(source_root, ROOT.resolve())
+        for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
+            self.assertTrue((source_root / source).is_file(), source)
 
     def test_console_service_starts_on_tty1_and_is_enabled(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")

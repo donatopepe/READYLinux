@@ -7,7 +7,7 @@ Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete i
 - `conf/layer.conf`: layer metadata.
 - `conf/distro/readylinux.conf`: initial distro policy, inheriting Poky defaults.
 - `recipes-core/images/readylinux-image.bb`: minimal image recipe based on `core-image-minimal` with Python 3 and the READY runtime package group.
-- `recipes-ready/readylinux/readylinux_0.3.bb`: installs the existing Python application, BASIC runtime, and AI client as a package.
+- `recipes-ready/readylinux/readylinux_0.3.bb`: installs the existing Python application, BASIC runtime, and AI client as a package. The recipe resolves `file://` sources from the repository root through `FILESEXTRAPATHS`.
 - `recipes-core/readylinux/`: systemd service that starts READY on `/dev/tty1` and restarts after failure.
 
 ## Integration (Linux build host required)
