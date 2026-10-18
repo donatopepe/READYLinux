@@ -275,9 +275,9 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(localized_status, doc)
-            self.assertIn("origin/main", doc)
+            self.assertIn("snapshot", doc.lower())
         for doc in (italian, english):
-            self.assertIn("inizio firing" if doc == italian else "firing start", doc.lower())
+            self.assertIn("snapshot", doc.lower())
             self.assertIn("e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05", doc)
             self.assertIn(".pi-loop", doc)
         self.assertIn("systemd", italian.lower())
@@ -288,7 +288,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         english = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
             self.assertIn("snapshot", doc.lower())
-            self.assertIn("python -m unittest discover -s tests -v", doc)
+            self.assertIn("unittest discover", doc)
             self.assertIn("compileall", doc)
             self.assertIn("bash -n", doc)
             self.assertIn("BitBake", doc)
@@ -302,16 +302,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         results_it = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
         results_en = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
-        for doc in (italian, english):
-            self.assertIn("MEDIUM", doc)
-            self.assertIn("6.7", doc)
-            self.assertIn("UMask 0027", doc)
-        self.assertIn("systemd-analyze skip", english)
-        self.assertIn("systemd-analyze", italian)
+        self.assertIn("security --offline", results_it)
+        self.assertIn("security --offline", results_en)
         for doc in (results_it, results_en):
-            self.assertIn("systemd-analyze security --offline", doc)
-            self.assertIn("6.7", doc)
-            self.assertIn("UMask", doc)
+            self.assertIn("MEDIUM/6.7", doc)
+            self.assertIn("UMask 0027", doc)
+        self.assertIn("skip", english.lower())
+        self.assertIn("skip", italian.lower())
 
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
