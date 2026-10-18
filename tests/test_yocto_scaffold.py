@@ -275,12 +275,24 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(localized_status, doc)
-            self.assertIn("main", doc)
-            self.assertIn("non tracciati" if localized_status == "Non verificato" else "untracked", doc)
-        self.assertIn("security MEDIUM/6.7", italian)
-        self.assertIn("security MEDIUM/6.7", english)
+            self.assertIn("origin/main", doc)
+            self.assertIn("8a287643b5498a307ee8b41e70c85277fcb1b1b0", doc)
+            self.assertIn(".pi-loop", doc)
+        self.assertIn("security --offline", italian)
+        self.assertIn("security --offline", english)
         self.assertIn("UMask 0027", italian)
         self.assertIn("UMask 0027", english)
+
+    def test_test_results_docs_report_test_commands_and_scope(self):
+        italian = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
+        for doc in (italian, english):
+            self.assertIn("python -m unittest discover -s tests -v", doc)
+            self.assertIn("compileall", doc)
+            self.assertIn("bash -n", doc)
+            self.assertIn("BitBake", doc)
+            self.assertIn("QEMU", doc)
+            self.assertNotIn("real Yocto build passed", doc.lower())
 
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
