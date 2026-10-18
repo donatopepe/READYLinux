@@ -8,5 +8,5 @@ Updated: 2026-10-18.
 - **Not verified**: Yocto parse/build/boot/QEMU, actual getty mask, login/console boot, OE package mapping, kernel, real GGUF, sandbox, GPU, ARM64, benchmarks.
 - **UX impact**: tty1 is reserved for READY; no normal login prompt on that terminal. Documented explicitly.
 - **Host**: Windows/MSYS AMD64, Python 3.11; no downloads/installations.
-- **Git**: `main` at `0165f09` at start; tty1 ownership changes tested, commit/push in progress. Exclude ZIP/loop state.
+- **Git**: `main` synchronized with `origin/main`; tty1 ownership docs published in `d8e9001`. Exclude ZIP/loop state.
 - **Next**: run full suite, then improve diagnostics/serial console for an explicit target; BitBake remains unverified on Linux host.
