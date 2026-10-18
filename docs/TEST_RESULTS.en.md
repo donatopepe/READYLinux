@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Evidence example record
+## 2026-10-18 — Yocto example/schema conformance
 
-- Added `docs/YOCTO_BUILD_EVIDENCE.example.json`, explicitly not-built/not-verified record.
-- Draft 2020-12 schema now requires `deviations`; test checks top-level key alignment and not-run states.
-- Schema/example test — PASS; suite `python -m unittest discover -s tests -v` — PASS, 58 tests.
-- compileall, `bash -n`, `git diff --check` — PASS.
+- Stdlib test checks nested keys, required fields, SHA/commit patterns, and enums against JSON Schema; no external validator library.
+- Focused test — PASS.
+- `python -m unittest discover -s tests -v` — PASS, 58 tests; compileall, `bash -n`, `git diff --check` — PASS.
+- Example remains explicitly not-built/not-verified.

@@ -141,6 +141,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(example["image"]["source_cache_state"], "not-built")
         self.assertEqual(example["boot"]["status"], "not-run")
         self.assertIsNone(example["image"]["sha256"])
+        for section in ("identity", "environment", "image", "boot"):
+            schema_section = schema["properties"][section]
+            self.assertEqual(set(example[section]), set(schema_section["properties"]))
+            self.assertTrue(set(schema_section["required"]).issubset(example[section]))
+        self.assertRegex(example["identity"]["poky_commit"], schema["properties"]["identity"]["properties"]["poky_commit"]["pattern"])
+        self.assertRegex(example["environment"]["local_conf_sha256"], schema["properties"]["environment"]["properties"]["local_conf_sha256"]["pattern"])
+        for section, key in (("image", "source_cache_state"), ("boot", "status"), ("verdict", None)):
+            value = example[section] if key is None else example[section][key]
+            enum = schema["properties"][section]["enum"] if key is None else schema["properties"][section]["properties"][key]["enum"]
+            self.assertIn(value, enum)
 
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (
