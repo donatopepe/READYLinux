@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Policy hardening systemd
+## 2026-10-18 — Regressioni sicurezza service Yocto
 
-- `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 test.
-- Assertion esplicite per User/Group non-root, `NoNewPrivileges`, `ProtectSystem`, `ProtectHome`, `PrivateTmp`, writable state ristretto e assenza capability elevate.
-- Suite completa `python -m unittest discover -s tests -v` — PASS, 52 test; compileall, `bash -n` e `git diff --check` — PASS.
-- Unit config non validata con systemd/BitBake runtime.
+- Aggiunte asserzioni statiche su identità non-root, hardening richiesto, limiti write path, assenza capability/override privilegiati.
+- `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 test; suite completa — PASS, 52 test.
+- `compileall`, `bash -n` su tutti gli script, `git diff --check` — PASS.
+- BitBake/systemd non presenti per unit validation/runtime.
