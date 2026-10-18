@@ -3,4 +3,4 @@ LICENSE = "MIT"
 
 require recipes-core/images/core-image-minimal.bb
 
-IMAGE_INSTALL:append = " readylinux"
+IMAGE_INSTALL:append = " readylinux readylinux-console"

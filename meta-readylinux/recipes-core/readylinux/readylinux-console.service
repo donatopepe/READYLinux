@@ -1,0 +1,19 @@
+[Unit]
+Description=READY Linux primary programming console
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/readylinux
+Restart=on-failure
+RestartSec=1
+StandardInput=tty
+StandardOutput=tty
+StandardError=journal
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+[Install]
+WantedBy=multi-user.target

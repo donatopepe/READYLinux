@@ -4,6 +4,10 @@
 
 Python application: `readylinux.py` handles READY console, numbered Python programs, and explicit BASIC mode; `basic.py` implements BASIC runtime with a restricted AST expression evaluator; `ai_local.py` calls local llama.cpp server; `vibe.py` handles workspaces, proposals, diffs, apply/undo, and static checks. Tests live in `tests/`. No OS layer, kernel, GUI, verified sandbox, or embedded build is present.
 
+## Yocto boot path (scaffold)
+
+The `readylinux-console` systemd unit starts `/usr/bin/readylinux` on `/dev/tty1`, restarts on failure, and is enabled in the minimal image. It assumes systemd owns tty1; getty conflict, user/session policy, and actual boot remain unverified. No AI model service starts at boot.
+
 ## Target
 
 1. **Classic runtime:** READY shell independent of AI plus real BASIC runtime, then primary Linux console.

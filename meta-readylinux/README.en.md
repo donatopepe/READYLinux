@@ -8,6 +8,7 @@ Minimal Yocto layer scaffold for READY Linux. It is not yet a complete image and
 - `conf/distro/readylinux.conf`: initial distro policy inheriting Poky defaults.
 - `recipes-core/images/readylinux-image.bb`: minimal image with the READY runtime.
 - `recipes-ready/readylinux/readylinux_0.3.bb`: installs the Python console, BASIC runtime, AI client, and vibe workspace code.
+- `recipes-core/readylinux/`: systemd service starts READY on `/dev/tty1` and restarts on failure.
 
 ## Build host integration
 
