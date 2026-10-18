@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Negative cases schema evidenze
+## 2026-10-18 — Chiarezza sample manifest
 
-- Esempio JSON placeholder verificato contro campi required, shape nested, pattern commit/hash ed enum.
-- Aggiunti negative assertions per commit malformed, verdict invalido e field richiesto mancante.
-- Test mirato `test_build_evidence_schema_is_valid_json_with_audit_fields` — PASS.
-- `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS. Nessuna libreria JSON Schema esterna usata.
+- Il test verifica `run_id` example, host/MACHINE/version non registrati, parse NOT-RUN, `deviations` esplicita e verdict not-verified.
+- Test mirato schema/sample: PASS.
+- `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
+- Il record resta dimostrativo; nessun risultato reale inserito.
