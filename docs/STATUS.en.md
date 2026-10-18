@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 51 tests, compileall, `bash -n`, `git diff --check`; helper's `BUILDDIR` execution verified with fake BitBake.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` at `d473189` at start; helper cwd verified, commit/push in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; helper cwd fix published in `290298c`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: rerun suite and publish; then real BitBake parse on configured OE host.
