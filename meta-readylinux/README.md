@@ -20,4 +20,4 @@ bitbake -p
 bitbake readylinux-image
 ```
 
-The recipe uses `file://` sources and the Python standard library only. Image build and boot have not been tested in this repository environment (Windows/MSYS; BitBake and QEMU unavailable). Choose and pin one Yocto release and machine before claiming reproducibility.
+The recipe uses `file://` sources and the Python standard library only. The current generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until an actual BSP/target is selected, because device names and login policy vary. Image build and boot have not been tested in this repository environment (Windows/MSYS; BitBake and QEMU unavailable). Choose and pin one Yocto release and machine before claiming reproducibility.

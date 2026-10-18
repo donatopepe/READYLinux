@@ -88,6 +88,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("BitBake and QEMU unavailable", readme)
         self.assertIn("does not clone repositories or download source", readme)
         self.assertIn("does not provide a normal login prompt there", readme)
+        self.assertIn("serial console is intentionally deferred", readme)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Ownership tty1
+## 2026-10-18 — Selezione console
 
-- Documentato che `getty@tty1.service` è mascherato e tty1 riservato a READY.
-- Test statici controllano unità, recipe `FILES`, target multi-user e assenza di login service concorrente.
+- Decisione documentata: scaffold generico usa tty1, seriale rinviata finché non viene scelto BSP/machine; nomi device e policy login dipendono dal target.
+- Test statici verificano il vincolo documentale.
 - `python -m unittest discover -s tests -v` — PASS, 43 test; compileall, `bash -n`, `git diff --check` — PASS.
-- BitBake/QEMU non disponibili; nessuna verifica immagine/boot.
+- BitBake/QEMU non disponibili.
