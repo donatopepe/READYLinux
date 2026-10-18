@@ -25,7 +25,9 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(f"file://{source}", recipe)
         self.assertNotRegex(recipe, r"(?m)^\s*(?:git|https?)://")
         self.assertIn('LICENSE = "MIT"', recipe)
-        self.assertIn("exec python3", recipe)
+        self.assertIn("exec python3 /usr/share/readylinux/readylinux.py", recipe)
+        launcher = recipe.split("cat > ${D}${bindir}/readylinux <<'EOF'\n", 1)[1].split("\nEOF", 1)[0]
+        self.assertNotIn("${datadir}", launcher)
         for dependency in ("python3-core", "python3-difflib", "python3-crypt", "python3-json", "python3-misc", "python3-netclient", "python3-shell"):
             self.assertIn(dependency, recipe)
         self.assertNotIn("python3-multiprocessing", recipe)

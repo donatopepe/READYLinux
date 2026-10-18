@@ -25,7 +25,7 @@ do_install() {
     install -d ${D}${bindir}
     cat > ${D}${bindir}/readylinux <<'EOF'
 #!/bin/sh
-exec python3 ${datadir}/readylinux/readylinux.py "$@"
+exec python3 /usr/share/readylinux/readylinux.py "$@"
 EOF
     chmod 0755 ${D}${bindir}/readylinux
 }
