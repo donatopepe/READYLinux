@@ -159,6 +159,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(example["boot"]["status"], "not-run")
         self.assertEqual(example["verdict"], "not-verified")
 
+        malformed_hash = dict(example["identity"])
+        malformed_hash["poky_commit"] = "abc"
+        self.assertNotRegex(malformed_hash["poky_commit"], r"^[0-9a-fA-F]{40}$")
+        self.assertNotIn("success", schema["properties"]["verdict"]["enum"])
+        missing_deviations = dict(example)
+        missing_deviations.pop("deviations")
+        self.assertIn("deviations", schema["required"])
+        self.assertNotEqual(set(missing_deviations), set(schema["required"]))
+
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (
             ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md",
