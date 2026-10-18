@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 52 tests, compileall, `bash -n`, `git diff --check`; helper propagates fake BitBake error status. Real BitBake unavailable.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` at `65f21d7` at unit start; error propagation tested, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; exit propagation tests published in `84352a5`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: rerun suite and publish; then real BitBake parse on configured OE host.

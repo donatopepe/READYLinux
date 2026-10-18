@@ -7,5 +7,5 @@ Aggiornato: 2026-10-18.
 - **Verificato localmente**: 52 test, compileall, `bash -n`, `git diff --check`; helper propaga il codice errore BitBake fake.
 - **Non verificato**: parse reale OE, build/boot QEMU, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake assente, nessun download/installazione.
-- **Git**: `main` a `65f21d7` all'avvio unità; error propagation testata, pubblicazione in corso. ZIP/`.pi-loop*` esclusi.
+- **Git**: `main` sincronizzato con `origin/main`; test exit propagation pubblicati in `84352a5`. ZIP/`.pi-loop*` esclusi.
 - **Prossimo**: test suite e publish; poi bitbake parse su host OE configurato.
