@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 50 tests, compileall, `bash -n` on all scripts, and `git diff --check`; helper tests cover preflight failures and fake parse invocation.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` was synced at `83113de` at start; helper tests green and publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; preflight tests published in `c489cf0`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: run suite and publish; then BitBake parse on configured OE host.
