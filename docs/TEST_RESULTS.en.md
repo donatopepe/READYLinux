@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Yocto helper error propagation
+## 2026-10-18 — systemd hardening policy
 
-- Helper tests: `python -m unittest tests.test_yocto_validation_script -v` — PASS, 9 tests.
-- Fake BitBake returns 37; helper propagates exit 37 from `bitbake -p`.
-- Full suite `python -m unittest discover -s tests -v` — PASS, 52 tests; compileall, `bash -n` on all scripts, `git diff --check` — PASS.
-- Real BitBake unavailable.
+- `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 tests.
+- Explicit assertions for non-root User/Group, `NoNewPrivileges`, `ProtectSystem`, `ProtectHome`, `PrivateTmp`, restricted writable state, and absence of elevated capabilities.
+- Full suite `python -m unittest discover -s tests -v` — PASS, 52 tests; compileall, `bash -n`, and `git diff --check` — PASS.
+- Unit not validated against running systemd or BitBake.
