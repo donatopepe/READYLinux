@@ -8,5 +8,5 @@ Updated: 2026-10-18.
 - **Not verified**: Yocto parse/build/boot/QEMU, actual getty mask, login/console boot, OE package mapping, kernel, real GGUF, sandbox, GPU, ARM64, benchmarks.
 - **UX impact**: tty1 is reserved for READY; no normal login prompt on that terminal. Serial console is deferred until BSP/target is selected.
 - **Host**: Windows/MSYS AMD64, Python 3.11; no downloads/installations.
-- **Git**: `main` at `21b20e6` at firing start; console target-selection docs verified, publication in progress. Exclude ZIP/loop state.
+- **Git**: `main` synchronized with `origin/main`; console target selection documented in commit `9dc4207`. Exclude ZIP/loop state.
 - **Next**: select Yocto release + machine/BSP before adding serial console; continue local M2 checks meanwhile. BitBake remains unverified on Linux host.
