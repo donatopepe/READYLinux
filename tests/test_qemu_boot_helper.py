@@ -41,6 +41,59 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertEqual(bad_hash.returncode, 2)
             self.assertIn("64 hexadecimal", bad_hash.stderr)
 
+    def fake_shell_path(self, path):
+        if os.name == "nt":
+            result = subprocess.run(["bash", "-lc", "cygpath -u \"$1\"", "bash", str(path)], cwd=ROOT, capture_output=True, text=True)
+            if result.returncode == 0 and result.stdout.strip():
+                return result.stdout.strip()
+        return str(path)
+
+    def test_verified_boot_uses_temporary_overlay_and_preserves_image(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            root_posix = self.fake_shell_path(root)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "image.raw"
+            image_bytes = b"fixture image bytes"
+            image.write_bytes(image_bytes)
+            kernel = root / "Image"
+            kernel.write_bytes(b"fixture kernel")
+            args_log = root / "qemu-args.txt"
+            overlay_log = root / "overlay-path.txt"
+            qemu_img = bindir / "qemu-img"
+            qemu_img.write_text(
+                "#!/bin/sh\nprintf '%s\\n' \"$6\" > \"$OVERLAY_LOG\"\n",
+                encoding="utf-8",
+            )
+            qemu = bindir / "qemu-system-x86_64"
+            qemu.write_text(
+                "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$QEMU_ARGS_LOG\"\nexit 0\n",
+                encoding="utf-8",
+            )
+            qemu_img.chmod(0o755)
+            qemu.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_BIN": self.fake_shell_path(qemu),
+                "READY_QEMU_IMG": self.fake_shell_path(qemu_img),
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0",
+                "OVERLAY_LOG": self.fake_shell_path(overlay_log),
+                "QEMU_ARGS_LOG": self.fake_shell_path(args_log),
+            }
+            result = self.run_script(image, hashlib.sha256(image_bytes).hexdigest(), "pc", env=env)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            overlay_raw = overlay_log.read_text(encoding="utf-8").strip()
+            overlay = root / Path(overlay_raw).name
+            self.assertFalse(overlay.exists(), "temporary overlay should be removed after QEMU exits")
+            self.assertEqual(image.read_bytes(), image_bytes, "base image must remain unchanged")
+            qemu_args = args_log.read_text(encoding="utf-8")
+            self.assertIn("-nic\nnone", qemu_args)
+            self.assertIn("-monitor\nnone", qemu_args)
+            self.assertIn("qcow2", qemu_args)
+
     def test_script_is_networkless_and_uses_copy_on_write_overlay(self):
         text = SCRIPT.read_text(encoding="utf-8")
         for guard in ("-nic none", "-monitor none", "-kernel", "-append", "-no-reboot", "qemu_img_bin", "qcow2", "-drive"):
