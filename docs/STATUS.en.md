@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 59 tests pass on Windows/Python 3.11 and WSL Debian 13/Python 3.13; compileall/shell syntax pass on both and diff check clean.
 - **Not verified**: READY OE parse/build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks. QEMU exists but no READY image artifact.
 - **Host**: Windows AMD64 + WSL2 Debian 13, 20 logical CPUs, 30 GiB RAM visible in WSL; GCC/QEMU x86_64 installed. BitBake unavailable. No Yocto checkout/download performed.
-- **Git**: `main` was at `a8dc022`; sample state invariants verified on Windows/WSL, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; evidence state tests published in `24d8e50`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: full suite and publish; real build/boot needs configured Linux + OE/QEMU host.
