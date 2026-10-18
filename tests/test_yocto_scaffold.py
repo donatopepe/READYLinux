@@ -194,6 +194,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("readylinux-console", image)
 
+    def test_layer_docs_package_and_install_ownership_directions_match_recipe(self):
+        italian = (LAYER / "README.md").read_text(encoding="utf-8")
+        english = (LAYER / "README.en.md").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', recipe)
+        for docs in (italian, english):
+            self.assertIn("readylinux-console", docs)
+            self.assertIn("getty@tty1.service", docs)
+            self.assertIn("ready", docs)
+        self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
+
     def test_layer_docs_order_environment_layer_parse_and_build(self):
         for doc_path in (LAYER / "README.md", LAYER / "README.en.md"):
             doc = doc_path.read_text(encoding="utf-8")

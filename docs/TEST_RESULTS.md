@@ -1,12 +1,11 @@
 # Risultati test
 
-## 2026-10-18 — Ownership install paths Yocto
+## 2026-10-18 — Documentazione package ownership
 
-- Suite command: `python -m unittest discover -s tests -v`; compileall and shell syntax also part of the cross-host run.
-- Suite command: `python -m unittest discover -s tests -v`; `python -m compileall`; `bash -n` static shell checks are part of the full run.
-- Test statico verifica che ogni path in `do_install` per runtime/service e getty mask sia coperto da `FILES:${PN}` nella recipe corrispondente.
-- Controlla anche symlink mask getty e `SYSTEMD_SERVICE` coerente.
-- Suite Windows/Python 3.11 — PASS, 86 test (1 skip systemd-analyze); suite WSL Debian 13/Python 3.13 — PASS, 86 test.
-- Test non sostituisce package QA/BitBake parse. QEMU boot non eseguito.
-- Compileall, shell syntax su entrambi, `git diff --check` — PASS.
-- Finding systemd precedente: `systemd-analyze security --offline`, `MEDIUM/6.7`, UMask 0027.
+- Full-suite command: `python -m unittest discover -s tests -v`; compileall and `bash -n` are also run in platform verification.
+- README layer IT/EN ora specificano che unità systemd e getty mask appartengono a `readylinux-console`, installato nella image recipe.
+- Test statico confronta tali istruzioni con `RDEPENDS`, `FILES:${PN}` e symlink installati dalla recipe.
+- Finding hardening systemd precedente: `systemd-analyze security --offline`, `MEDIUM/6.7`, `UMask 0027`.
+- Windows/Python 3.11 full suite — PASS, 87 test (1 skip systemd-analyze); WSL Debian 13/Python 3.13 full suite — PASS, 87 test.
+- Compileall, shell syntax su entrambi e `git diff --check` — PASS.
+- Nessun BitBake/package QA disponibile; nessun QEMU boot reale.
