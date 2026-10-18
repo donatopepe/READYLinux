@@ -127,6 +127,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("readylinux-console", image)
 
+    def test_layer_docs_order_environment_layer_parse_and_build(self):
+        for doc_path in (LAYER / "README.md", LAYER / "README.en.md"):
+            doc = doc_path.read_text(encoding="utf-8")
+            commands = ["source oe-init-build-env", "bitbake-layers add-layer", "bash scripts/validate-yocto-env.sh", "bitbake readylinux-image"]
+            positions = [doc.index(command) for command in commands]
+            self.assertEqual(positions, sorted(positions), f"command order in {doc_path.name}")
+            self.assertIn("MACHINE", doc)
+
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
         english = (LAYER / "README.en.md").read_text(encoding="utf-8")

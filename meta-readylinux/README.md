@@ -15,8 +15,11 @@ Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete i
 Use a checked-out, release-pinned Poky/OE-Core tree and add its layer paths plus this repository to `bblayers.conf`. Do not mix release series. The layer intentionally does not clone repositories or download source. `bitbake -p` validates metadata without building the image. A full image build requires the normal Yocto/OE source downloads unless already cached; run it only when explicitly provisioning a build host.
 
 ```sh
+cd /path/to/poky
+source oe-init-build-env /path/to/build
+# Set MACHINE to the explicitly selected BSP in build/conf/local.conf.
 bitbake-layers add-layer /path/to/READYLinux/meta-readylinux
-# Run from repository root after sourcing the target's oe-init-build-env:
+cd /path/to/READYLinux
 bash scripts/validate-yocto-env.sh
 # Only after metadata parse succeeds, explicitly build the image (may fetch sources):
 bitbake readylinux-image
