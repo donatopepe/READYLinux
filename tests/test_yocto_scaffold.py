@@ -144,7 +144,10 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(example["environment"]["parse_log"], "NOT-RUN")
         self.assertTrue(any("Example only" in note for note in example["deviations"]))
         self.assertEqual(example["verdict"], "not-verified")
+        self.assertIsNone(example["environment"]["parse_exit_code"])
+        self.assertEqual(example["environment"]["parse_log"], "NOT-RUN")
         self.assertEqual(example["image"]["source_cache_state"], "not-built")
+        self.assertIsNone(example["image"]["exit_code"])
         self.assertEqual(example["boot"]["status"], "not-run")
         self.assertIsNone(example["image"]["sha256"])
         for section in ("identity", "environment", "image", "boot"):

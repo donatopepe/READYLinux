@@ -36,7 +36,7 @@
         "build_dir": {"type": "string", "minLength": 1},
         "bblayers_conf_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
         "local_conf_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
-        "parse_exit_code": {"type": "integer"},
+        "parse_exit_code": {"type": ["integer", "null"]},
         "parse_log": {"type": "string", "minLength": 1}
       }
     },

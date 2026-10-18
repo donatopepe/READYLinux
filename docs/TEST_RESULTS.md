@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Chiarezza sample manifest
+## 2026-10-18 — Stato parse nel sample evidence
 
-- Il test verifica `run_id` example, host/MACHINE/version non registrati, parse NOT-RUN, `deviations` esplicita e verdict not-verified.
-- Test mirato schema/sample: PASS.
+- `parse_exit_code` reso nullable; sample `NOT-RUN` non dichiara più exit 0 fuorviante.
+- Test verifica log NOT-RUN e exit null nel sample.
 - `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
-- Il record resta dimostrativo; nessun risultato reale inserito.
+- Nessun parse reale effettuato.

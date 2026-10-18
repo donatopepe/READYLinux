@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Evidence sample clarity
+## 2026-10-18 — Evidence sample parse state
 
-- Test checks example `run_id`, unrecorded host/MACHINE/version, NOT-RUN parse, explicit deviations, and not-verified verdict.
-- Focused schema/sample test: PASS.
+- `parse_exit_code` is nullable; `NOT-RUN` sample no longer claims misleading exit 0.
+- Test checks `NOT-RUN` log and null exit code.
 - `python -m unittest discover -s tests -v` — PASS, 58 tests; compileall, `bash -n`, `git diff --check` — PASS.
-- Record remains illustrative; no real results inserted.
+- No real parse performed.
