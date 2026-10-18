@@ -7,6 +7,6 @@ Updated: 2026-10-18.
 - **Locally verified**: 42 tests, compileall, `bash -n`; static recipe tests now check Python dependencies. BitBake unavailable.
 - **Not verified**: Yocto parse/build/boot, QEMU, real tty1/getty, kernel, real GGUF, sandbox, GPU, ARM64, benchmarks.
 - **Environment**: Windows/MSYS AMD64, Python 3.11; no downloads/installations.
-- **Git**: `main` synced at start; packaging changes under verification. Publish whitelist only after green suite. Exclude ZIP/loop state.
+- **Git**: `main` synchronized with `origin/main`; commit `a37b42e` published. ZIP/loop state excluded.
 - **Next**: make recipe source path resolution testable and document OE/Python dependency variability; then BitBake on Linux host.
 - **Risk**: tty1 service may conflict with getty; no real boot test.
