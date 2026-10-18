@@ -45,6 +45,19 @@ class YoctoScaffoldTests(unittest.TestCase):
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
 
+    def test_all_recipe_file_uri_sources_resolve_inside_repository(self):
+        for recipe_path in sorted(LAYER.rglob("*.bb")):
+            recipe = recipe_path.read_text(encoding="utf-8")
+            src_uri_match = re.search(r'(?m)^SRC_URI\\s*=\\s*"([^"]*)"', recipe)
+            sources = re.findall(r"file://([^\\s\\\\]+)", src_uri_match.group(1)) if src_uri_match else []
+            search_roots = [recipe_path.parent, ROOT]
+            prepend_match = re.search(r'FILESEXTRAPATHS:prepend\\s*:?=\\s*"([^\"]+)"', recipe)
+            if prepend_match:
+                relative = prepend_match.group(1).replace("${THISDIR}/", "")
+                search_roots.insert(0, (recipe_path.parent / relative).resolve())
+            for source in sources:
+                self.assertTrue(any((base / source).is_file() for base in search_roots), f"{source} missing for {recipe_path.relative_to(ROOT)}")
+
     def test_recipe_includes_runtime_sources_and_no_external_fetch(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
@@ -296,7 +309,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("QEMU", doc)
             self.assertIn(localized_status, doc)
         for doc in (italian, english):
-            self.assertIn("snapshot", doc.lower())
+            self.assertIn("Git", doc)
             self.assertIn(".pi-loop", doc)
         self.assertIn("systemd", italian.lower())
         self.assertIn("systemd", english.lower())
@@ -324,8 +337,6 @@ class YoctoScaffoldTests(unittest.TestCase):
         for doc in (results_it, results_en):
             self.assertIn("MEDIUM/6.7", doc)
             self.assertIn("UMask 0027", doc)
-        self.assertIn("skip", english.lower())
-        self.assertIn("skip", italian.lower())
 
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")

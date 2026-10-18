@@ -1,12 +1,11 @@
 # Risultati test
 
-## 2026-10-18 — Protezione archivi locali Git
+## 2026-10-18 — Closure sorgenti locali Yocto
 
-- BitBake/Yocto build e QEMU boot reali non eseguiti; prerequisiti ancora mancanti.
-- Evidenza systemd precedente: `systemd-analyze security --offline` su WSL, `MEDIUM/6.7`, UMask 0027.
-- Suite completa: `python -m unittest discover -s tests -v`.
-- Aggiunta regola `.gitignore` `*.zip`: archivi locali non entrano per errore nel diff/staging.
-- `git check-ignore -v ReadyLinux_0.3_VibeCoding_CPU.zip READYLinux_0.3_Codex_Handoff.zip` — entrambi esclusi da `.gitignore:5`.
-- Test statico copre regole cache, bytecode, lock loop, GGUF, ZIP e override sintassi layer/recipes moderni; quest'ultimo non sostituisce bitbake parse.
-- Windows/MSYS Python 3.11 suite: 82 test PASS (1 skip previsto: systemd-analyze assente); WSL Debian 13 Python 3.13 suite: 82 test PASS.
-- Comandi di verifica: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; shell: `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh scripts/validate-systemd-unit.sh scripts/verify-image-artifact.sh scripts/check-yocto-host.sh scripts/boot-image-qemu.sh`; `git diff --check` — PASS.
+- Suite command: `python -m unittest discover -s tests -v`; compileall command documented in previous baseline; shell command `bash -n` documented there too.
+- Aggiunto controllo stdlib che legge `SRC_URI` locale di ogni recipe `.bb` e verifica che ogni `file://` abbia sorgente nel layer/repository o nella FILESEXTRAPATHS risolta.
+- Test mirato PASS su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+- Questo è controllo statico sorgenti, non sostituisce il parse BitBake; nessun QEMU boot eseguito.
+- Evidenza hardening precedente: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- Windows/MSYS Python 3.11 suite: 83 test PASS (1 skip previsto: systemd-analyze assente); WSL Debian 13 Python 3.13 suite: 83 test PASS.
+- Compileall, shell syntax e `git diff --check` su entrambi — PASS.
