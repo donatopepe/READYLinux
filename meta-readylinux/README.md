@@ -23,7 +23,9 @@ Use a checked-out, release-pinned Poky/OE-Core tree and add its layer paths plus
 ```sh
 cd /path/to/poky
 source oe-init-build-env /path/to/build
-# Set MACHINE to the explicitly selected BSP in build/conf/local.conf.
+# Select the READY distro and an explicitly chosen BSP in build/conf/local.conf.
+# DISTRO = "readylinux"
+# MACHINE = "<selected-bsp-machine>"
 bitbake-layers add-layer /path/to/READYLinux/meta-readylinux
 cd /path/to/READYLinux
 bash scripts/validate-yocto-env.sh

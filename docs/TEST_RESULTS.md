@@ -1,11 +1,18 @@
 # Risultati test
 
+## 2026-10-18 — Configurazione distro/BSP opt-in
+
+- README build ora indica esplicitamente `DISTRO = "readylinux"` e lascia `MACHINE` come placeholder scelto dall'utente; nessun BSP viene assunto automaticamente.
+- Test statico verifica `readylinux.conf` abilita systemd, image recipe non forza la distro, entrambi README danno istruzioni coerenti.
+- Test mirato Windows/Python 3.11 e WSL Debian 13/Python 3.13 — PASS.
+- Nessun BitBake e nessun BSP selezionato, quindi nessun parse/build reale.
+
 ## 2026-10-18 — Baseline test/status
 
 - Nuovo test statico IT/EN per ownership tty1, maschera getty e messaggio assenza login prompt.
 
-- HEAD snapshot a inizio firing: `6266983bc1ce4aaaf9cd60a9b8158fa79276daf9`; il test statico garantisce status IT/EN citino snapshot, baseline aggiornata e limiti BitBake/QEMU.
-- Full suite Windows/Python 3.11 — PASS, 94 test (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13 — PASS, 94 test.
+- HEAD snapshot a inizio firing: `1e3a456a489b20340ba41f568efe5fa478c9657b`; test statico richiede snapshot e baseline in status IT/EN.
+- Full suite Windows/Python 3.11 — PASS, 95 test (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13 — PASS, 95 test.
 - `compileall`, shell syntax su entrambi e `git diff --check` — PASS.
 
 ## 2026-10-18 — Documentazione package ownership

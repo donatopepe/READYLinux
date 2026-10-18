@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 94 test Windows (1 skip systemd-analyze) e WSL; compileall/shell/diff pass. Test statico controlla tty/getty contract bilingual.
+- **Verificato localmente**: 95 test Windows (1 skip systemd-analyze) e WSL; compileall/shell/diff pass. Distro opt-in e placeholder MACHINE documentati e testati.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti, BitBake assente; nessun checkout/fetch Yocto.
-- **Git**: snapshot firing `16cea275376886423be22380975094f0cf6d4f45`; tty/getty contract test pubblicato in `3afbb81`. ZIP ignorati; `.pi-loop.json` locale.
+- **Git**: snapshot iniziale firing `1e3a456a489b20340ba41f568efe5fa478c9657b`; distro/BSP guidance verificata, publish in corso. ZIP ignorati; `.pi-loop.json` locale.
 - **Prossimo**: parse/build su host OE release-pinned quando selezionato; non dichiarare boot/reproducibilità senza acceptance evidence.
