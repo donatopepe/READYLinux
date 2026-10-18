@@ -3,9 +3,9 @@
 Aggiornato: 2026-10-18.
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
-- **Implementato**: console, vibe/BASIC, Yocto scaffold e servizio tty1 non-root hardenizzato; helper validation BitBake/systemd/image SHA.
-- **Verificato**: 66 test PASS su Windows e WSL; WSL systemd-analyze verify PASS; security report MEDIUM exposure (UMask 0027, file group-readable). Hardening assertions aggiornate.
-- **Non verificato**: BitBake/image build, QEMU boot, getty mask dentro image, service runtime target, model/sandbox/GPU/ARM64.
-- **Host**: Windows+WSL Debian 13, QEMU x86_64 installato; BitBake assente. Nessun checkout sorgenti Yocto.
-- **Git**: `main` sincronizzato con `origin/main`; hardening unit systemd pubblicato in `0eb8552`. ZIP/`.pi-loop*` esclusi.
-- **Prossimo**: eseguire test cross-platform, documentare exposure metric e pubblicare.
+- **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio systemd tty1 non-root con hardening; helper validation BitBake/systemd/checksum artifact.
+- **Verificato localmente**: 66 test su Windows/MSYS Python 3.11 e WSL Debian 13 Python 3.13; compileall e `bash -n` su entrambi; `git diff --check` pulito. Unit systemd passa `systemd-analyze verify` (copia temporanea, ExecStart sostituito). `systemd-analyze security --offline`: MEDIUM, score exposure 6.7, residuo UMask 0027.
+- **Non verificato**: BitBake/Yocto parse/build, boot immagine QEMU, getty mask nell'immagine, comportamento runtime dell'unit, artifact READY reale, GGUF, sandbox, GPU/ARM64/benchmark.
+- **Host**: Windows 10 AMD64 + WSL2 Debian 13; 20 CPU logiche, 30 GiB RAM WSL, GCC e QEMU x86_64 installati. BitBake non disponibile. Nessun checkout/fetch Yocto effettuato.
+- **Git**: `main` sincronizzato con `origin/main` a `2bf1827a5bc92a082cee0d2cf6982c79b1dd2870`. ZIP e `.pi-loop*` non tracciati, esclusi dai commit.
+- **Prossimo**: scegliere release/BSP e ottenere BitBake su host Linux prima di metadata parse e build; non dichiarare riproducibilità/boot finché checklist README non ha evidenze.

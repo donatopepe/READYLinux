@@ -1,8 +1,11 @@
 # Risultati test
 
-## 2026-10-18 — Hardening unit systemd
+## 2026-10-18 — Baseline corrente, validazione cross-platform
 
-- Unit include ProtectClock/KernelLogs/ControlGroups/KernelModules/KernelTunables/Hostname, RestrictSUIDSGID, LockPersonality, RemoveIPC.
-- Su copia temporanea WSL systemd 257: `systemd-analyze verify` PASS; `systemd-analyze security --offline` exposure MEDIUM, UMask 0027 lascia file leggibili al gruppo `ready`.
-- Suite completa 66 test PASS su Windows/Python 3.11 e WSL/Debian 13/Python 3.13; compileall e shell syntax PASS su entrambi; `git diff --check` PASS.
-- BitBake/QEMU non disponibili.
+- Windows/MSYS, Python 3.11: `python -m unittest discover -s tests -v` — PASS, 66 test.
+- WSL2 Debian 13, Python 3.13: `python3 -m unittest discover -s tests -v` — PASS, 66 test.
+- In entrambi: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` e `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh scripts/validate-systemd-unit.sh scripts/verify-image-artifact.sh` — PASS.
+- `systemd-analyze verify` su copia temporanea unit, ExecStart sostituito — PASS; non prova image integration/runtime.
+- `systemd-analyze security --offline`: score exposure 6.7, MEDIUM; UMask 0027 residuo documentato.
+- `git diff --check` — PASS.
+- BitBake non disponibile; nessun Yocto parse/build/QEMU boot o image hash reale.

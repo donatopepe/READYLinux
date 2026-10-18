@@ -3,9 +3,9 @@
 Updated: 2026-10-18.
 
 - **Release**: READY Linux 0.3 prototype.
-- **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened non-root tty1 service; BitBake/systemd/image SHA validation helpers.
-- **Verified**: 66 tests pass on Windows and WSL; WSL systemd-analyze verify PASS; systemd security reports MEDIUM exposure (UMask 0027, group-readable files). Hardening assertions updated.
-- **Not verified**: BitBake/image build, QEMU boot, getty mask in image, target service runtime, model/sandbox/GPU/ARM64.
-- **Host**: Windows + WSL Debian 13, QEMU x86_64 installed; BitBake absent. No Yocto sources checked out.
-- **Git**: `main` synchronized with `origin/main`; systemd unit hardening published in `0eb8552`. ZIPs and `.pi-loop*` excluded.
-- **Next**: cross-platform tests, record security exposure metric, publish.
+- **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened non-root systemd tty1 service; BitBake/systemd/image-checksum validation helpers.
+- **Locally verified**: 66 tests on Windows/MSYS Python 3.11 and WSL Debian 13 Python 3.13; compileall and `bash -n` on both; `git diff --check` clean. Unit passes WSL `systemd-analyze verify` on a temporary copy with ExecStart substituted. `systemd-analyze security --offline`: MEDIUM, exposure score 6.7, residual UMask 0027.
+- **Not verified**: BitBake/Yocto parse/build, QEMU image boot, getty mask in image, unit runtime behavior, real READY image artifact, GGUF, sandbox, GPU/ARM64/benchmarks.
+- **Host**: Windows 10 AMD64 + WSL2 Debian 13; 20 logical CPUs, 30 GiB WSL RAM, GCC and QEMU x86_64 installed. BitBake unavailable. No Yocto checkout/fetch performed.
+- **Git**: `main` synchronized with `origin/main` at `2bf1827a5bc92a082cee0d2cf6982c79b1dd2870`. ZIPs and `.pi-loop*` remain untracked and excluded from commits.
+- **Next**: select release/BSP and provide BitBake on Linux before metadata parse/build; do not claim reproducibility/boot until README acceptance evidence exists.
