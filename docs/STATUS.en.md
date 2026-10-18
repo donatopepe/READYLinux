@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 51 tests, compileall, `bash -n` on all scripts, and `git diff --check`; helper tests cover preflight failures, symlink builddir, fake parse.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` synced at `e6cf33e` at unit start; symlink robustness tested, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; builddir canonicalization published in `f5bc77a`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: run suite and publish; then BitBake parse on configured OE host.
