@@ -168,6 +168,30 @@ class YoctoScaffoldTests(unittest.TestCase):
         required = {packaged[module] for module in stdlib - local_modules}
         self.assertTrue(required.issubset(declared), f"Missing RDEPENDS: {sorted(required - declared)}")
 
+    def test_service_user_group_and_state_directory_contract_match_recipe(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        user = directives.get("User")
+        group = directives.get("Group")
+        self.assertTrue(user)
+        self.assertTrue(group)
+        useradd = re.search(r'USERADD_PARAM:\$\{PN\}\s*=\s*"([^"]+)"', recipe)
+        groupadd = re.search(r'GROUPADD_PARAM:\$\{PN\}\s*=\s*"([^"]+)"', recipe)
+        self.assertIsNotNone(useradd)
+        self.assertIsNotNone(groupadd)
+        self.assertIn(f" {user}", useradd.group(1))
+        self.assertIn(f"--gid {group}", useradd.group(1))
+        self.assertIn(f" {group}", groupadd.group(1))
+        state_directory = directives.get("StateDirectory", "")
+        self.assertTrue(state_directory)
+        self.assertIn(f"{state_directory}", directives.get("Environment", ""))
+        self.assertEqual(directives.get("StateDirectoryMode"), "0750")
+
     def test_systemd_writable_paths_are_scoped_to_persistent_state_directory(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
@@ -418,11 +442,11 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertRegex(doc, r"(?m)\b92 tests?\b")
+            self.assertRegex(doc, r"(?m)\b93 tests?\b")
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
-            self.assertIn("a547aef", doc)
-            self.assertIn("6266983bc1ce4aaaf9cd60a9b8158fa79276daf9", doc)
+            self.assertIn(".pi-loop.json", doc)
+            self.assertIn("firing", doc.lower())
 
     def test_status_docs_state_current_build_limits_and_host_prereqs(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
