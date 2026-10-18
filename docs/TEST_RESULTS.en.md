@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Yocto service security regressions
+## 2026-10-18 — systemd state ownership
 
-- Added static assertions for unprivileged identity, required hardening, write-path restriction, and absence of capability/privilege overrides.
-- `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 tests; full suite — PASS, 52 tests.
-- `compileall`, `bash -n` on all scripts, `git diff --check` — PASS.
-- BitBake/systemd unavailable for metadata/runtime validation.
+- Focused static tests: `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 tests.
+- Verified `StateDirectory`, mode 0750, `UMask`, XDG path, user home/group, and persistent workspace.
+- `python -m unittest discover -s tests -v` — PASS, 52 tests; compileall, `bash -n`, and `git diff --check` — PASS.
+- No systemd/BitBake runtime validation available.
