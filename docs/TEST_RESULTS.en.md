@@ -1,8 +1,7 @@
 # Test Results
 
-## 2026-10-18 — Machine-readable Yocto evidence schema
+## 2026-10-18 — Yocto evidence schema constraints
 
-- Added `docs/YOCTO_BUILD_EVIDENCE.schema.json`, Draft 2020-12, no additional Python dependencies.
-- `json.loads` and required sections/audit fields test — PASS.
+- Focused test checks 40/64-hex patterns, cache enum, boot status, and verdict enum: PASS.
 - `python -m unittest discover -s tests -v` — PASS, 58 tests; compileall, `bash -n`, `git diff --check` — PASS.
-- No build evidence/results fabricated.
+- No full JSON Schema validation library installed/used.

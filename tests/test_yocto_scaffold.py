@@ -129,6 +129,12 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(section, schema["properties"])
         self.assertIn("readylinux_commit", schema["properties"]["identity"]["properties"])
         self.assertIn("sha256", schema["properties"]["image"]["properties"])
+        props = schema["properties"]
+        self.assertEqual(props["identity"]["properties"]["poky_commit"]["pattern"], "^[0-9a-fA-F]{40}$")
+        self.assertEqual(props["environment"]["properties"]["local_conf_sha256"]["pattern"], "^[0-9a-fA-F]{64}$")
+        self.assertEqual(props["image"]["properties"]["source_cache_state"]["enum"], ["cached", "fetched", "unknown", "not-built"])
+        self.assertEqual(props["boot"]["properties"]["status"]["enum"], ["passed", "failed", "not-run"])
+        self.assertEqual(props["verdict"]["enum"], ["reproducible-and-booted", "built-not-booted", "failed", "not-verified"])
 
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (
