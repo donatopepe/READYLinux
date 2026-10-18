@@ -2,6 +2,7 @@
 
 ## 2026-10-18 — Opt-in distro/BSP configuration
 
+- Added static test: READY distro enables systemd/init coherently with the service recipe (inherit/autostart/RDEPENDS), without removing distro features.
 - Build README now explicitly says `DISTRO = "readylinux"` and leaves `MACHINE` as a user-selected placeholder; no BSP is silently assumed.
 - Static test checks `readylinux.conf` enables systemd, image recipe does not force a distro, both READMEs match.
 - Focused Windows/Python 3.11 and WSL Debian 13/Python 3.13 test — PASS.
@@ -11,8 +12,9 @@
 
 - Added static IT/EN test for tty1 ownership, getty mask and absence of a normal login prompt.
 
-- HEAD snapshot at firing start: `1e3a456a489b20340ba41f568efe5fa478c9657b`; static test requires status snapshot and baseline freshness.
-- Full Windows/Python 3.11 suite — PASS, 95 tests (1 `systemd-analyze` skip); WSL Debian 13/Python 3.13 — PASS, 95 tests.
+- HEAD snapshot at firing start: `28f5bba753f44fe58ae5063eb93f06f470bec5bd`; static test requires status snapshot and baseline freshness.
+- Distro contract test checks systemd distro feature, init manager, service recipe inheritance and autostart.
+- Full Windows/Python 3.11 suite — PASS, 96 tests (1 `systemd-analyze` skip); WSL Debian 13/Python 3.13 — PASS, 96 tests.
 - `compileall`, shell syntax on both, and `git diff --check` — PASS.
 
 ## 2026-10-18 — Package ownership documentation

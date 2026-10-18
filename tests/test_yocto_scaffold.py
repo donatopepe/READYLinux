@@ -58,6 +58,16 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn('DISTRO = "readylinux"', readme)
             self.assertIn('MACHINE = "<selected-bsp-machine>"', readme)
 
+    def test_ready_distro_selects_systemd_without_forcing_service_runtime(self):
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        service_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        self.assertIn('DISTRO_FEATURES:append = " systemd"', distro)
+        self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
+        self.assertIn('inherit systemd useradd allarch', service_recipe)
+        self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', service_recipe)
+        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', service_recipe)
+        self.assertNotIn("DISTRO_FEATURES:remove", distro)
+
     def test_image_recipe_has_license_and_minimal_local_package_contract(self):
         image_path = LAYER / "recipes-core/images/readylinux-image.bb"
         image = image_path.read_text(encoding="utf-8")
@@ -455,7 +465,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertRegex(doc, r"(?m)\b95 tests?\b")
+            self.assertRegex(doc, r"(?m)\b96 tests?\b")
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
