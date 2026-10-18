@@ -1,4 +1,3 @@
-import os
 import subprocess
 import tempfile
 import unittest
@@ -6,6 +5,28 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/validate-yocto-env.sh"
+
+
+def shell_pwd(path):
+    result = subprocess.run(["bash", "-lc", "cd \"$1\" && pwd -P", "bash", str(path)], cwd=ROOT, capture_output=True, text=True)
+    if result.returncode:
+        raise RuntimeError(result.stderr)
+    return result.stdout.strip()
+
+
+def bash_builddir_path(path):
+    value = str(path).replace("\\", "/")
+    if value.startswith("/tmp/"):
+        return value
+    if value.startswith("D:/"):
+        return "/mnt/d/" + value[3:]
+    marker = "/AppData/Local/Temp/"
+    if marker in value:
+        return "/tmp/" + value.split(marker, 1)[1]
+    if value.startswith("C:/"):
+        return "/mnt/c/" + value[3:]
+    raise AssertionError(f"unsupported Windows-to-WSL path mapping: {value}")
+
 
 
 class YoctoValidationScriptTests(unittest.TestCase):
@@ -62,7 +83,8 @@ class YoctoValidationScriptTests(unittest.TestCase):
             actual = root / "build actual"
             conf = actual / "conf"
             conf.mkdir(parents=True)
-            (conf / "bblayers.conf").write_text('BBLAYERS += "/d/repos/ReadyLinux/meta-readylinux"\n', encoding="utf-8")
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
             (conf / "local.conf").write_text("", encoding="utf-8")
             alias = root / "build-link"
             alias.symlink_to(actual, target_is_directory=True)
@@ -89,21 +111,24 @@ class YoctoValidationScriptTests(unittest.TestCase):
             builddir = Path(temp)
             conf = builddir / "conf"
             conf.mkdir()
-            layer_path = "/d/repos/ReadyLinux/meta-readylinux"
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
             (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
             (conf / "local.conf").write_text("", encoding="utf-8")
             result, fake_root = self.run_with_builddir(builddir)
             self.addCleanup(fake_root.cleanup)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(f"FAKE_BITBAKE -p /tmp/{builddir.name}", result.stdout)
+        announced_builddir = next(line.removeprefix("Build directory: ") for line in result.stdout.splitlines() if line.startswith("Build directory: "))
+        expected_builddir = bash_builddir_path(builddir)
+        self.assertEqual(announced_builddir, expected_builddir)
+        self.assertIn(f"FAKE_BITBAKE -p {expected_builddir}", result.stdout)
 
     def test_script_propagates_bitbake_parse_failure(self):
         with tempfile.TemporaryDirectory() as temp:
             builddir = Path(temp)
             conf = builddir / "conf"
             conf.mkdir()
-            layer_path = "/d/repos/ReadyLinux/meta-readylinux"
-            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\\n', encoding="utf-8")
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
             (conf / "local.conf").write_text("", encoding="utf-8")
             result, fake_root = self.run_with_builddir(builddir, bitbake_exit=37)
             self.addCleanup(fake_root.cleanup)

@@ -4,8 +4,8 @@ Aggiornato: 2026-10-18.
 
 - **Release**: READY Linux 0.3 prototipo applicativo.
 - **Implementato**: console Python, vibe flow, BASIC ridotto, layer Yocto e servizio tty1 non-root; helper `scripts/validate-yocto-env.sh` esegue preflight e parse-only BitBake.
-- **Verificato localmente**: 59 test totali, compileall, `bash -n`, `git diff --check`; checksum/retention guidati staticamente.
-- **Non verificato**: parse reale OE, build/boot QEMU, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmark.
-- **Host**: Windows/MSYS AMD64, Python 3.11; nessun download/installazione.
-- **Git**: `main` sincronizzato con `origin/main`; checksum/retention policy pubblicata in `09a9ee9`. ZIP/`.pi-loop*` esclusi.
+- **Verificato localmente**: 59 test passano su Windows/Python 3.11 e WSL Debian 13/Python 3.13; compileall e shell syntax passano entrambi, `git diff --check` pass.
+- **Non verificato**: parse OE/build/boot READY, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmark. QEMU presente ma nessun image artifact.
+- **Host**: Windows AMD64 + WSL2 Debian 13, 20 CPU logiche e 30 GiB RAM visibili in WSL; GCC/QEMU x86_64 installati. BitBake non presente. Nessun checkout/download Yocto fatto.
+- **Git**: `main` era a `91b9c1f`; helper cross-platform verificato, publish in corso. ZIP/`.pi-loop*` esclusi.
 - **Prossimo**: suite completa e pubblicazione; build/boot reale richiede host Linux + OE/QEMU configurati.
