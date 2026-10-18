@@ -1,9 +1,10 @@
 # Test Results
 
-## 2026-10-18 — Test report and Git snapshot consistency
+## 2026-10-18 — Initial snapshot and report consistency
 
-- Initial snapshot verified: `git status --short --branch` showed `main...origin/main`; HEAD `e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05`.
-- IT/EN status files align to that snapshot and distinguish later documentation-only commits.
-- Standard commands: `python -m unittest discover -s tests -v`; `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `bash -n` for the shell scripts listed below.
-- Limitations: no real BitBake/Yocto parse, image build, or QEMU boot.
-- Pre-new-test baseline: 78 Windows tests (1 expected skip) and 78 WSL tests; rerun the updated suite.
+- At firing start, `git status --short --branch` showed `main...origin/main`; snapshot HEAD `e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05`. This firing's documentation/test commits are subsequent and non-product.
+- Static tests ensure IT/EN status cites snapshot, commit, build-host limits and systemd MEDIUM/UMask finding.
+- Standard suite/compileall/shell-syntax commands are documented here.
+- No real BitBake/Yocto parse, image build, or QEMU boot.
+- Windows/Python 3.11: 79 tests PASS (1 expected skip: systemd-analyze unavailable); WSL Debian 13/Python 3.13: 79 tests PASS.
+- Compileall, shell syntax on both, and `git diff --check` — PASS.

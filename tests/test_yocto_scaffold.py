@@ -297,6 +297,22 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("bash -n", doc)
             self.assertNotIn("real Yocto build passed", doc.lower())
 
+    def test_systemd_security_observation_and_skip_are_reported_bilingually(self):
+        italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
+        results_it = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
+        results_en = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
+        for doc in (italian, english):
+            self.assertIn("MEDIUM", doc)
+            self.assertIn("6.7", doc)
+            self.assertIn("UMask 0027", doc)
+        self.assertIn("systemd-analyze skip", english)
+        self.assertIn("systemd-analyze", italian)
+        for doc in (results_it, results_en):
+            self.assertIn("systemd-analyze security --offline", doc)
+            self.assertIn("6.7", doc)
+            self.assertIn("UMask", doc)
+
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
         self.assertIn("BitBake and QEMU unavailable", readme)
