@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 96 test Windows (1 skip systemd-analyze) e WSL; compileall/shell/diff pass. Distro systemd/init policy coerente con service recipe e README.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti, BitBake assente; nessun checkout/fetch Yocto.
-- **Git**: snapshot iniziale firing `28f5bba753f44fe58ae5063eb93f06f470bec5bd`; distro/service guard in aggiornamento. ZIP ignorati; `.pi-loop.json` locale.
+- **Git**: snapshot firing `28f5bba753f44fe58ae5063eb93f06f470bec5bd`; distro systemd contract test pubblicato in `7283fb6`. ZIP ignorati; `.pi-loop.json` locale.
 - **Prossimo**: parse/build su host OE release-pinned quando selezionato; non dichiarare boot/reproducibilità senza acceptance evidence.
