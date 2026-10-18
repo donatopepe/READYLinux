@@ -2,12 +2,15 @@
 
 ## 2026-10-18 — Baseline test/status
 
+- Nuovo test statico IT/EN per ownership tty1, maschera getty e messaggio assenza login prompt.
+
 - HEAD snapshot a inizio firing: `6266983bc1ce4aaaf9cd60a9b8158fa79276daf9`; il test statico garantisce status IT/EN citino snapshot, baseline aggiornata e limiti BitBake/QEMU.
-- Full suite Windows/Python 3.11 — PASS, 93 test (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13 — PASS, 93 test.
+- Full suite Windows/Python 3.11 — PASS, 94 test (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13 — PASS, 94 test.
 - `compileall`, shell syntax su entrambi e `git diff --check` — PASS.
 
 ## 2026-10-18 — Documentazione package ownership
 
+- Test statico aggiunto: unit e recipe devono assegnare `/dev/tty1` a READY, mascherare `getty@tty1.service`, e entrambi i README spiegano terminale riservato senza login prompt.
 - User/group/state test verifica che unit `User`/`Group` e `StateDirectory=readylinux` corrispondano a USERADD/GROUPADD, path persistente e mode 0750.
 - Writable-state scope test: `StateDirectory=readylinux`, `ReadWritePaths=/var/lib/readylinux`, XDG state path allineati; broad writable paths rifiutati.
 - Test statico aggiunto che `StateDirectory`, `ReadWritePaths` e `XDG_DATA_HOME` restino allineati su `/var/lib/readylinux`, senza writable paths broad (`/home`, `/etc`, `/usr`, `/opt`).

@@ -442,11 +442,27 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertRegex(doc, r"(?m)\b93 tests?\b")
+            self.assertRegex(doc, r"(?m)\b94 tests?\b")
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
             self.assertIn("firing", doc.lower())
+
+    def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        readmes = (
+            (LAYER / "README.md").read_text(encoding="utf-8"),
+            (LAYER / "README.en.md").read_text(encoding="utf-8"),
+        )
+        self.assertIn("TTYPath=/dev/tty1", service)
+        self.assertIn("StandardInput=tty", service)
+        self.assertIn("getty@tty1.service", recipe)
+        self.assertIn("/dev/null", recipe)
+        for readme in readmes:
+            self.assertIn("/dev/tty1", readme)
+            self.assertIn("getty@tty1.service", readme)
+            self.assertRegex(readme.lower(), r"(?:no|does not provide).{0,80}(?:login|prompt)|(?:nessun|non offre).{0,80}(?:login|prompt)")
 
     def test_status_docs_state_current_build_limits_and_host_prereqs(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
