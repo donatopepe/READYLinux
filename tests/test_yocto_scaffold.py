@@ -167,6 +167,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(example["image"]["exit_code"], None)
         self.assertEqual(example["boot"]["status"], "not-run")
         self.assertEqual(example["verdict"], "not-verified")
+        if example["image"]["source_cache_state"] == "not-built":
+            self.assertIsNone(example["image"]["exit_code"])
+            self.assertIsNone(example["image"]["artifact_path"])
+            self.assertIsNone(example["image"]["sha256"])
+        if example["boot"]["status"] == "not-run":
+            for field in ("ready_console", "unprivileged_service", "persistent_state", "getty_mask", "basic_smoke", "offline_smoke"):
+                self.assertEqual(example["boot"][field], "not-run", field)
 
         malformed_hash = dict(example["identity"])
         malformed_hash["poky_commit"] = "abc"

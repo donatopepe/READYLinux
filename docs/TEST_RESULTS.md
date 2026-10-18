@@ -1,8 +1,7 @@
 # Risultati test
 
-## 2026-10-18 — Stato parse nel sample evidence
+## 2026-10-18 — Invarianti record non eseguito
 
-- `parse_exit_code` reso nullable; sample `NOT-RUN` non dichiara più exit 0 fuorviante.
-- Test verifica log NOT-RUN e exit null nel sample.
-- `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
-- Nessun parse reale effettuato.
+- Esempio JSON testato: not-built → nessun exit/artifact/checksum; not-run boot → tutti gli smoke check not-run.
+- Test mirato `test_build_evidence_schema_is_valid_json_with_audit_fields` — PASS.
+- Suite completa `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
