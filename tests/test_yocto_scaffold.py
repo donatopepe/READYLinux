@@ -135,6 +135,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(props["image"]["properties"]["source_cache_state"]["enum"], ["cached", "fetched", "unknown", "not-built"])
         self.assertEqual(props["boot"]["properties"]["status"]["enum"], ["passed", "failed", "not-run"])
         self.assertEqual(props["verdict"]["enum"], ["reproducible-and-booted", "built-not-booted", "failed", "not-verified"])
+        example = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.example.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(example), set(schema["required"]))
+        self.assertEqual(example["verdict"], "not-verified")
+        self.assertEqual(example["image"]["source_cache_state"], "not-built")
+        self.assertEqual(example["boot"]["status"], "not-run")
+        self.assertIsNone(example["image"]["sha256"])
 
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (

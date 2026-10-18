@@ -5,7 +5,7 @@
   "description": "Auditable evidence for one READY Linux Yocto build and target-specific boot run.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["run_id", "identity", "environment", "image", "boot", "verdict"],
+  "required": ["run_id", "identity", "environment", "image", "boot", "deviations", "verdict"],
   "properties": {
     "run_id": {"type": "string", "minLength": 1},
     "identity": {

@@ -1,0 +1,48 @@
+{
+  "run_id": "example-not-a-real-build",
+  "identity": {
+    "utc_date": "2000-01-01T00:00:00Z",
+    "host_os": "UNRECORDED",
+    "host_arch": "UNRECORDED",
+    "poky_commit": "0000000000000000000000000000000000000000",
+    "layer_commits": [],
+    "readylinux_commit": "0000000000000000000000000000000000000000",
+    "bitbake_version": "NOT-RUN",
+    "distro": "readylinux",
+    "machine": "UNSELECTED",
+    "bsp_revision": "",
+    "tclibc": "",
+    "init_system": "systemd"
+  },
+  "environment": {
+    "build_dir": "",
+    "bblayers_conf_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "local_conf_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "parse_exit_code": 0,
+    "parse_log": "NOT-RUN"
+  },
+  "image": {
+    "build_command": "NOT-RUN",
+    "source_cache_state": "not-built",
+    "exit_code": null,
+    "build_log": null,
+    "artifact_path": null,
+    "artifact_format": null,
+    "artifact_size_bytes": null,
+    "sha256": null
+  },
+  "boot": {
+    "status": "not-run",
+    "qemu_version": null,
+    "command": null,
+    "console_log": null,
+    "ready_console": "not-run",
+    "unprivileged_service": "not-run",
+    "persistent_state": "not-run",
+    "getty_mask": "not-run",
+    "basic_smoke": "not-run",
+    "offline_smoke": "not-run"
+  },
+  "deviations": ["Example only; no Yocto parse, image build, or QEMU boot performed."],
+  "verdict": "not-verified"
+}
