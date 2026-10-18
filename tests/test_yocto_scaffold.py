@@ -131,6 +131,8 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("exact commit:", text)
             self.assertIn("SHA-256:", text)
             self.assertIn("[ ] Not verified / blocked", text)
+            self.assertIn("redact secrets", text.lower())
+            self.assertIn("attach credentials", text.lower())
             self.assertNotRegex(text, r"(?im)^(?:[A-Za-z0-9_-]+\s+){5,}[0-9a-f]{7,40}$")
 
     def test_build_evidence_templates_have_semantic_field_parity(self):
