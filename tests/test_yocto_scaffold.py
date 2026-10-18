@@ -133,6 +133,21 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("[ ] Not verified / blocked", text)
             self.assertNotRegex(text, r"(?im)^(?:[A-Za-z0-9_-]+\s+){5,}[0-9a-f]{7,40}$")
 
+    def test_build_evidence_templates_have_semantic_field_parity(self):
+        it = (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md").read_text(encoding="utf-8")
+        en = (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.en.md").read_text(encoding="utf-8")
+        fields = (
+            "Run ID / UTC date", "Host OS and architecture", "Poky/OE-Core",
+            "Other layer", "READY Linux repository commit", "BitBake version",
+            "Distro", "MACHINE", "Build directory", "bblayers.conf",
+            "local.conf", "exit code", "build log", "Image artifact",
+            "SHA-256", "QEMU version", "READY appears", "unprivileged",
+            "/var/lib/readylinux", "getty@tty1", "BASIC smoke", "offline smoke",
+        )
+        for label in fields:
+            self.assertIn(label, it, f"Italian template missing {label}")
+            self.assertIn(label, en, f"English template missing {label}")
+
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
         english = (LAYER / "README.en.md").read_text(encoding="utf-8")

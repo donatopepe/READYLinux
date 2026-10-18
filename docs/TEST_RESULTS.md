@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Guard template evidenze
+## 2026-10-18 — Parità template evidenze IT/EN
 
-- Test mirati: `python -m unittest tests.test_yocto_scaffold -v` — PASS, 9 test.
-- Template IT/EN controllati per placeholders provenance, checksum, verdict non verificato e assenza hash commit simili a dati reali.
-- Suite completa `python -m unittest discover -s tests -v` — PASS, 55 test; compileall, `bash -n`, `git diff --check` — PASS.
-- Build/boot non eseguiti (BitBake/QEMU assenti).
+- Test mirato: `python -m unittest tests.test_yocto_scaffold -v` — PASS, 10 test.
+- Assertion verifica corrispondenza dei campi semantici provenance, macchina, config, parse/build, artifact, QEMU, tty, persistenza, BASIC/offline.
+- `python -m unittest discover -s tests -v` — PASS, 56 test; compileall, `bash -n`, `git diff --check` — PASS.
+- Nessuna build/boot reale (BitBake/QEMU non disponibili).
