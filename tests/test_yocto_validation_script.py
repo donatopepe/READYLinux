@@ -56,6 +56,21 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertIn("missing", result.stderr)
         self.assertNotIn("FAKE_BITBAKE", result.stdout)
 
+    def test_script_accepts_symlinked_build_directory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            actual = root / "build actual"
+            conf = actual / "conf"
+            conf.mkdir(parents=True)
+            (conf / "bblayers.conf").write_text('BBLAYERS += "/d/repos/ReadyLinux/meta-readylinux"\n', encoding="utf-8")
+            (conf / "local.conf").write_text("", encoding="utf-8")
+            alias = root / "build-link"
+            alias.symlink_to(actual, target_is_directory=True)
+            result, fake_root = self.run_with_builddir(alias)
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("FAKE_BITBAKE -p", result.stdout)
+
     def test_script_fails_when_layer_is_not_registered(self):
         with tempfile.TemporaryDirectory() as temp:
             builddir = Path(temp)
