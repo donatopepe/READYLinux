@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 81 test Windows (1 skip previsto per `systemd-analyze` assente) e 81 WSL; compileall/shell/diff check pass. `git check-ignore` conferma i due ZIP esclusi.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti, BitBake assente; nessun checkout/fetch Yocto.
-- **Git**: snapshot iniziale firing `f8aa2a57ab050cc054dcfd358e6168e6d678a7d3`; la regola ignore ZIP è stata aggiunta nei commit successivi. `.pi-loop*` esclusi.
+- **Git**: snapshot firing `f8aa2a57ab050cc054dcfd358e6168e6d678a7d3`; regola `*.zip` e test ignore pubblicati in `c95befd`. Ora resta non tracciato solo `.pi-loop.json`.
 - **Prossimo**: scegliere release/BSP e predisporre BitBake prima di parse/build. Non dichiarare riproducibilità/boot senza evidenze acceptance checklist.
