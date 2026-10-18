@@ -25,6 +25,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(recipe, r"(?m)^\s*(?:git|https?)://")
         self.assertIn('LICENSE = "MIT"', recipe)
         self.assertIn("exec python3", recipe)
+        for dependency in ("python3-core", "python3-io", "python3-json", "python3-netclient", "python3-shell"):
+            self.assertIn(dependency, recipe)
+        self.assertNotIn("python3-multiprocessing", recipe)
 
     def test_console_service_starts_on_tty1_and_is_enabled(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
