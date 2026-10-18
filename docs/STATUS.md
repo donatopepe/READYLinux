@@ -7,5 +7,5 @@ Aggiornato: 2026-10-18.
 - **Verificato localmente**: 58 test, compileall, `bash -n`, `git diff --check`; sample privacy guard pass, manifest solo placeholder.
 - **Non verificato**: parse reale OE, build/boot QEMU, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows/MSYS AMD64, Python 3.11; nessun download/installazione.
-- **Git**: `main` era a `f7c5aa1`; privacy sample check pass, publish in corso. ZIP/`.pi-loop*` esclusi.
+- **Git**: `main` sincronizzato con `origin/main`; privacy guard sample pubblicato in `e721eac`. ZIP/`.pi-loop*` esclusi.
 - **Prossimo**: suite completa e pubblicazione; build/boot reale richiede host Linux + OE/QEMU configurati.
