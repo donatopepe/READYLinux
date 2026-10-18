@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 54 tests, compileall, `bash -n`, `git diff --check`; bilingual build command checklist tests pass. BitBake unavailable.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` was synced at `8e92a01`; checklist and command sequence verified, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; bilingual build sequence published in `15bf87b`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: reproducible Linux-host validation with OE/layer commits, distro, MACHINE, build log, image checksum, and QEMU boot evidence per `meta-readylinux/README.en.md`.
