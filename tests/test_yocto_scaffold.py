@@ -45,6 +45,19 @@ class YoctoScaffoldTests(unittest.TestCase):
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
 
+    def test_image_recipe_has_license_and_minimal_local_package_contract(self):
+        image_path = LAYER / "recipes-core/images/readylinux-image.bb"
+        image = image_path.read_text(encoding="utf-8")
+        self.assertIn('LICENSE = "MIT"', image)
+        self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
+        install_match = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^\"]+)"', image)
+        self.assertIsNotNone(install_match)
+        self.assertEqual(set(install_match.group(1).split()), {"readylinux", "readylinux-console"})
+        self.assertNotRegex(image, r"(?i)(?:https?://|git://|AUTOREV|gguf|safetensors)")
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
+        self.assertIn('DISTRO_FEATURES:append = " systemd"', distro)
+
     def test_image_installs_every_custom_recipe_package_exactly_once(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         package_names = set()
