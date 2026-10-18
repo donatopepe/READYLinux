@@ -3,10 +3,9 @@
 Updated: 2026-10-18.
 
 - **Release**: READY Linux 0.3 application prototype.
-- **Implemented**: Python console, vibe flow, reduced BASIC; Yocto scaffold and systemd READY tty1 service.
-- **Locally verified**: 42 tests, compileall, `bash -n`; static recipe tests now check Python dependencies. BitBake unavailable.
-- **Not verified**: Yocto parse/build/boot, QEMU, real tty1/getty, kernel, real GGUF, sandbox, GPU, ARM64, benchmarks.
-- **Environment**: Windows/MSYS AMD64, Python 3.11; no downloads/installations.
-- **Git**: `main` synchronized with `origin/main`; commit `a37b42e` published. ZIP/loop state excluded.
-- **Next**: make recipe source path resolution testable and document OE/Python dependency variability; then BitBake on Linux host.
-- **Risk**: tty1 service may conflict with getty; no real boot test.
+- **Implemented**: Python console, vibe flow, reduced BASIC, Yocto scaffold and tty1 service.
+- **Locally verified**: 43 tests, compileall, and `bash -n`; AST dependency check compares stdlib imports against recipe `RDEPENDS`. BitBake unavailable.
+- **Not verified**: Yocto parse/build/boot/QEMU, OE package mapping for target release, real tty1/getty, kernel, real GGUF, sandbox, GPU, ARM64, benchmarks.
+- **Host**: Windows/MSYS AMD64, Python 3.11; no downloads/installations.
+- **Git**: `main` was synced at `e3ede6e` at unit start; dependency changes tested, commit/push in progress. Exclude ZIPs and `.pi-loop*`.
+- **Next**: verify runtime dependencies and document OE release variability; BitBake on Linux remains follow-up.

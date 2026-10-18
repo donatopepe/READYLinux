@@ -3,10 +3,9 @@
 Aggiornato: 2026-10-18.
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
-- **Implementato**: console Python, flusso vibe, BASIC ridotto; scaffolding Yocto e servizio systemd READY su tty1.
-- **Verificato localmente**: 42 test, compileall, `bash -n`; test statici recipe includono dipendenze Python. Nessun BitBake disponibile.
-- **Non verificato**: parse/build/boot Yocto, QEMU, tty1/getty reale, kernel, GGUF reale, sandbox, GPU, ARM64, benchmark.
-- **Ambiente**: Windows/MSYS AMD64, Python 3.11; no download/installazioni.
-- **Git**: `main` sincronizzato con `origin/main`, commit `a37b42e` pubblicato. ZIP/loop state esclusi.
-- **Prossimo**: rendere testabile la risoluzione dei file sorgente `FILESEXTRAPATHS` e documentare variabilità dipendenze OE/Python; poi BitBake su host Linux.
-- **Rischi**: unità console tty1 può interferire con getty; non testata in boot reale.
+- **Implementato**: console Python, vibe flow, BASIC ridotto, scaffolding Yocto e servizio tty1.
+- **Verificato localmente**: 43 test, compileall e `bash -n`; controllo AST dipendenze confronta moduli stdlib con mapping `RDEPENDS`. BitBake non disponibile.
+- **Non verificato**: parse/build/boot Yocto/QEMU, correttezza mapping package sul release target, tty1/getty reale, kernel, GGUF reale, sandbox, GPU, ARM64, benchmark.
+- **Host**: Windows/MSYS AMD64, Python 3.11; nessun download/installazione.
+- **Git**: `main` era sincronizzato a `e3ede6e` all'avvio; packaging dependency changes testati, commit/push in corso. ZIP e `.pi-loop*` esclusi.
+- **Prossimo**: verificare dipendenze runtime e documentare la variabilità OE per release; BitBake su Linux resta follow-up.

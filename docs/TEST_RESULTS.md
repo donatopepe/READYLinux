@@ -1,13 +1,11 @@
 # Risultati test
 
-## 2026-10-18 — Packaging Yocto M2
+## 2026-10-18 — Dipendenze runtime Yocto
 
+- `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 test scaffolding.
 - `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` — PASS.
-- `python -m unittest discover -s tests -v` — PASS, 42 test.
-- `bash -n install.sh setup-ai-cpu.sh` — PASS.
-- Test statici controllano recipe dependency Python, file locali, unità tty1 e metadati.
-- BitBake non disponibile: nessun parse/build/boot eseguito.
-
-## Baseline e BASIC
-
-Vedi commit/risultati precedenti. HTTP AI è simulato; inferenza GGUF reale non verificata.
+- Suite completa finale: `python -m unittest discover -s tests -v` — PASS, 43 test.
+- `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` — PASS; `bash -n install.sh setup-ai-cpu.sh` — PASS; `git diff --check` — PASS.
+- `bash -n install.sh setup-ai-cpu.sh` — PASS, nessuna modifica agli script.
+- Analisi AST dei moduli runtime rileva import standard-library e verifica il mapping package dichiarato nella ricetta.
+- BitBake non disponibile; naming/ownership dei package non verificati dal metadata reale della release OE.

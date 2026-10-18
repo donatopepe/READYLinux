@@ -1,3 +1,4 @@
+import ast
 import re
 import unittest
 from pathlib import Path
@@ -25,15 +26,37 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(recipe, r"(?m)^\s*(?:git|https?)://")
         self.assertIn('LICENSE = "MIT"', recipe)
         self.assertIn("exec python3", recipe)
-        for dependency in ("python3-core", "python3-io", "python3-json", "python3-netclient", "python3-shell"):
+        for dependency in ("python3-core", "python3-difflib", "python3-crypt", "python3-json", "python3-misc", "python3-netclient", "python3-shell"):
             self.assertIn(dependency, recipe)
         self.assertNotIn("python3-multiprocessing", recipe)
+        self.assertNotIn("python3-io", recipe)
         # FILESEXTRAPATHS resolves from recipe dir: readylinux -> recipes-ready -> layer -> repo root.
         recipe_dir = LAYER / "recipes-ready/readylinux"
         source_root = (recipe_dir / "../../../").resolve()
         self.assertEqual(source_root, ROOT.resolve())
         for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
             self.assertTrue((source_root / source).is_file(), source)
+
+    def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        dependency_match = re.search(r'RDEPENDS:\$\{PN\}\s*\+=\s*"([^"]+)"', recipe)
+        self.assertIsNotNone(dependency_match, "RDEPENDS missing from runtime recipe")
+        declared = set(dependency_match.group(1).split())
+        source_files = (ROOT / name for name in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"))
+        stdlib = set()
+        for source in source_files:
+            tree = ast.parse(source.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    stdlib.update(alias.name.split(".")[0] for alias in node.names)
+                elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                    stdlib.add(node.module.split(".")[0])
+        local_modules = {"ai_local", "basic", "vibe", "__future__"}
+        packaged = {"argparse": "python3-core", "code": "python3-core", "ast": "python3-core", "operator": "python3-core", "re": "python3-core", "sys": "python3-core", "traceback": "python3-core", "os": "python3-core", "shutil": "python3-core", "socket": "python3-core", "time": "python3-core", "dataclasses": "python3-core", "typing": "python3-core", "pathlib": "python3-core", "urllib": "python3-netclient", "subprocess": "python3-misc", "difflib": "python3-difflib", "hashlib": "python3-crypt", "json": "python3-json", "tempfile": "python3-misc"}
+        unknown = stdlib - local_modules - set(packaged)
+        self.assertFalse(unknown, f"Add package mapping for imports: {sorted(unknown)}")
+        required = {packaged[module] for module in stdlib - local_modules}
+        self.assertTrue(required.issubset(declared), f"Missing RDEPENDS: {sorted(required - declared)}")
 
     def test_console_service_starts_on_tty1_and_is_enabled(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")

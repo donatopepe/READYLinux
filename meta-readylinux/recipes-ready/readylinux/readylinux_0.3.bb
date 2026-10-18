@@ -13,7 +13,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/../../../:"
 S = "${WORKDIR}"
 
 inherit allarch
-RDEPENDS:${PN} += "python3-core python3-io python3-json python3-netclient python3-shell"
+RDEPENDS:${PN} += "python3-core python3-difflib python3-crypt python3-json python3-misc python3-netclient python3-shell"
 
 do_install() {
     install -d ${D}${datadir}/readylinux
