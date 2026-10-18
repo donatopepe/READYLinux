@@ -45,6 +45,24 @@ class YoctoScaffoldTests(unittest.TestCase):
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
 
+    def test_image_installs_every_custom_recipe_package_exactly_once(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        package_names = set()
+        for recipe_path in LAYER.rglob("*.bb"):
+            if recipe_path == LAYER / "recipes-core/images/readylinux-image.bb":
+                continue
+            if recipe_path.name.startswith("readylinux-") or recipe_path.parent.parent.name == "recipes-ready":
+                match = re.search(r"PN\\s*=\\s*\"([^\"]+)\"", recipe_path.read_text(encoding="utf-8"))
+                if match:
+                    package_names.add(match.group(1))
+                else:
+                    package_names.add(recipe_path.name.split("_", 1)[0])
+        install_match = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^"]+)"', image)
+        self.assertIsNotNone(install_match)
+        installed = install_match.group(1).split()
+        self.assertEqual(len(installed), len(set(installed)), "IMAGE_INSTALL contains duplicate package entries")
+        self.assertEqual(set(installed), package_names)
+
     def test_all_recipe_file_uri_sources_resolve_inside_repository(self):
         for recipe_path in sorted(LAYER.rglob("*.bb")):
             recipe = recipe_path.read_text(encoding="utf-8")
