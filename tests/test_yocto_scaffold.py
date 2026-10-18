@@ -18,6 +18,11 @@ class YoctoScaffoldTests(unittest.TestCase):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
         self.assertIn('IMAGE_INSTALL:append = " readylinux readylinux-console"', image)
+        self.assertNotRegex(image, r"(?i)(?:gguf|llama|model|https?://|SRC_URI)")
+        runtime_recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        self.assertNotRegex(runtime_recipe, r"(?i)(?:gguf|safetensors|llama-server|https?://)")
+        self.assertNotRegex(runtime_recipe, r"(?m)^\\s*file://[^\\s\\\\]+\\.(?:gguf|safetensors|bin)\\b")
+        self.assertNotRegex(runtime_recipe, r"(?m)^\\s*(?:git|https?)://")
 
     def test_recipe_includes_runtime_sources_and_no_external_fetch(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
@@ -112,6 +117,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
         self.assertIn("BitBake and QEMU unavailable", readme)
         self.assertIn("does not clone repositories or download source", readme)
+        self.assertIn("No model weights, AI runtime binaries, or network fetches", readme)
         self.assertIn("does not provide a normal login prompt there", readme)
         self.assertIn("serial console is intentionally deferred", readme)
 

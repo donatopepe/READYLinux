@@ -7,7 +7,7 @@ Minimal Yocto layer scaffold for READY Linux. It is not yet a complete image and
 - `conf/layer.conf`: layer metadata.
 - `conf/distro/readylinux.conf`: initial distro policy inheriting Poky defaults.
 - `recipes-core/images/readylinux-image.bb`: minimal image with the READY runtime.
-- `recipes-ready/readylinux/readylinux_0.3.bb`: installs the Python console, BASIC runtime, AI client, and vibe workspace code. `FILESEXTRAPATHS` resolves `file://` sources from the repository root.
+- `recipes-ready/readylinux/readylinux_0.3.bb`: installs the Python console, BASIC runtime, AI client, and vibe workspace code. `FILESEXTRAPATHS` resolves `file://` sources from the repository root; the recipe does not include llama.cpp binaries or model weights.
 - `recipes-core/readylinux/`: systemd starts READY on `/dev/tty1` as a dedicated unprivileged `ready` account, with persistent writable state and baseline filesystem hardening. The package masks `getty@tty1.service`; this image reserves tty1 for READY and therefore has no normal login prompt on that terminal.
 
 ## Build host integration
@@ -22,4 +22,4 @@ bash scripts/validate-yocto-env.sh
 bitbake readylinux-image
 ```
 
-The generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until a real BSP/target is selected because device names and login policy vary. Build and boot are **not verified here**: current Windows/MSYS environment has no BitBake or QEMU. Pin one Yocto release and target machine before claiming reproducibility. The recipe only uses local `file://` sources; model weights are excluded.
+No model weights, AI runtime binaries, or network fetches are included by the image recipe; model/runtime provisioning remains a separate explicit step. The generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until a real BSP/target is selected because device names and login policy vary. Build and boot are **not verified here**: current Windows/MSYS environment has no BitBake or QEMU. Pin one Yocto release and target machine before claiming reproducibility. The recipe only uses local `file://` sources; model weights are excluded.

@@ -7,7 +7,7 @@ Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete i
 - `conf/layer.conf`: layer metadata.
 - `conf/distro/readylinux.conf`: initial distro policy, inheriting Poky defaults.
 - `recipes-core/images/readylinux-image.bb`: minimal image recipe based on `core-image-minimal` with Python 3 and the READY runtime package group.
-- `recipes-ready/readylinux/readylinux_0.3.bb`: installs the existing Python application, BASIC runtime, and AI client as a package. The recipe resolves `file://` sources from the repository root through `FILESEXTRAPATHS`.
+- `recipes-ready/readylinux/readylinux_0.3.bb`: installs the existing Python application, BASIC runtime, and AI client as a package. The recipe resolves `file://` sources from the repository root through `FILESEXTRAPATHS`; it does not include llama.cpp binaries or model weights.
 - `recipes-core/readylinux/`: systemd service starts READY on `/dev/tty1` as a dedicated unprivileged `ready` account, with a persistent writable state directory and baseline filesystem hardening. The package masks `getty@tty1.service`; this image reserves tty1 for READY, so it does not provide a normal login prompt there.
 
 ## Integration (Linux build host required)
@@ -22,4 +22,4 @@ bash scripts/validate-yocto-env.sh
 bitbake readylinux-image
 ```
 
-The recipe uses `file://` sources and the Python standard library only. The current generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until an actual BSP/target is selected, because device names and login policy vary. Image build and boot have not been tested in this repository environment (Windows/MSYS; BitBake and QEMU unavailable). Choose and pin one Yocto release and machine before claiming reproducibility.
+The recipe uses `file://` sources and the Python standard library only. No model weights, AI runtime binaries, or network fetches are part of the image recipe; model/runtime provisioning remains a separate explicit step. The current generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until an actual BSP/target is selected, because device names and login policy vary. Image build and boot have not been tested in this repository environment (Windows/MSYS; BitBake and QEMU unavailable). Choose and pin one Yocto release and machine before claiming reproducibility.
