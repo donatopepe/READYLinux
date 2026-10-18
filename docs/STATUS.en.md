@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 57 tests, compileall, `bash -n`, `git diff --check`; evidence-template secret warning is tested.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` was at `7ea4311`; template credential guard verified, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; template credential guard published in `bf632b3`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: reproducible Linux-host validation with OE/layer commits, distro, MACHINE, build log, image checksum, and QEMU boot evidence per `meta-readylinux/README.en.md`.
