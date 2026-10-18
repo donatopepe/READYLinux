@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 59 total tests, compileall, `bash -n`, `git diff --check`; checksum/retention guidance statically checked.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; no downloads/installations.
-- **Git**: `main` was at `e331ec2`; artifact-integrity checks pass, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; checksum/retention policy published in `09a9ee9`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: full suite and publish; real build/boot needs configured Linux + OE/QEMU host.
