@@ -1,0 +1,3 @@
+# PROMPT INIZIALE PER CODEX
+
+Continua il progetto READY Linux usando i file di questa cartella. Leggi prima AGENTS.md, CONTEXT.md e README.md. Analizza codice, struttura e test: non dare per implementate funzionalità che esistono solo nella roadmap. Esegui i test esistenti senza scaricare modelli. Poi proponi un'architettura e una roadmap a milestone per trasformare READY Linux 0.3 in una vera distribuzione Linux avviabile il cui ambiente principale sia il vibe coding, con IA locale funzionante su sola CPU, anteprima/diff, approvazione, verifica ed esecuzione isolata del codice generato. Specifica dipendenze, trade-off e criteri di accettazione. Prima di modifiche architetturali importanti, mostra un piano.

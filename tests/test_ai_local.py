@@ -1,0 +1,127 @@
+import contextlib
+import io
+import json
+import tempfile
+import threading
+import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from unittest.mock import patch
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from ai_local import AIConfig, AIError, LocalAI
+from readylinux import ReadyLinux
+
+
+class DummyLlama(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path != '/health':
+            self.send_error(404)
+            return
+        payload = b'{"status":"ok"}'
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def do_POST(self):
+        if self.path != '/v1/chat/completions':
+            self.send_error(404)
+            return
+        body = self.rfile.read(int(self.headers['Content-Length']))
+        self.server.last_payload = json.loads(body)
+        payload = json.dumps({'choices': [{'message': {'content': 'Spiegazione simulata (TEST)'}}]}).encode()
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def log_message(self, fmt, *args):
+        pass
+
+
+class LocalAITests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self.httpd = ThreadingHTTPServer(('127.0.0.1', 0), DummyLlama)
+        self.thread = threading.Thread(target=self.httpd.serve_forever, daemon=True)
+        self.thread.start()
+        self.config = AIConfig(model=self.root / 'model.gguf', server='does-not-matter', port=self.httpd.server_port, timeout=3)
+        self.app = ReadyLinux(self.root / 'programs', ai_config=self.config)
+
+    def tearDown(self):
+        self.httpd.shutdown()
+        self.httpd.server_close()
+        self.thread.join(3)
+        self.temp.cleanup()
+
+    def test_status_existing_local_server(self):
+        self.assertIn('online', self.app.ai.status())
+        self.assertIn('esterno', self.app.ai.status())
+
+    def test_ask_http_and_program_context(self):
+        self.app.program[10] = 'x = 3'
+        self.app.program[20] = 'print(x)'
+        reply = self.app.ai.ask('EXPLAIN', self.app.source())
+        self.assertEqual(reply, 'Spiegazione simulata (TEST)')
+        prompt = self.httpd.last_payload['messages'][1]['content']
+        self.assertIn('x = 3', prompt)
+        self.assertIn('print(x)', prompt)
+        self.assertTrue(self.httpd.last_payload['stream'] is False)
+        self.assertEqual(self.httpd.last_payload['max_tokens'], 384)
+
+    def test_ai_command_does_not_change_code(self):
+        self.app.command('10 print(42)')
+        before = self.app.listing()
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.app.command('AI REVIEW')
+            self.app.command('AI FIX')
+            self.app.command('AI ASK Come funziona il codice?')
+        self.assertEqual(self.app.listing(), before)
+        self.assertIn('Spiegazione simulata', out.getvalue())
+
+    def test_missing_code_and_long_question(self):
+        with self.assertRaises(AIError):
+            self.app.ai.ask('FIX', '')
+        with self.assertRaises(AIError):
+            self.app.ai.ask('ASK', '', 'A' * 2001)
+
+    def test_start_refuses_absent_model(self):
+        with self.assertRaises(AIError):
+            self.app.ai.start()
+
+    def test_stop_does_not_kill_external_process(self):
+        self.assertIn('non arresto', self.app.ai.stop())
+
+    def test_cpu_only_server_flags(self):
+        model = self.root / 'model.gguf'
+        model.write_bytes(b'GGUF')
+        binary = self.root / 'llama-server'
+        binary.write_text('#!/bin/sh\nexit 0\n')
+        binary.chmod(0o700)
+        cfg = AIConfig(model=model, server=str(binary), port=18081, threads=2)
+        ai = LocalAI(cfg, self.root / 'logs')
+        class FakeProcess:
+            returncode = None
+            def poll(self):
+                return None
+            def terminate(self):
+                pass
+            def wait(self, timeout):
+                return 0
+        with patch('ai_local.subprocess.Popen', return_value=FakeProcess()) as popen:
+            with patch('ai_local.time.sleep'):
+                output = ai.start()
+        cmd = popen.call_args.args[0]
+        self.assertIn('CPU', output)
+        self.assertEqual(cmd[cmd.index('--n-gpu-layers') + 1], '0')
+        self.assertEqual(cmd[cmd.index('--device') + 1], 'none')
+        self.assertEqual(cmd[cmd.index('--host') + 1], '127.0.0.1')
+        self.assertIn('--ctx-size', cmd)
+        ai.stop()
+
+if __name__ == '__main__':
+    unittest.main()

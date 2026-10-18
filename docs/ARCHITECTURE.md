@@ -1,0 +1,20 @@
+# Architettura READY Linux (proposta incrementale)
+
+## Stato attuale
+
+Applicazione Python: `readylinux.py` gestisce console READY, programmi numerati Python e modalità BASIC esplicita; `basic.py` implementa runtime BASIC con valutatore espressioni AST ristretto; `ai_local.py` chiama server llama.cpp locale; `vibe.py` gestisce workspace, proposte multi-file, diff/applicazione/rollback e controlli statici. Test in `tests/`. Nessun livello OS, kernel, GUI, sandbox o build embedded presente.
+
+## Target
+
+1. **Classic runtime**: shell READY indipendente dall'IA e runtime BASIC reale, poi console primaria su Linux.
+2. **Project agent**: interfaccia astratta per inferenza locale; modifiche solo come patch approvabili; runner isolato reale.
+3. **System image**: layer Yocto separato da runtime; Stable prima, Performance solo dopo benchmark; immagini x86-64 e ARM64 distinte.
+4. **UI**: processi separati per interfaccia e inference, protocollo locale documentato; Classic resta accessibile senza GUI.
+
+## Confini di sicurezza
+
+Il modello non ottiene accesso filesystem generale né privilegi. I controlli statici non equivalgono a sandbox. Codice generato non attendibile resta non eseguibile automaticamente finché un runner isolato e testato non è disponibile. Niente download di modelli o toolchain durante build base.
+
+## Decisioni aperte
+
+Yocto release/BSP, linguaggio BASIC, GUI toolkit, sandbox runtime, modelli e formati protocollo vanno scelti con spike misurabili, non assunti.
