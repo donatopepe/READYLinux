@@ -148,6 +148,19 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(label, it, f"Italian template missing {label}")
             self.assertIn(label, en, f"English template missing {label}")
 
+    def test_build_evidence_template_sections_match_in_order(self):
+        it = (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md").read_text(encoding="utf-8")
+        en = (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.en.md").read_text(encoding="utf-8")
+        sections = ("Identity", "Environment and parse", "Image build", "Boot and smoke checks", "Verdict")
+        for template in (it, en):
+            headings = [line.lstrip("# ").strip() for line in template.splitlines() if line.startswith("## ")]
+            self.assertEqual(len(headings), len(sections))
+            self.assertEqual(headings[0], sections[0])
+            self.assertEqual(headings[2:], list(sections[2:]))
+            self.assertIn("Environment", headings[1])
+            self.assertIn("parse", headings[1])
+            self.assertEqual(headings[-1], sections[-1])
+
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
         english = (LAYER / "README.en.md").read_text(encoding="utf-8")
