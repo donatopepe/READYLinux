@@ -4,8 +4,8 @@ Aggiornato: 2026-10-18.
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 78 test su Windows/Python 3.11 (1 skip previsto) e WSL Debian 13/Python 3.13; compileall/shell syntax/diff check pass. systemd verify/security MEDIUM/6.7; fake QEMU COW cleanup pass.
+- **Verificato localmente**: suite aggiornata 78 test Windows/Python 3.11 (1 skip atteso: systemd-analyze assente) e 78 test WSL/Python 3.13; compileall, bash syntax e diff check pass. Unit systemd e fake QEMU COW verificati.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
-- **Host**: Windows 10 AMD64 + WSL2 Debian 13, QEMU x86_64 e GCC installati; BitBake assente, nessun checkout/fetch Yocto. Probe host read-only disponibile.
-- **Git**: `main` era sincronizzato con `origin/main` a `8a287643b5498a307ee8b41e70c85277fcb1b1b0` all'inizio firing; report guardato e pubblicato in `16ec02d`. ZIP e `.pi-loop*` esclusi.
-- **Prossimo**: scegliere release/BSP e predisporre BitBake prima di parse/build; seguire acceptance checklist README, non dichiarare boot/reproducibilità prima delle evidenze.
+- **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti, BitBake assente; nessun checkout/fetch Yocto.
+- **Git**: main era allineato a `origin/main` a inizio firing sullo snapshot `e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05`; i commit di aggiornamento documenti di questo firing seguono quello snapshot. ZIP e `.pi-loop*` restano esclusi.
+- **Prossimo**: scegliere release/BSP e predisporre BitBake prima di parse/build. Non dichiarare riproducibilità/boot senza evidenze acceptance checklist.
