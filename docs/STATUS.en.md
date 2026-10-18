@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 52 tests, compileall, `bash -n`, `git diff --check`; static tests verify AI asset exclusion from recipes.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` was at `5067663`; AI asset exclusion tests pass, commit/push in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; AI exclusion policy published in `3368a61`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: rerun suite and publish; then real BitBake parse on configured OE host.
