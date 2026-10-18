@@ -1,14 +1,16 @@
 # Risultati test
 
-## 2026-10-18 — Validazione locale unità systemd
+## 2026-10-18 — Verifica artefatto immagine per QEMU
 
-- `systemd-analyze verify` WSL Debian 13/systemd 257 — PASS usando copia temporanea con ExecStart sostituito; unità originale non alterata.
-- Test helper che verifica errore quando systemd-analyze non disponibile ora passano sia Windows/MSYS sia WSL.
-- Suite aggiornata: 62 test Windows/Python 3.11 e 62 test WSL/Python 3.13 — PASS.
-- `compileall` e `bash -n` su entrambi — PASS; `git diff --check` — PASS.
+- Helper checksum immagine introdotto in `scripts/verify-image-artifact.sh`; verifica solo hash/file, non avvia QEMU.
+- Windows/Python 3.11 suite — PASS, 66 test; WSL Debian 13/Python 3.13 suite — PASS, 66 test.
+- Compileall e `bash -n` su entrambi — PASS; systemd-analyze verify su WSL — PASS; `git diff --check` — PASS.
+- Nessuna immagine READY disponibile, quindi helper non applicato a un artefatto reale.
 
-- `bash scripts/validate-systemd-unit.sh` su WSL Debian 13/systemd 257 — PASS; nessun warning/error.
-- Script sostituisce solo in copia temporanea `ExecStart` con `/bin/true`; sorgente versionato non modificato. Non è test d'integrazione image/boot.
-- `python -m unittest tests.test_systemd_validation_script -v` — PASS, 3 test.
-- Windows/Python 3.11 suite — PASS, 62 test; WSL Debian 13/Python 3.13 suite — PASS, 62 test.
+## 2026-10-18 — Verifica artifact image
+
+- Aggiunto `scripts/verify-image-artifact.sh`: richiede file regolare/non vuoto e SHA-256 atteso; codice 0 match, 1 mismatch, 2 input/tool non valido. Non avvia QEMU né crea artifact.
+- Testa hash match/mismatch, digest malformato, file mancante/vuoto.
+- Suite Windows/Python 3.11 — PASS, 66 test; suite WSL Debian 13/Python 3.13 — PASS, 66 test.
 - Compileall e shell syntax su entrambi — PASS; `git diff --check` — PASS.
+- Nessuna immagine READY disponibile da verificare.

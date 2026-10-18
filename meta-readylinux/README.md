@@ -23,6 +23,8 @@ cd /path/to/READYLinux
 bash scripts/validate-yocto-env.sh
 # Only after metadata parse succeeds, explicitly build the image (may fetch sources):
 bitbake readylinux-image
+# After build, verify downloaded/copied artifact integrity before boot:
+bash scripts/verify-image-artifact.sh /path/to/image.wic <sha256-from-trusted-build-record>
 ```
 
 Run local systemd unit-file syntax validation on a Linux host (does not verify image integration or runtime behavior):

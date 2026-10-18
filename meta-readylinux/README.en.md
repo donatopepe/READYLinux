@@ -23,6 +23,8 @@ cd /path/to/READYLinux
 bash scripts/validate-yocto-env.sh
 # Only after metadata parse succeeds, explicitly build the image (may fetch sources):
 bitbake readylinux-image
+# After build, verify copied/downloaded artifact integrity before boot:
+bash scripts/verify-image-artifact.sh /path/to/image.wic <sha256-from-trusted-build-record>
 ```
 
 No model weights, AI runtime binaries, or network fetches are included by the image recipe; model/runtime provisioning remains a separate explicit step. The generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until a real BSP/target is selected because device names and login policy vary. Run local systemd unit syntax validation on a Linux host (this does not verify image integration or runtime behavior):

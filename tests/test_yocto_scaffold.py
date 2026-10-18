@@ -114,7 +114,7 @@ class YoctoScaffoldTests(unittest.TestCase):
     def test_layer_docs_order_environment_layer_parse_and_build(self):
         for doc_path in (LAYER / "README.md", LAYER / "README.en.md"):
             doc = doc_path.read_text(encoding="utf-8")
-            commands = ["source oe-init-build-env", "bitbake-layers add-layer", "bash scripts/validate-yocto-env.sh", "bitbake readylinux-image"]
+            commands = ["source oe-init-build-env", "bitbake-layers add-layer", "bash scripts/validate-yocto-env.sh", "bitbake readylinux-image", "bash scripts/verify-image-artifact.sh"]
             positions = [doc.index(command) for command in commands]
             self.assertEqual(positions, sorted(positions), f"command order in {doc_path.name}")
             self.assertIn("MACHINE", doc)
