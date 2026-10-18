@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 80 Windows tests (1 expected skip) and 80 WSL tests; compileall/shell/diff checks pass. Hash fixture+symlink/path-with-spaces checked; systemd unit and fake QEMU COW verified.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present, BitBake absent; no Yocto checkout/fetch.
-- **Git**: firing-start snapshot `e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05`; baseline/security reports refreshed in subsequent commits. ZIPs and `.pi-loop*` excluded.
+- **Git**: firing-start snapshot `e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05`; image hash edge-case guard published in `173f434`. ZIPs and `.pi-loop*` excluded.
 - **Next**: choose release/BSP and provision BitBake before parse/build. Do not claim reproducibility/boot without README acceptance evidence.
