@@ -9,7 +9,7 @@ Updated: 2026-10-18.
 - **Environment**: Windows AMD64, Python 3.11.7, 20 logical CPUs; BitBake/QEMU/containers/compiler unavailable in PATH; RAM unmeasured.
 - **Implemented but not build-verified**: initial `meta-readylinux` Yocto layer, distro config, minimal image recipe, local runtime recipe, static tests.
 - **OS work not verified**: BitBake parse/build, QEMU boot, kernel, real GGUF inference, GPU, ARM64, secure sandbox, benchmarks.
-- **Git**: branch `main` synchronized with `origin/main` at start of M2 iteration; scaffold changes pending commit/push. ZIPs and local loop state excluded.
+- **Git**: branch `main` synchronized with `origin/main`; M2 commit `b2eda90` published. ZIPs and local loop state excluded.
 - **Automatic publishing**: user authorizes automatic commit/push for READYLinux changes. Stage only project source/docs/tests; never ZIPs, locks, secrets, or unrelated files. Run applicable tests and verify commit/remote.
 - **Next**: pin a Yocto release/machine and validate parse/build + QEMU boot on a Linux host. Current host lacks those tools; proceed with independent static/config work meanwhile.
 - **Host limitation**: current Windows/MSYS host lacks BitBake/QEMU; image boot cannot be verified here. Continue independent tasks and record limitation.
