@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 92 tests on Windows (1 systemd-analyze skip) and WSL; compileall/shell/diff pass. Writable paths statically scoped to persistent state; README/unit hardening consistent.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present, BitBake absent; no Yocto checkout/fetch.
-- **Git**: firing-start snapshot `6266983bc1ce4aaaf9cd60a9b8158fa79276daf9`; historical writable-state guard `a547aef`; status guard refreshed this firing. ZIPs ignored; `.pi-loop.json` remains local.
+- **Git**: firing-start snapshot `6266983bc1ce4aaaf9cd60a9b8158fa79276daf9`; baseline guard published in `24eb343`. ZIPs ignored; `.pi-loop.json` remains local.
 - **Next**: parse/build on a release-pinned OE host after selection; do not claim boot/reproducibility without acceptance evidence.
