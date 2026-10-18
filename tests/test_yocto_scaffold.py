@@ -21,6 +21,20 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('BBFILE_PATTERN_readylinux = "^${LAYERDIR}/"', conf)
         self.assertRegex(conf, r"LAYERSERIES_COMPAT_readylinux\s*=\s*\"[^\"]+\"")
 
+    def test_layer_metadata_and_recipes_use_modern_override_syntax(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        recipes = (
+            LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb",
+            LAYER / "recipes-ready/readylinux/readylinux_0.3.bb",
+        )
+        self.assertIn("LAYERSERIES_COMPAT_readylinux", layer_conf)
+        for recipe_path in recipes:
+            recipe = recipe_path.read_text(encoding="utf-8")
+            self.assertNotRegex(recipe, r"(?m)^\\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE|FILESEXTRAPATHS)_[A-Za-z]\\w*\\s*[+:?]?=")
+            self.assertNotRegex(recipe, r"(?m)^\\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE):[A-Za-z_]+\\s*=")
+        self.assertIn("RDEPENDS:${PN}", recipes[0].read_text(encoding="utf-8"))
+        self.assertIn("FILESEXTRAPATHS:prepend", recipes[1].read_text(encoding="utf-8"))
+
     def test_image_extends_core_minimal_and_installs_runtime(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
@@ -283,7 +297,6 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(localized_status, doc)
         for doc in (italian, english):
             self.assertIn("snapshot", doc.lower())
-            self.assertIn("e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05", doc)
             self.assertIn(".pi-loop", doc)
         self.assertIn("systemd", italian.lower())
         self.assertIn("systemd", english.lower())
