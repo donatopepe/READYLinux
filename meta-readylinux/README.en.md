@@ -16,7 +16,9 @@ Use a Linux host with a checked-out, release-pinned Poky/OE-Core tree. Add requi
 
 ```sh
 bitbake-layers add-layer /path/to/READYLinux/meta-readylinux
-bitbake -p
+# Run from repository root after sourcing the target's oe-init-build-env:
+bash scripts/validate-yocto-env.sh
+# Only after metadata parse succeeds, explicitly build the image (may fetch sources):
 bitbake readylinux-image
 ```
 
