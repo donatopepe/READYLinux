@@ -1,8 +1,7 @@
 # Risultati test
 
-## 2026-10-18 — Conformità esempio/schema Yocto
+## 2026-10-18 — Esempio JSON schema safety
 
-- Il test stdlib verifica chiavi nested, required fields, pattern SHA/commit e enum contro schema JSON; nessuna libreria validator esterna.
-- Test mirato — PASS.
+- Rafforzati controlli stdlib per pattern commit/checksum, enum, nullable exit/artifact, stati non-build/non-boot.
+- Il JSON è un esempio con placeholder, non prova di build; schema comment avverte che hash zero/NOT-RUN non sono evidenze.
 - `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
-- Esempio resta esplicitamente not-built/not-verified.

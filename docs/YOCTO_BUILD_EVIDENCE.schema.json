@@ -3,6 +3,7 @@
   "$id": "https://readylinux.example/schemas/yocto-build-evidence.schema.json",
   "title": "READY Linux Yocto Build Evidence",
   "description": "Auditable evidence for one READY Linux Yocto build and target-specific boot run.",
+  "$comment": "YOCTO_BUILD_EVIDENCE.example.json contains placeholders only; zero hashes and NOT-RUN markers are not build evidence.",
   "type": "object",
   "additionalProperties": false,
   "required": ["run_id", "identity", "environment", "image", "boot", "deviations", "verdict"],

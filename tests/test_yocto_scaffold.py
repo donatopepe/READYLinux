@@ -151,6 +151,13 @@ class YoctoScaffoldTests(unittest.TestCase):
             value = example[section] if key is None else example[section][key]
             enum = schema["properties"][section]["enum"] if key is None else schema["properties"][section]["properties"][key]["enum"]
             self.assertIn(value, enum)
+        self.assertEqual(len(example["identity"]["poky_commit"]), 40)
+        self.assertTrue(all(char in "0123456789abcdef" for char in example["identity"]["poky_commit"]))
+        self.assertEqual(len(example["environment"]["local_conf_sha256"]), 64)
+        self.assertTrue(all(char in "0123456789abcdef" for char in example["environment"]["local_conf_sha256"]))
+        self.assertEqual(example["image"]["exit_code"], None)
+        self.assertEqual(example["boot"]["status"], "not-run")
+        self.assertEqual(example["verdict"], "not-verified")
 
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (
