@@ -1,8 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Yocto build evidence template
+## 2026-10-18 — Evidence template guard
 
-- IT/EN templates `docs/YOCTO_BUILD_EVIDENCE_TEMPLATE*.md` capture OE/layer provenance, distro/MACHINE, BitBake, config/image checksums, parse/build logs, QEMU boot, smoke checks.
-- `python -m unittest discover -s tests -v` — PASS, 55 tests.
-- compileall, `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh`, `git diff --check` — PASS.
-- No build/boot run: BitBake and QEMU unavailable.
+- Focused tests: `python -m unittest tests.test_yocto_scaffold -v` — PASS, 9 tests.
+- IT/EN templates checked for provenance/checksum placeholders, not-verified verdict and absence of commit-like populated hashes.
+- Full suite `python -m unittest discover -s tests -v` — PASS, 55 tests; compileall, `bash -n`, `git diff --check` — PASS.
+- Build/boot not run (BitBake/QEMU unavailable).

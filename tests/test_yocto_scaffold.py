@@ -127,6 +127,11 @@ class YoctoScaffoldTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             for item in required:
                 self.assertIn(item, text, f"{item} missing from {path.name}")
+            self.assertIn("Run ID / UTC date:", text)
+            self.assertIn("exact commit:", text)
+            self.assertIn("SHA-256:", text)
+            self.assertIn("[ ] Not verified / blocked", text)
+            self.assertNotRegex(text, r"(?im)^(?:[A-Za-z0-9_-]+\s+){5,}[0-9a-f]{7,40}$")
 
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
