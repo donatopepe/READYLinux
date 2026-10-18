@@ -92,6 +92,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("AUTOREV", runtime + service)
         self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
 
+    def test_recipe_installed_paths_are_covered_by_package_files(self):
+        runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        console = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        for installed_path in ("${datadir}/readylinux", "${bindir}/readylinux"):
+            self.assertIn(installed_path, runtime)
+            self.assertIn(installed_path, runtime.split("FILES:${PN} +=", 1)[1])
+        for installed_path in ("${systemd_system_unitdir}/readylinux-console.service", "${sysconfdir}/systemd/system/getty@tty1.service"):
+            self.assertIn(installed_path, console)
+            self.assertIn(installed_path, console.split("FILES:${PN} +=", 1)[1])
+        self.assertIn("ln -s /dev/null", console)
+        self.assertIn('SYSTEMD_SERVICE:${PN} = "readylinux-console.service"', console)
+
     def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         dependency_match = re.search(r'RDEPENDS:\$\{PN\}\s*\+=\s*"([^"]+)"', recipe)
