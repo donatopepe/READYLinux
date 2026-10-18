@@ -25,7 +25,13 @@ bash scripts/validate-yocto-env.sh
 bitbake readylinux-image
 ```
 
-No model weights, AI runtime binaries, or network fetches are included by the image recipe; model/runtime provisioning remains a separate explicit step. The generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until a real BSP/target is selected because device names and login policy vary. Acceptance evidence required before calling this layer reproducible:
+No model weights, AI runtime binaries, or network fetches are included by the image recipe; model/runtime provisioning remains a separate explicit step. The generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until a real BSP/target is selected because device names and login policy vary. Run local systemd unit syntax validation on a Linux host (this does not verify image integration or runtime behavior):
+
+```sh
+bash scripts/validate-systemd-unit.sh
+```
+
+Acceptance evidence required before calling this layer reproducible:
 
 1. Record exact Poky/OE-Core commit, layer revisions, distro, `MACHINE`, host OS, and BitBake version.
 2. Run `bash scripts/validate-yocto-env.sh`; retain successful `bitbake -p` log.

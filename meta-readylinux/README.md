@@ -25,6 +25,12 @@ bash scripts/validate-yocto-env.sh
 bitbake readylinux-image
 ```
 
+Run local systemd unit-file syntax validation on a Linux host (does not verify image integration or runtime behavior):
+
+```sh
+bash scripts/validate-systemd-unit.sh
+```
+
 Acceptance evidence required before calling this layer reproducible:
 
 1. Record exact Poky/OE-Core commit, layer revisions, distro, `MACHINE`, host OS, and BitBake version.

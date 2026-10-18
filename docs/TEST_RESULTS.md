@@ -1,9 +1,9 @@
 # Risultati test
 
-## 2026-10-18 — Coerenza stati not-built/not-run
+## 2026-10-18 — Validazione locale unità systemd
 
-- Sample evidence verificato: immagini not-built implicano exit/artifact/hash null; boot not-run implica smoke checks tutti not-run.
-- Test mirato Windows — PASS.
-- Windows/Python 3.11 suite — PASS, 59 test; WSL Debian 13/Python 3.13 suite — PASS, 59 test.
-- Compileall + shell syntax su entrambi — PASS; `git diff --check` — PASS.
-- Nessun parse/build reale svolto.
+- `bash scripts/validate-systemd-unit.sh` su WSL Debian 13/systemd 257 — PASS; nessun warning/error.
+- Script sostituisce solo in copia temporanea `ExecStart` con `/bin/true`; sorgente versionato non modificato. Non è test d'integrazione image/boot.
+- `python -m unittest tests.test_systemd_validation_script -v` — PASS, 3 test.
+- Windows/Python 3.11 suite — PASS, 62 test; WSL Debian 13/Python 3.13 suite — PASS, 62 test.
+- Compileall e shell syntax su entrambi — PASS; `git diff --check` — PASS.

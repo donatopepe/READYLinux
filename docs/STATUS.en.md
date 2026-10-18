@@ -3,9 +3,9 @@
 Updated: 2026-10-18.
 
 - **Release**: READY Linux 0.3 application prototype.
-- **Implemented**: Python console, vibe flow, reduced BASIC, Yocto layer and non-root tty1 service; `scripts/validate-yocto-env.sh` performs preflight and metadata-only BitBake parse.
-- **Locally verified**: 59 tests pass on Windows/Python 3.11 and WSL Debian 13/Python 3.13; compileall/shell syntax pass on both and diff check clean.
-- **Not verified**: READY OE parse/build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks. QEMU exists but no READY image artifact.
-- **Host**: Windows AMD64 + WSL2 Debian 13, 20 logical CPUs, 30 GiB RAM visible in WSL; GCC/QEMU x86_64 installed. BitBake unavailable. No Yocto checkout/download performed.
-- **Git**: `main` synchronized with `origin/main`; evidence state tests published in `24d8e50`. Exclude ZIPs and `.pi-loop*`.
-- **Next**: full suite and publish; real build/boot needs configured Linux + OE/QEMU host.
+- **Implemented**: console, vibe/reduced BASIC, Yocto scaffold, non-root tty1 systemd service; BitBake preflight helper and local unit-file validator.
+- **Locally verified**: 62 tests pass on Windows and WSL; compileall/shell syntax pass on both; unit accepted by WSL Debian 13 `systemd-analyze verify`.
+- **Not verified**: BitBake/Yocto parse/build, QEMU image boot, getty mask inside image, full runtime policy, GGUF, sandbox, GPU/ARM64/benchmarks.
+- **Host**: Windows 10 AMD64 + WSL2 Debian 13, 20 logical CPUs, about 30 GiB WSL RAM; GCC/QEMU x86_64 installed. BitBake absent; no Yocto checkout/download performed.
+- **Git**: `main` was at `ecacf3b`; systemd helper locally verified, publish in progress. ZIPs and `.pi-loop*` excluded.
+- **Next**: run full suite on Windows and WSL and publish; consider non-invasive BitBake provisioning for Debian.
