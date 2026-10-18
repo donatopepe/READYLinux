@@ -168,6 +168,19 @@ class YoctoScaffoldTests(unittest.TestCase):
         required = {packaged[module] for module in stdlib - local_modules}
         self.assertTrue(required.issubset(declared), f"Missing RDEPENDS: {sorted(required - declared)}")
 
+    def test_systemd_writable_paths_are_scoped_to_persistent_state_directory(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("StateDirectory"), "readylinux")
+        self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
+        self.assertEqual(directives.get("Environment"), "XDG_DATA_HOME=/var/lib/readylinux")
+        for forbidden in ("/home", "/etc", "/usr", "/opt"):
+            self.assertNotIn(forbidden, directives.get("ReadWritePaths", ""))
+
     def test_systemd_service_hardening_is_fully_described_in_bilingual_readmes(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         readmes = (
