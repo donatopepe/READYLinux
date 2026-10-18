@@ -1,7 +1,7 @@
 # Risultati test
 
-## 2026-10-18 — Invarianti record non eseguito
+## 2026-10-18 — Privacy sample manifest
 
-- Esempio JSON testato: not-built → nessun exit/artifact/checksum; not-run boot → tutti gli smoke check not-run.
-- Test mirato `test_build_evidence_schema_is_valid_json_with_audit_fields` — PASS.
-- Suite completa `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
+- Test statico rifiuta password, token e marker private-key nell'esempio JSON.
+- Guide IT/EN chiariscono placeholder-only e redazione credenziali prima di archiviare prove reali.
+- `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
