@@ -7,5 +7,5 @@ Aggiornato: 2026-10-18.
 - **Verificato localmente**: 57 test, compileall, `bash -n`, `git diff --check`; template parity e ordine sezioni verificati staticamente.
 - **Non verificato**: parse reale OE, build/boot QEMU, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake assente, nessun download/installazione.
-- **Git**: `main` era a `187d3be`; template structure test passati, publish in corso. ZIP/`.pi-loop*` esclusi.
+- **Git**: `main` sincronizzato con `origin/main`; ordine template verificato in `b759076`. ZIP/`.pi-loop*` esclusi.
 - **Prossimo**: validazione riproducibile su host Linux con commit OE/layer, distro, MACHINE, build log, checksum immagine e boot QEMU raccolti secondo `meta-readylinux/README.md`.
