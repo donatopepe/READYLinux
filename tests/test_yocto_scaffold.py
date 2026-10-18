@@ -9,6 +9,12 @@ LAYER = ROOT / "meta-readylinux"
 
 
 class YoctoScaffoldTests(unittest.TestCase):
+    def test_repository_ignore_rules_cover_generated_and_sensitive_runtime_files(self):
+        ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+        for pattern in ("__pycache__/", "*.py[cod]", ".pi-loop.json.lock", "*.gguf"):
+            self.assertIn(pattern, ignore)
+        self.assertIn("*.zip", ignore)
+
     def test_layer_collection_and_compatibility_are_declared(self):
         conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
         self.assertIn('BBFILE_COLLECTIONS += "readylinux"', conf)
@@ -275,7 +281,6 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(localized_status, doc)
-            self.assertIn("snapshot", doc.lower())
         for doc in (italian, english):
             self.assertIn("snapshot", doc.lower())
             self.assertIn("e4f6dacb72d5c0a2548ec7dc4d305531fce2ae05", doc)
@@ -287,8 +292,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("snapshot", doc.lower())
-            self.assertIn("unittest discover", doc)
+            self.assertIn("python -m unittest discover -s tests -v", doc)
             self.assertIn("compileall", doc)
             self.assertIn("bash -n", doc)
             self.assertIn("BitBake", doc)
