@@ -77,6 +77,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("USERADD_PARAM:${PN}", recipe)
         self.assertIn("ln -s /dev/null ${D}${sysconfdir}/systemd/system/getty@tty1.service", recipe)
         self.assertIn("${sysconfdir}/systemd/system/getty@tty1.service", recipe)
+        self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
+        self.assertIn("WantedBy=multi-user.target", service)
+        self.assertNotIn("getty@tty1.service", service)
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("readylinux-console", image)
 
@@ -84,6 +87,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
         self.assertIn("BitBake and QEMU unavailable", readme)
         self.assertIn("does not clone repositories or download source", readme)
+        self.assertIn("does not provide a normal login prompt there", readme)
 
 
 if __name__ == "__main__":
