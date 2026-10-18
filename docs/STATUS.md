@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 83 test Windows (1 skip systemd-analyze) e WSL; compileall/shell/diff check pass. Recipe `file://` source closure e override syntax verificati staticamente.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti, BitBake assente; nessun checkout/fetch Yocto.
-- **Git**: `main` a `2f6fdfb` all'avvio; source closure test e report aggiornati, publish in corso. ZIP ignorati; `.pi-loop.json` locale.
+- **Git**: `main` sincronizzato con `origin/main`; recipe source-closure test pubblicato in `0be5349`. ZIP ignorati; `.pi-loop.json` locale.
 - **Prossimo**: scegliere release/BSP e predisporre BitBake prima di parse/build. Non dichiarare riproducibilità/boot senza evidenze acceptance checklist.
