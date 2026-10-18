@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Immagine senza pesi AI
+## 2026-10-18 — Wiring image/package Yocto
 
-- Test statici verificano che image recipe non dichiari `SRC_URI`, URL, modello GGUF o runtime llama; runtime recipe ammette solo sorgenti software locali.
-- Documentazione precisa che i pesi/runtime AI non sono inclusi e provisioning resta esplicito.
-- `python -m unittest discover -s tests -v` — PASS, 52 test; compileall, `bash -n` e `git diff --check` — PASS.
-- BitBake assente: contenuto effettivo immagine non verificato.
+- `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 test.
+- Test controlla package `IMAGE_INSTALL` esattamente, recipe presenti e `RDEPENDS` del servizio console su `readylinux systemd`.
+- `python -m unittest discover -s tests -v` — PASS, 52 test; compileall, `bash -n`, `git diff --check` — PASS.
+- BitBake non disponibile; package resolution metadata reale non testata.

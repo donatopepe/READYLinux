@@ -17,10 +17,24 @@ class YoctoScaffoldTests(unittest.TestCase):
     def test_image_extends_core_minimal_and_installs_runtime(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
-        self.assertIn('IMAGE_INSTALL:append = " readylinux readylinux-console"', image)
+        install_match = re.search(r'IMAGE_INSTALL:append = "([^"]+)"', image)
+        self.assertIsNotNone(install_match)
+        self.assertEqual(set(install_match.group(1).split()), {"readylinux", "readylinux-console"})
+        self.assertNotRegex(image, r"(?i)(?:gguf|safetensors|llama-server|https?://|SRC_URI)")
+        console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
         self.assertNotRegex(image, r"(?i)(?:gguf|llama|model|https?://|SRC_URI)")
         runtime_recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         self.assertNotRegex(runtime_recipe, r"(?i)(?:gguf|safetensors|llama-server|https?://)")
+        console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        package_names = {
+            "readylinux": (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"),
+            "readylinux-console": (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb"),
+        }
+        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
+        self.assertEqual(set(package_names), {"readylinux", "readylinux-console"})
+        for path in package_names.values():
+            self.assertTrue(path.is_file(), str(path))
         self.assertNotRegex(runtime_recipe, r"(?m)^\\s*file://[^\\s\\\\]+\\.(?:gguf|safetensors|bin)\\b")
         self.assertNotRegex(runtime_recipe, r"(?m)^\\s*(?:git|https?)://")
 
