@@ -1,9 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Helper boot QEMU isolato
+## 2026-10-18 — Consistenza baseline status
 
-- `scripts/boot-image-qemu.sh` richiede artifact/hash validi, kernel matching e cmdline espliciti; machine allowlist (`pc`, `q35`, `microvm`); nessuna rete/host share/monitor.
-- Verifica SHA prima del boot e usa overlay qcow2 temporaneo sopra base raw, per non modificare l'immagine originale.
-- Fake QEMU/qemu-img test conferma overlay temporaneo rimosso dopo uscita QEMU e base image invariata; test negativi coprono input/tool/machine/hash. Nessun QEMU boot reale (image/kernel READY assenti).
-- Windows/Python 3.11 suite — PASS, 75 test; WSL Debian 13/Python 3.13 suite — PASS, 75 test.
+- Status IT/EN riallineati a HEAD `c6d98eda388edb1085c74c8812a4484ae26399cf`, test 75, WSL/Windows, limiti BitBake/boot e misura systemd MEDIUM/UMask.
+- Nuovo test statico verifica commit citato, limiti host, assenza build claim e UMask in entrambi gli status.
+- Windows/Python 3.11 suite — PASS, 76 test; WSL Debian 13/Python 3.13 suite — PASS, 76 test.
 - Compileall e shell syntax su entrambi — PASS; `git diff --check` — PASS.

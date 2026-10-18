@@ -3,9 +3,9 @@
 Aggiornato: 2026-10-18.
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
-- **Implementato**: console, vibe/BASIC, Yocto scaffold, unit tty1 hardenizzata; helper host preflight, BitBake, systemd, checksum image e boot QEMU isolato/COW.
-- **Verificato localmente**: 75 test su Windows/WSL; fake QEMU conferma overlay COW temporaneo rimosso e image base invariata; nessun image/kernel READY reale.
-- **Non verificato**: BitBake/Yocto parse/build, boot immagine QEMU, getty mask nell'immagine, comportamento runtime dell'unit, artifact READY reale, GGUF, sandbox, GPU/ARM64/benchmark.
-- **Host**: Windows 10 AMD64 + WSL2 Debian 13; 20 CPU logiche, 30 GiB RAM WSL, GCC e QEMU x86_64 installati. BitBake non disponibile. Nessun checkout/fetch Yocto effettuato.
-- **Git**: `main` sincronizzato con `origin/main`; cleanup overlay QEMU verificato nel commit `858be31`. ZIP e `.pi-loop*` restano non tracciati/esclusi.
-- **Prossimo**: scegliere release/BSP e ottenere BitBake su host Linux prima di metadata parse e build; non dichiarare riproducibilità/boot finché checklist README non ha evidenze.
+- **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
+- **Verificato localmente**: 76 test su Windows/MSYS Python 3.11 e WSL Debian 13 Python 3.13; compileall, shell syntax e `git diff --check` pass. Unit systemd passa verify; security MEDIUM/6.7 con UMask 0027; fake QEMU verifica overlay cleanup/base invariata.
+- **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
+- **Host**: Windows 10 AMD64 + WSL2 Debian 13, QEMU x86_64 e GCC installati; BitBake assente, nessun checkout/fetch Yocto. Probe host read-only disponibile.
+- **Git**: `main` era allineato a `origin/main` su `c6d98eda388edb1085c74c8812a4484ae26399cf`; status baseline staticamente controllata, publish in corso. ZIP e `.pi-loop*` non tracciati/esclusi.
+- **Prossimo**: scegliere release/BSP e predisporre BitBake prima di parse/build; seguire acceptance checklist README, non dichiarare boot/reproducibilità prima delle evidenze.

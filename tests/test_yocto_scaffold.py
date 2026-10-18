@@ -268,6 +268,19 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(requirement, italian)
             self.assertIn(requirement, english)
 
+    def test_status_docs_state_current_build_limits_and_host_prereqs(self):
+        italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
+        for doc, localized_status in ((italian, "Non verificato"), (english, "Not verified")):
+            self.assertIn("BitBake", doc)
+            self.assertIn("QEMU", doc)
+            self.assertIn(localized_status, doc)
+            self.assertIn("c6d98eda388edb1085c74c8812a4484ae26399cf", doc)
+        self.assertIn("security --offline", italian)
+        self.assertIn("security --offline", english)
+        self.assertIn("UMask=0027", italian)
+        self.assertIn("UMask=0027", english)
+
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
         self.assertIn("BitBake and QEMU unavailable", readme)
