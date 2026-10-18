@@ -1,9 +1,9 @@
 # Test Results
 
-## 2026-10-18 — Yocto validation helper
+## 2026-10-18 — Yocto helper preflight
 
-- `bash -n scripts/validate-yocto-env.sh` — PASS.
-- `python -m unittest tests.test_yocto_validation_script -v` — PASS, 3 tests.
-- `bash scripts/validate-yocto-env.sh` without `BUILDDIR` — expected exit 2; no fetch/build started.
-- `python -m unittest discover -s tests -v` — PASS, 46 tests; compileall, shell syntax (`install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh`), and `git diff --check` — PASS.
-- BitBake not installed; real metadata parse not run.
+- `python -m unittest tests.test_yocto_validation_script -v` — PASS, 7 tests with fake builddir/bitbake.
+- Preflight failures verified: `BUILDDIR`, `bitbake`, `conf/bblayers.conf`, `conf/local.conf`, layer registration.
+- Happy path invokes fake `bitbake -p` only after checks pass.
+- `python -m unittest discover -s tests -v` — PASS, 50 tests; compileall, `bash -n` on all scripts, and `git diff --check` — PASS.
+- No real parse or downloads.
