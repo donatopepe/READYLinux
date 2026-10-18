@@ -27,6 +27,14 @@ class SystemdValidationScriptTests(unittest.TestCase):
         self.assertIn("systemd-analyze is unavailable", result.stderr)
         self.assertNotIn("Verifying READY", result.stdout)
 
+    def test_runtime_systemd_verify_when_available(self):
+        probe = subprocess.run(["bash", "-lc", "command -v systemd-analyze"], capture_output=True, text=True)
+        if probe.returncode:
+            self.skipTest("systemd-analyze is unavailable on this host")
+        result = subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Verifying READY systemd unit syntax", result.stdout)
+
     def test_script_documents_temporary_host_command_substitution(self):
         text = SCRIPT.read_text(encoding="utf-8")
         self.assertIn("sed 's#^ExecStart=/usr/bin/readylinux .*#ExecStart=/bin/true#'", text)
