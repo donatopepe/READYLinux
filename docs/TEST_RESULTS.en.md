@@ -1,16 +1,8 @@
 # Test Results
 
-## 2026-10-18 — Image artifact verification for QEMU
+## 2026-10-18 — systemd unit hardening
 
-- Image checksum helper added at `scripts/verify-image-artifact.sh`; validates file/hash only and does not launch QEMU.
-- Windows/Python 3.11 suite — PASS, 66 tests; WSL Debian 13/Python 3.13 suite — PASS, 66 tests.
-- Compileall and `bash -n` on both — PASS; WSL `systemd-analyze verify` — PASS; `git diff --check` — PASS.
-- No READY image artifact exists; helper not run against a real image.
-
-## 2026-10-18 — Image artifact verification
-
-- Added `scripts/verify-image-artifact.sh`: requires non-empty regular file and expected SHA-256; returns 0 match, 1 mismatch, 2 invalid input/tool. Does not invoke QEMU or create artifacts.
-- Tests digest match/mismatch, malformed digest, missing/empty image.
-- Windows/Python 3.11 suite — PASS, 66 tests; WSL Debian 13/Python 3.13 suite — PASS, 66 tests.
-- Compileall and shell syntax on both — PASS; `git diff --check` — PASS.
-- No READY image exists to verify.
+- Unit adds ProtectClock/KernelLogs/ControlGroups/KernelModules/KernelTunables/Hostname, RestrictSUIDSGID, LockPersonality, RemoveIPC.
+- On WSL systemd 257 temporary copy: `systemd-analyze verify` PASS; `systemd-analyze security --offline` exposure MEDIUM, residual UMask 0027 (group-readable files).
+- Full suite 66 tests PASS on Windows/Python 3.11 and WSL/Debian 13/Python 3.13; compileall and shell syntax pass on both; `git diff --check` PASS.
+- BitBake/QEMU unavailable.

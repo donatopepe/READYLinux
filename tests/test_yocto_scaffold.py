@@ -75,12 +75,23 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("ReadWritePaths=/var/lib/readylinux", service)
         self.assertIn("NoNewPrivileges=yes", service)
         self.assertIn("ProtectSystem=strict", service)
+        self.assertIn("ProtectClock=yes", service)
+        self.assertIn("ProtectKernelLogs=yes", service)
+        self.assertIn("ProtectControlGroups=yes", service)
+        self.assertIn("ProtectKernelModules=yes", service)
+        self.assertIn("ProtectKernelTunables=yes", service)
+        self.assertIn("ProtectHostname=yes", service)
+        self.assertIn("RestrictSUIDSGID=yes", service)
+        self.assertIn("LockPersonality=yes", service)
+        self.assertIn("RemoveIPC=yes", service)
         self.assertIn("StateDirectory=readylinux", service)
         directives = {line.split("=", 1)[0]: line.split("=", 1)[1] for line in service.splitlines() if "=" in line and not line.startswith("#")}
         self.assertEqual(directives.get("User"), "ready")
         self.assertEqual(directives.get("Group"), "ready")
         self.assertEqual(directives.get("NoNewPrivileges"), "yes")
         self.assertEqual(directives.get("ProtectSystem"), "strict")
+        for key in ("ProtectClock", "ProtectKernelLogs", "ProtectControlGroups", "ProtectKernelModules", "ProtectKernelTunables", "ProtectHostname", "RestrictSUIDSGID", "LockPersonality", "RemoveIPC"):
+            self.assertEqual(directives.get(key), "yes", key)
         self.assertEqual(directives.get("ProtectHome"), "yes")
         self.assertEqual(directives.get("PrivateTmp"), "yes")
         self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
@@ -95,6 +106,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("AmbientCapabilities", directives)
         self.assertNotEqual(directives.get("User"), "root")
         self.assertNotIn("RootDirectory", directives)
+        self.assertNotIn("AmbientCapabilities", directives)
         self.assertNotIn("PrivateUsers", directives)
         self.assertNotEqual(directives.get("NoNewPrivileges"), "no")
         self.assertNotIn("ReadWriteDirectories", directives)
@@ -229,7 +241,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             "Other layer", "READY Linux repository commit", "BitBake version",
             "Distro", "MACHINE", "Build directory", "bblayers.conf",
             "local.conf", "exit code", "build log", "Image artifact",
-            "SHA-256", "QEMU version", "READY appears", "unprivileged",
+            "SHA-256", "QEMU version", "READY appears", "unprivileged", "systemd-analyze security",
             "/var/lib/readylinux", "getty@tty1", "BASIC smoke", "offline smoke",
         )
         for label in fields:
