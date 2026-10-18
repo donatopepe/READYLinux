@@ -1,6 +1,6 @@
 # READY Linux Yocto Build Evidence
 
-Copy this file per build run to `docs/build-evidence/<run-id>.md`. Machine-readable format is `YOCTO_BUILD_EVIDENCE.schema.json`; `YOCTO_BUILD_EVIDENCE.example.json` contains placeholders only. Do not mark a field verified without a retained command result or artifact; redact credentials before storing evidence.
+Copy this file per build run to `docs/build-evidence/<run-id>.md`, using a unique run ID identifying OE commit, MACHINE, and date. Create a new record for every attempt; never overwrite or retroactively edit collected evidence. Correct mistakes in a new record referencing the earlier one. Machine-readable format is `YOCTO_BUILD_EVIDENCE.schema.json`; `YOCTO_BUILD_EVIDENCE.example.json` contains placeholders only. Do not mark a field verified without a retained command result or artifact; redact credentials before storing evidence.
 
 ## Identity
 

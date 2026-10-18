@@ -1,7 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Privacy sample manifest
+## 2026-10-18 — Integrità storico evidenze
 
-- Test statico rifiuta password, token e marker private-key nell'esempio JSON.
-- Guide IT/EN chiariscono placeholder-only e redazione credenziali prima di archiviare prove reali.
-- `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
+- Template IT/EN richiedono run ID unico e append-only: nuovi record per tentativo; correzioni via nuovo record che referenzia precedente.
+- Test statico verifica policy in entrambi i template.
+- `python -m unittest discover -s tests -v` — PASS, 59 test; compileall, `bash -n`, `git diff --check` — PASS.
+- Nessun record/build reale creato.

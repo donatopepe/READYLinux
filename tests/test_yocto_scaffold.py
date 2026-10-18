@@ -206,6 +206,14 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("attach credentials", text.lower())
             self.assertNotRegex(text, r"(?im)^(?:[A-Za-z0-9_-]+\s+){5,}[0-9a-f]{7,40}$")
 
+    def test_build_evidence_templates_require_unique_append_only_run_records(self):
+        for path in (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md", ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.en.md"):
+            text = path.read_text(encoding="utf-8").lower()
+            self.assertIn("unique run id", text, path.name)
+            self.assertIn("never overwrite", text, path.name)
+            self.assertIn("new record", text, path.name)
+            self.assertIn("referencing the earlier one", text, path.name)
+
     def test_build_evidence_templates_have_semantic_field_parity(self):
         it = (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md").read_text(encoding="utf-8")
         en = (ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.en.md").read_text(encoding="utf-8")

@@ -1,6 +1,6 @@
 # READY Linux Yocto Build Evidence Template (EN)
 
-This is the English companion to `YOCTO_BUILD_EVIDENCE_TEMPLATE.md`; use one copy per run at `docs/build-evidence/<run-id>.md`. Machine-readable format is `YOCTO_BUILD_EVIDENCE.schema.json`; `YOCTO_BUILD_EVIDENCE.example.json` contains placeholders only. Do not mark fields verified without retained command output or artifacts; redact credentials before storing evidence.
+This is the English companion to `YOCTO_BUILD_EVIDENCE_TEMPLATE.md`; use one copy per run at `docs/build-evidence/<run-id>.md` with a unique run ID identifying OE commit, MACHINE, and date. Create a new record for every attempt; never overwrite or retroactively edit collected evidence. Correct mistakes in a new record referencing the earlier one. Machine-readable format is `YOCTO_BUILD_EVIDENCE.schema.json`; `YOCTO_BUILD_EVIDENCE.example.json` contains placeholders only. Do not mark fields verified without retained command output or artifacts; redact credentials before storing evidence.
 
 ## Identity
 
