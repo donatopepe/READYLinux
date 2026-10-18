@@ -1,11 +1,10 @@
 # Test Results
 
-## 2026-10-18 — Local Yocto source closure
+## 2026-10-18 — Static Yocto recipe audit
 
-- Suite command: `python -m unittest discover -s tests -v`; compileall and `bash -n` shell syntax commands are recorded in the prior baseline entry.
-- Added stdlib check reading local `SRC_URI` in each `.bb` recipe and confirming each `file://` source exists in layer/repository or resolved `FILESEXTRAPATHS`.
-- Focused test PASS on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
-- Static source check does not replace BitBake metadata parsing; no QEMU boot run.
-- Prior systemd hardening evidence: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-- Windows/MSYS Python 3.11 suite: 83 tests PASS (1 expected systemd-analyze skip); WSL Debian 13 Python 3.13 suite: 83 tests PASS.
-- Compileall, shell syntax and `git diff --check` on both — PASS.
+- Suite/static commands: `python -m unittest discover -s tests -v`; `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh scripts/validate-systemd-unit.sh scripts/verify-image-artifact.sh scripts/check-yocto-host.sh scripts/boot-image-qemu.sh`.
+- Tests cover MIT license, known `LIC_FILES_CHKSUM`, runtime `RDEPENDS`, `ready` account, systemd autostart, no AUTOREV or remote URIs.
+- Windows/Python 3.11 full suite: 84 tests PASS (1 expected systemd-analyze skip); WSL Debian 13/Python 3.13 full suite: 84 tests PASS.
+- BitBake has no Debian 13 apt candidate and no Yocto checkout; this is source audit, not metadata parse. No QEMU boot run.
+- Prior systemd host observation: `systemd-analyze security --offline` MEDIUM/6.7, residual `UMask 0027`.
+- Compileall/shell syntax on both and `git diff --check` — PASS.

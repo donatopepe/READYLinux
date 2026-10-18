@@ -78,6 +78,20 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertTrue((source_root / source).is_file(), source)
         self.assertNotRegex(recipe, r"(?i)(?:gguf|safetensors|llama-server|https?://)")
 
+    def test_recipes_declare_license_provenance_and_runtime_dependencies(self):
+        runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        service = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        expected_license = 'LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"'
+        for recipe in (runtime, service):
+            self.assertIn('LICENSE = "MIT"', recipe)
+            self.assertIn(expected_license, recipe)
+        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', service)
+        self.assertIn("USERADD_PARAM:${PN}", service)
+        self.assertIn('GROUPADD_PARAM:${PN} = "--system ready"', service)
+        self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', service)
+        self.assertNotIn("AUTOREV", runtime + service)
+        self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
+
     def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         dependency_match = re.search(r'RDEPENDS:\$\{PN\}\s*\+=\s*"([^"]+)"', recipe)
