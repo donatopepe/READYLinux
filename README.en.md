@@ -48,6 +48,10 @@ HELLO
 
 BASIC is an experimental reduced dialect, not full Commodore BASIC compatibility. It evaluates an allowlisted expression subset; this is not a sandbox for arbitrary code. Python mode remains available. See [BASIC docs in English](docs/BASIC.en.md) and [Italian docs](docs/BASIC.md).
 
+## Embedded Linux build scaffold
+
+A minimal Yocto layer is present under `meta-readylinux/`. It installs READY from local sources and does not fetch AI weights. BitBake build has not been run; use a Linux host with a selected Yocto release and machine. See [layer guide (EN)](meta-readylinux/README.en.md) and [Italian guide](meta-readylinux/README.md). This scaffold is not a verified or bootable image.
+
 ## Limits and safety
 
 AI proposals are reviewable and not executed automatically. `ESEGUI` and Python `RUN` are ordinary user-permission execution, not sandboxing. This prototype is not a bootable distribution; Yocto, kernel, GUI, real model inference, GPU, ARM64, and secure code-execution isolation remain unimplemented or unverified.

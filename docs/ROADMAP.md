@@ -6,11 +6,11 @@ Accettazione: struttura e limiti descritti; comandi di test riproducibili.
 
 ## M1 — Classic console e BASIC
 
-Accettazione: parser/runtime effettivo; numeri di riga, variabili, espressioni, IF, loop, input/output, subroutine e file; test deterministici; READY e Python legacy non regressi. Stato: interprete autonomo `basic.py` con 9 test dedicati; integrazione console, persistenza e documentazione bilingue ancora incomplete. Suite attuale ha un test d'integrazione fallito; milestone NON chiusa.
+Accettazione: parser/runtime effettivo; numeri di riga, variabili, espressioni, IF, loop, input/output, subroutine e file; test deterministici; READY e Python legacy non regressi. Implementazione ridotta presente, con test; compatibilità Commodore completa non dichiarata.
 
 ## M2 — Build OS minimo
 
-Spike Yocto su host Linux; layer meta-readylinux; immagine x86-64 avviabile QEMU; autostart console. Niente ottimizzazioni kernel senza benchmark.
+Scaffolding iniziale `meta-readylinux` aggiunto (layer config, distro, image, runtime recipe, test statici). BitBake parse/build e boot QEMU non verificati; host corrente non dispone di BitBake/QEMU. Accettazione restante: pin release/machine, parse, build x86-64 e boot QEMU su Linux. Niente ottimizzazioni kernel senza benchmark.
 
 ## M3 — READY Stable
 

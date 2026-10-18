@@ -10,7 +10,7 @@ Acceptance: real parser/runtime; numbered lines, variables, expressions, conditi
 
 ## M2 — Minimal OS build
 
-Yocto spike on Linux host; `meta-readylinux`; x86-64 image boots in QEMU; console autostarts. No kernel tuning without benchmarks.
+Scaffold started: `meta-readylinux` layer metadata, distro config, image recipe, local runtime recipe, and static tests. BitBake parse/build and x86-64 QEMU boot remain unverified. Next acceptance: pin supported Yocto release and machine; validate `bitbake -p`, build image and boot in QEMU on suitable Linux host. No kernel tuning without benchmarks.
 
 ## M3 — READY Stable
 

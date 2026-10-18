@@ -102,7 +102,11 @@ Puoi anche digitare direttamente una richiesta naturale con più parole, per ese
 | `BASIC HELP` | Mostra i precedenti comandi READY, programmi numerati inclusi |
 | `HELP` | Mostra il nuovo flusso vibe-first |
 
-## 5. Sicurezza e limiti
+## 5. Build Linux embedded (scaffolding sperimentale)
+
+È presente il layer Yocto minimo `meta-readylinux/`. La ricetta installa l'app READY da sorgenti locali, senza scaricare pesi IA. Non è ancora stata eseguita una build BitBake: serve un host Linux con release Yocto e machine selezionate. Dettagli in [`meta-readylinux/README.md`](meta-readylinux/README.md) (IT) e [`meta-readylinux/README.en.md`](meta-readylinux/README.en.md) (EN). Non considerare il layer un'immagine verificata o bootabile.
+
+## 6. Sicurezza e limiti
 
 - Il modello **non può eseguire** comandi attraverso la risposta: genera soltanto JSON con lista dei file. Sono ammessi file di testo e codice con estensioni consentite, sotto la cartella del progetto.
 - Percorsi assoluti, `..`, file nascosti e symlink di destinazione vengono rifiutati. Il programma legge un contesto limitato dal progetto attivo e non naviga arbitrariamente nell'intero filesystem.

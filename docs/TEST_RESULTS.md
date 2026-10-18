@@ -1,5 +1,13 @@
 # Risultati test
 
+## 2026-10-18 — Scaffolding Yocto M2
+
+- `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` — PASS.
+- `python -m unittest discover -s tests -v` — PASS, 41 test.
+- `bash -n install.sh setup-ai-cpu.sh` — PASS.
+- Test statici verificano metadati layer, sorgenti locali ricetta, immagine e assenza di URI fetch esterni.
+- BitBake non disponibile su Windows/MSYS: nessun parse BitBake, build immagine o boot QEMU eseguiti.
+
 ## 2026-10-18 — Runtime BASIC M1 (in corso)
 
 - `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` — PASS.
