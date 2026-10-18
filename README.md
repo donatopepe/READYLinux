@@ -38,6 +38,8 @@ bash setup-ai-cpu.sh
 ~/.local/bin/readylinux
 ```
 
+Per usare il runtime BASIC sperimentale, digita `BASIC`; usa `HELP` per i comandi e `STOP` per tornare a READY. La modalità numerata Python resta il flusso legacy. Vedi [`docs/BASIC.md`](docs/BASIC.md) (IT) e [`docs/BASIC.en.md`](docs/BASIC.en.md) (EN).
+
 In READY digita `AI START`, quindi verifica con `AI STATUS` quando il modello è pronto. `AI STOP` arresta soltanto il processo avviato dalla sessione corrente, non un server esterno già esistente.
 
 L'applicazione può usare un modello installato manualmente:
@@ -96,6 +98,7 @@ Puoi anche digitare direttamente una richiesta naturale con più parole, per ese
 | `VERIFICA` | Verifica la sintassi Python e JSON, senza eseguire alcun codice |
 | `ESEGUI file.py CONFERMO` | Esegue esplicitamente Python **senza sandbox**, timeout di 10 secondi |
 | `AI START`, `AI STATUS`, `AI STOP` | Gestisce il processo di IA locale |
+| `BASIC` | Entra nella modalità BASIC sperimentale; `STOP` torna a READY |
 | `BASIC HELP` | Mostra i precedenti comandi READY, programmi numerati inclusi |
 | `HELP` | Mostra il nuovo flusso vibe-first |
 
@@ -106,7 +109,7 @@ Puoi anche digitare direttamente una richiesta naturale con più parole, per ese
 - Ogni proposta mostra il diff e richiede `APPLICA`. Se un file cambia dopo la proposta, l'applicazione viene rifiutata. Lo storico consente l'ultimo undo, salvo modifiche manuali successive.
 - I test automatici controllano validazione dei percorsi, conflitti e il fatto che `VERIFICA` **non** esegua il codice.
 - **NON è un sistema blindato per l'esecuzione di codice sconosciuto.** `ESEGUI` usa un normale sottoprocesso Python con i permessi dell'utente e **può accedere a file e rete**; la modalità numerata `RUN` e `PY` sono anch'esse non isolate. Il timeout limita la durata, non i privilegi o le risorse. Per testare output IA non fidato utilizzare una VM/container configurati con restrizioni reali.
-- Non sono stati implementati LSP, test unitari generati ed eseguiti automaticamente, sandbox Linux, Git integration, desktop grafico o ISO avviabile.
+- Non sono stati implementati LSP, test unitari generati ed eseguiti automaticamente, sandbox Linux, desktop grafico o ISO avviabile. Il runtime BASIC è sperimentale e non garantisce compatibilità completa Commodore.
 - Gli input inclusi nei file e i log sono trattati come non attendibili nelle istruzioni al modello; questo **non garantisce immunità** dagli attacchi di prompt injection.
 - La generazione è limitata a 5 file per richiesta, 14.000 caratteri per file e 28.000 caratteri complessivi. Contesto attuale massimo 5 file. Nella pratica, un modello 1.5B e il contesto disponibile possono imporre limiti ben inferiori.
 

@@ -4,14 +4,14 @@ Licensed under [MIT](LICENSE).
 
 **Describe software in natural language → review proposed files → approve → verify → iterate.**
 
-READY 0.3 is a terminal-based Linux application prototype, not a bootable distribution, graphical desktop, or fully autonomous coding agent. It retains numbered Python programming and optional local AI. An experimental READY BASIC interpreter is available via `BASIC` mode; see [BASIC docs](docs/BASIC.en.md). Existing Python numbered mode remains default.
+READY 0.3 is a terminal-based application prototype, not a bootable Linux distribution, graphical desktop, or autonomous coding agent. It retains the numbered Python workflow and optional local AI. Experimental BASIC mode is entered with `BASIC`; use `HELP` for commands and `STOP` to return to READY. See [BASIC guide](docs/BASIC.en.md) and [Italian README](README.md).
 
 ## Requirements
 
-- GNU/Linux, Python 3.10+, Python standard library.
-- Optional local generation: `llama-server` and compatible GGUF model.
-- CPU inference supported; no GPU required.
-- AI model download is explicit via setup script; real GGUF inference is not verified by current automated tests.
+- GNU/Linux, Python 3.10+, standard library.
+- Optional generation: local `llama-server` and compatible GGUF model.
+- CPU-only supported; no GPU required.
+- Model download is opt-in via setup script. Real GGUF inference is not covered by automated tests.
 
 ## Quick start
 
@@ -19,13 +19,35 @@ READY 0.3 is a terminal-based Linux application prototype, not a bootable distri
 python3 readylinux.py
 ```
 
-In READY, type `BASIC`, then:
+Optional non-admin installation:
 
-```text
-10 PRINT "HELLO"
-20 PRINT 2+2
-RUN
-STOP
+```bash
+bash install.sh
+~/.local/bin/readylinux
 ```
 
-Use `HELP` for commands. Python mode is unchanged. See `README.md` for full Italian documentation and caveats. No automatic execution of AI-proposed code.
+To provision local AI (requires Internet and downloads only when explicitly run):
+
+```bash
+bash setup-ai-cpu.sh
+```
+
+## BASIC example
+
+```text
+READY.
+> BASIC
+READY BASIC.
+> 10 PRINT "HELLO"
+> 20 PRINT 2+2
+> RUN
+HELLO
+4
+> STOP
+```
+
+BASIC is an experimental reduced dialect, not full Commodore BASIC compatibility. It evaluates an allowlisted expression subset; this is not a sandbox for arbitrary code. Python mode remains available. See [BASIC docs in English](docs/BASIC.en.md) and [Italian docs](docs/BASIC.md).
+
+## Limits and safety
+
+AI proposals are reviewable and not executed automatically. `ESEGUI` and Python `RUN` are ordinary user-permission execution, not sandboxing. This prototype is not a bootable distribution; Yocto, kernel, GUI, real model inference, GPU, ARM64, and secure code-execution isolation remain unimplemented or unverified.

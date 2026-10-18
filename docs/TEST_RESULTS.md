@@ -6,6 +6,7 @@
 - `python -m unittest discover -s tests -v` — PASS, 37 test (26 baseline + 11 BASIC).
 - `bash -n install.sh setup-ai-cpu.sh` — PASS.
 - BASIC verificato: output/arithmetic, IF/GOTO, FOR/NEXT, INPUT, GOSUB/RETURN, edit/delete/list, save/load via console, rejection di chiamate Python e istruzioni sconosciute, step limit.
+- Non coperti da suite: boot Yocto/QEMU, inferenza GGUF reale, sandbox codice generato.
 - Questo non verifica Commodore BASIC completo, sandbox codice generato o OS embedded.
 
 

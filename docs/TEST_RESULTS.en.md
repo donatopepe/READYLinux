@@ -1,12 +1,12 @@
 # Test Results
 
-## 2026-10-18 — BASIC runtime M1 (in progress)
+## 2026-10-18 — READY BASIC milestone work
 
 - `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py` — PASS.
 - `python -m unittest discover -s tests -v` — PASS, 37 tests (26 baseline + 11 BASIC).
 - `bash -n install.sh setup-ai-cpu.sh` — PASS.
-- BASIC coverage: output/arithmetic, IF/GOTO, FOR/NEXT, INPUT, GOSUB/RETURN, edit/delete/list, console save/load, rejection of Python calls and unknown statements, execution step limit.
-- This does not verify full Commodore BASIC compatibility, generated-code sandboxing, or embedded OS.
+- BASIC tests cover arithmetic, IF/GOTO, FOR/NEXT, INPUT, GOSUB/RETURN, editing, console routing, persistence, malformed input, rejected Python calls/statements, and step-limit enforcement.
+- Not covered: Yocto/QEMU boot, real GGUF inference, generated-code sandbox.
 
 ## Baseline — 2026-10-18
 
