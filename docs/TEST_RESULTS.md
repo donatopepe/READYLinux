@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Avviso segreti template evidenze
+## 2026-10-18 — Schema machine-readable evidenze Yocto
 
-- Template IT/EN esplicitano di redigere segreti/non allegare credenziali nei checksum config.
-- Test mirato `python -m unittest tests.test_yocto_scaffold.YoctoScaffoldTests.test_build_evidence_templates_include_required_provenance_and_results -v` — PASS.
-- Suite completa `python -m unittest discover -s tests -v` — PASS, 57 test; compileall, `bash -n`, `git diff --check` — PASS.
-- Nessun dato reale o build inseriti.
+- Aggiunto `docs/YOCTO_BUILD_EVIDENCE.schema.json` Draft 2020-12, senza dipendenze Python aggiuntive.
+- Test `json.loads` e sezioni/audit fields richiesti — PASS.
+- `python -m unittest discover -s tests -v` — PASS, 58 test; compileall, `bash -n`, `git diff --check` — PASS.
+- Nessun dato o risultato build inventato.

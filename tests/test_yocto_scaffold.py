@@ -1,4 +1,5 @@
 import ast
+import json
 import re
 import unittest
 from pathlib import Path
@@ -116,6 +117,18 @@ class YoctoScaffoldTests(unittest.TestCase):
             positions = [doc.index(command) for command in commands]
             self.assertEqual(positions, sorted(positions), f"command order in {doc_path.name}")
             self.assertIn("MACHINE", doc)
+
+    def test_build_evidence_schema_is_valid_json_with_audit_fields(self):
+        schema_path = ROOT / "docs/YOCTO_BUILD_EVIDENCE.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        self.assertEqual(schema["$schema"], "https://json-schema.org/draft/2020-12/schema")
+        self.assertEqual(schema["type"], "object")
+        self.assertFalse(schema["additionalProperties"])
+        for section in ("identity", "environment", "image", "boot", "verdict"):
+            self.assertIn(section, schema["required"])
+            self.assertIn(section, schema["properties"])
+        self.assertIn("readylinux_commit", schema["properties"]["identity"]["properties"])
+        self.assertIn("sha256", schema["properties"]["image"]["properties"])
 
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (

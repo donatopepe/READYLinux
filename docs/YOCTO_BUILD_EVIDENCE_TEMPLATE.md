@@ -1,6 +1,6 @@
 # READY Linux Yocto Build Evidence
 
-Copy this file per build run to `docs/build-evidence/<run-id>.md`. Do not mark a field verified without a retained command result or artifact.
+Copy this file per build run to `docs/build-evidence/<run-id>.md`. Machine-readable format also defined in `YOCTO_BUILD_EVIDENCE.schema.json`. Do not mark a field verified without a retained command result or artifact.
 
 ## Identity
 
