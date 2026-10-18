@@ -31,6 +31,7 @@ No model weights, AI runtime binaries, or network fetches are included by the im
 2. Run `bash scripts/validate-yocto-env.sh`; retain successful `bitbake -p` log.
 3. Build `readylinux-image` with documented download/cache state; record artifact checksums.
 4. Boot image in QEMU for the selected machine; verify READY owns tty1, non-root UID, persisted `/var/lib/readylinux`, and no competing getty.
-5. Store results and deviations in `docs/TEST_RESULTS.en.md` and Italian counterpart.
+5. Compute artifact digest with `sha256sum <image>`; retain image and build/console logs in controlled storage, and record locations/checksum in `docs/build-evidence/<run-id>.md`. Never commit image binaries, credentials, or secret-bearing configs.
+6. Store results and deviations in `docs/TEST_RESULTS.en.md` and Italian counterpart.
 
 Build and boot are **not verified here**: current Windows/MSYS environment has no BitBake or QEMU. Pin one Yocto release and target machine before claiming reproducibility. The recipe only uses local `file://` sources; model weights are excluded.

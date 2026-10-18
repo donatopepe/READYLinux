@@ -31,6 +31,7 @@ Acceptance evidence required before calling this layer reproducible:
 2. Run `bash scripts/validate-yocto-env.sh`; retain successful `bitbake -p` log.
 3. Build `readylinux-image` with documented download/cache state; record artifact checksums.
 4. Boot image in QEMU for the selected machine; verify READY owns tty1, non-root UID, persisted `/var/lib/readylinux`, and no competing getty.
-5. Keep test results and deviations in `docs/TEST_RESULTS.md` (and EN counterpart).
+5. Compute artifact digest with `sha256sum <image>`; retain build/console logs and image in controlled storage, and record paths/checksum in `docs/build-evidence/<run-id>.md`. Never commit image binaries, credentials, or secret-bearing configs.
+6. Keep test results and deviations in `docs/TEST_RESULTS.md` (and EN counterpart).
 
 The recipe uses `file://` sources and the Python standard library only. No model weights, AI runtime binaries, or network fetches are part of the image recipe; model/runtime provisioning remains a separate explicit step. The current generic scaffold reserves `/dev/tty1`; a machine-specific serial console is intentionally deferred until an actual BSP/target is selected, because device names and login policy vary. Image build and boot have not been tested in this repository environment (Windows/MSYS; BitBake and QEMU unavailable). Choose and pin one Yocto release and machine before claiming reproducibility.

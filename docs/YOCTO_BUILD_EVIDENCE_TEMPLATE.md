@@ -28,7 +28,8 @@ Copy this file per build run to `docs/build-evidence/<run-id>.md`, using a uniqu
 - Network/source-cache condition (sources already cached or fetched):
 - Exit code and retained build log:
 - Image artifact path, format, size:
-- SHA-256:
+- SHA-256 (`sha256sum <artifact>` output):
+- Retained artifact/log location and access/retention policy (never commit large binaries or secrets):
 
 ## Boot and smoke checks
 

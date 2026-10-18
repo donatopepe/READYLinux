@@ -28,7 +28,8 @@ This is the English companion to `YOCTO_BUILD_EVIDENCE_TEMPLATE.md`; use one cop
 - Network/source-cache condition (sources cached or fetched):
 - Exit code and retained build log:
 - Image artifact path, format, size:
-- SHA-256:
+- SHA-256 (`sha256sum <artifact>` output):
+- Retained artifact/log location and access/retention policy (never commit large binaries or secrets):
 
 ## Boot and smoke checks
 

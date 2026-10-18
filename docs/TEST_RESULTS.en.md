@@ -1,8 +1,7 @@
 # Test Results
 
-## 2026-10-18 — Evidence history integrity
+## 2026-10-18 — Evidence artifact integrity
 
-- IT/EN templates require a unique run ID and append-only records: new record per attempt; corrections use a new record referencing the earlier one.
-- Static test checks this policy in both templates.
-- `python -m unittest discover -s tests -v` — PASS, 59 tests; compileall, `bash -n`, `git diff --check` — PASS.
-- No real build/evidence record created.
+- Static tests `python -m unittest tests.test_yocto_scaffold -v` — PASS, 13 tests.
+- Guides/templates require `sha256sum <artifact>`, image/log retention paths, and prohibit committing binaries/credentials.
+- No image artifact is available to hash.
