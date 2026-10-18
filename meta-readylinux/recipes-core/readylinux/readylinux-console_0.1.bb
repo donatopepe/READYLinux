@@ -6,10 +6,13 @@ SRC_URI = "file://readylinux-console.service"
 FILESEXTRAPATHS:prepend := "${THISDIR}:"
 S = "${WORKDIR}"
 
-inherit systemd allarch
+inherit systemd useradd allarch
 
 SYSTEMD_SERVICE:${PN} = "readylinux-console.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+USERADD_PACKAGES = "${PN}"
+GROUPADD_PARAM:${PN} = "--system ready"
+USERADD_PARAM:${PN} = "--system --gid ready --home-dir /var/lib/readylinux --no-create-home --shell /sbin/nologin ready"
 RDEPENDS:${PN} += "readylinux systemd"
 
 do_install() {

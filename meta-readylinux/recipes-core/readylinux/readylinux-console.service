@@ -4,7 +4,10 @@ After=local-fs.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/readylinux
+User=ready
+Group=ready
+Environment=XDG_DATA_HOME=/var/lib/readylinux
+ExecStart=/usr/bin/readylinux --workspace /var/lib/readylinux/programs
 Restart=on-failure
 RestartSec=1
 StandardInput=tty
@@ -14,6 +17,14 @@ TTYPath=/dev/tty1
 TTYReset=yes
 TTYVHangup=yes
 TTYVTDisallocate=yes
+StateDirectory=readylinux
+StateDirectoryMode=0750
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/readylinux
 
 [Install]
 WantedBy=multi-user.target

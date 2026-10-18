@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — Launcher Yocto
+## 2026-10-18 — Hardening servizio console
 
-- Corretto launcher installato: heredoc quoted non espande variabili BitBake; percorso runtime reso statico `/usr/share/readylinux/readylinux.py`.
-- Test mirato: `python -m unittest tests.test_yocto_scaffold -v` — PASS, 6 test.
-- Suite completa finale: `python -m unittest discover -s tests -v` — PASS, 43 test; `compileall`, `bash -n` e `git diff --check` — PASS.
-- BitBake assente; package/image non buildati.
+- Modificato servizio per utente non privilegiato `ready`, `StateDirectory=/var/lib/readylinux`, `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=strict`, `ProtectHome` e sole scritture autorizzate sullo state.
+- Ricetta useradd crea gruppo/utente di sistema.
+- `python -m unittest discover -s tests -v` — PASS, 43 test; `compileall`, `bash -n` e `git diff --check` — PASS. Test statici verificano User, state persistente e hardening dichiarato.
+- BitBake/QEMU non disponibili: nessun parse/build/boot verificato.
