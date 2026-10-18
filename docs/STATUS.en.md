@@ -7,5 +7,5 @@ Updated: 2026-10-18.
 - **Locally verified**: 58 tests, compileall, `bash -n`, `git diff --check`; evidence JSON Schema valid and audit fields tested.
 - **Not verified**: real OE parse, QEMU image build/boot, package mapping, service boot, kernel, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows/MSYS AMD64, Python 3.11; BitBake unavailable, no downloads/installations.
-- **Git**: `main` at `1799196` at start; schema and tests pass, publish in progress. Exclude ZIPs and `.pi-loop*`.
+- **Git**: `main` synchronized with `origin/main`; machine-readable schema published in `8cfc9d9`. Exclude ZIPs and `.pi-loop*`.
 - **Next**: reproducible Linux-host validation with OE/layer commits, distro, MACHINE, build log, image checksum, and QEMU boot evidence per `meta-readylinux/README.en.md`.
