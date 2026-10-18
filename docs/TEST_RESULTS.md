@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-18 — Baseline test/status
+
+- HEAD snapshot a inizio firing: `6266983bc1ce4aaaf9cd60a9b8158fa79276daf9`; il test statico garantisce status IT/EN citino snapshot, hash storico writable-state guard, baseline aggiornata e limiti BitBake/QEMU.
+- Full suite Windows/Python 3.11 — PASS, 92 test (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13 — PASS, 92 test.
+- `compileall`, shell syntax su entrambi e `git diff --check` — PASS.
+
 ## 2026-10-18 — Documentazione package ownership
 
 - Writable-state scope test: `StateDirectory=readylinux`, `ReadWritePaths=/var/lib/readylinux`, XDG state path allineati; broad writable paths rifiutati.
@@ -11,6 +17,6 @@
 - README layer IT/EN ora specificano che unità systemd e getty mask appartengono a `readylinux-console`, installato nella image recipe.
 - Test statico confronta tali istruzioni con `RDEPENDS`, `FILES:${PN}` e symlink installati; image inclusion audit verifica che runtime/console siano inclusi una volta in `IMAGE_INSTALL`.
 - Finding hardening systemd precedente: `systemd-analyze security --offline`, `MEDIUM/6.7`, `UMask 0027`.
-- Windows/Python 3.11 full suite — PASS, 91 test (1 skip systemd-analyze); WSL Debian 13/Python 3.13 full suite — PASS, 91 test.
+- Windows/Python 3.11 full suite — PASS, 92 test (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13 full suite — PASS, 92 test.
 - Compileall, shell syntax su entrambi e `git diff --check` — PASS.
 - Nessun BitBake/package QA disponibile; nessun QEMU boot reale.

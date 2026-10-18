@@ -414,6 +414,16 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(requirement, italian)
             self.assertIn(requirement, english)
 
+    def test_status_records_current_test_baseline_and_bitbake_limitation(self):
+        italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
+        for doc in (italian, english):
+            self.assertRegex(doc, r"(?m)\b92 tests?\b")
+            self.assertIn("BitBake", doc)
+            self.assertIn("QEMU", doc)
+            self.assertIn("a547aef", doc)
+            self.assertIn("6266983bc1ce4aaaf9cd60a9b8158fa79276daf9", doc)
+
     def test_status_docs_state_current_build_limits_and_host_prereqs(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
