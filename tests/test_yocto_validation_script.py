@@ -25,13 +25,13 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertIn("source the target build environment first", result.stderr)
         self.assertNotIn("bitbake -p", result.stdout)
 
-    def run_with_builddir(self, builddir, *, with_bitbake=True):
+    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0):
         temp_path = tempfile.TemporaryDirectory()
         bindir = Path(temp_path.name) / "bin"
         bindir.mkdir()
         if with_bitbake:
             fake = bindir / "bitbake"
-            fake.write_text("#!/bin/sh\nprintf 'FAKE_BITBAKE %s %s\\n' \"$*\" \"$PWD\"\n", encoding="utf-8")
+            fake.write_text(f"#!/bin/sh\nprintf 'FAKE_BITBAKE %s %s\\n' \"$*\" \"$PWD\"\nexit {bitbake_exit}\n", encoding="utf-8")
             fake.chmod(0o755)
         env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": str(builddir)}
         return subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True), temp_path
@@ -96,6 +96,19 @@ class YoctoValidationScriptTests(unittest.TestCase):
             self.addCleanup(fake_root.cleanup)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(f"FAKE_BITBAKE -p /tmp/{builddir.name}", result.stdout)
+
+    def test_script_propagates_bitbake_parse_failure(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = "/d/repos/ReadyLinux/meta-readylinux"
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\\n', encoding="utf-8")
+            (conf / "local.conf").write_text("", encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, bitbake_exit=37)
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 37)
+        self.assertIn("FAKE_BITBAKE -p", result.stdout)
 
     def test_script_checks_build_confs_and_layer_registration(self):
         text = SCRIPT.read_text(encoding="utf-8")

@@ -1,8 +1,8 @@
 # Risultati test
 
-## 2026-10-18 — CWD helper BitBake
+## 2026-10-18 — Error propagation helper Yocto
 
-- Helper invoca `bitbake -p` da `BUILDDIR` canonico, non dalla directory chiamante.
-- Test happy-path usa falso eseguibile BitBake e verifica cwd; test symlink builddir e branch preflight già presenti.
-- `python -m unittest discover -s tests -v` — PASS, 51 test; compileall, `bash -n` su tutti gli script e `git diff --check` — PASS.
-- BitBake reale non disponibile.
+- Test helper: `python -m unittest tests.test_yocto_validation_script -v` — PASS, 9 test.
+- Fake BitBake restituisce 37; helper propaga exit 37 dopo `bitbake -p`.
+- Suite completa `python -m unittest discover -s tests -v` — PASS, 52 test; compileall, `bash -n` su tutti gli script, `git diff --check` — PASS.
+- BitBake reale non presente.
