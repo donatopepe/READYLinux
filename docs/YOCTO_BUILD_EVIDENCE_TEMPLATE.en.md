@@ -37,6 +37,7 @@ This is the English companion to `YOCTO_BUILD_EVIDENCE_TEMPLATE.md`; use one cop
 - Boot result and retained serial/console log:
 - READY appears on selected console:
 - `id` confirms unprivileged service user:
+- `systemd-analyze verify` / `systemd-analyze security` output for unit:
 - `/var/lib/readylinux` writable by READY user and persists after reboot:
 - `getty@tty1` mask and no competing login prompt:
 - BASIC smoke result:

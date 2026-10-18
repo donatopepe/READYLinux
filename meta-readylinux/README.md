@@ -8,7 +8,7 @@ Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete i
 - `conf/distro/readylinux.conf`: initial distro policy, inheriting Poky defaults.
 - `recipes-core/images/readylinux-image.bb`: minimal image recipe based on `core-image-minimal` with Python 3 and the READY runtime package group.
 - `recipes-ready/readylinux/readylinux_0.3.bb`: installs the existing Python application, BASIC runtime, and AI client as a package. The recipe resolves `file://` sources from the repository root through `FILESEXTRAPATHS`; it does not include llama.cpp binaries or model weights.
-- `recipes-core/readylinux/`: systemd service starts READY on `/dev/tty1` as a dedicated unprivileged `ready` account, with a persistent writable state directory and baseline filesystem hardening. The package masks `getty@tty1.service`; this image reserves tty1 for READY, so it does not provide a normal login prompt there.
+- `recipes-core/readylinux/`: systemd service starts READY on `/dev/tty1` as a dedicated unprivileged `ready` account, with a persistent writable state directory and systemd filesystem/kernel hardening (`NoNewPrivileges`, private tmp, protected home/system/clock/kernel settings, restricted SUID/SGID and capabilities). The package masks `getty@tty1.service`; this image reserves tty1 for READY, so it does not provide a normal login prompt there.
 
 ## Verification and acceptance (Linux build host required)
 

@@ -37,6 +37,7 @@ Copy this file per build run to `docs/build-evidence/<run-id>.md`, using a uniqu
 - Boot exit/status and retained serial/console log:
 - READY appears on selected console:
 - `id` confirms service runs unprivileged:
+- `systemd-analyze verify` / `systemd-analyze security` results for unit:
 - `/var/lib/readylinux` writable by READY user and persistent after reboot:
 - `getty@tty1` mask and absence of competing login prompt:
 - BASIC smoke result:
