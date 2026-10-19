@@ -2,6 +2,7 @@
 
 ## 2026-10-18 — Yocto recipe guard snapshot
 
+- Yocto validator regression accepts a valid build path with spaces on WSL; Windows skips because temp dirs are outside WSL filesystem.
 - Firing-start snapshot: `git status --short --branch` = `main...origin/main` plus untracked `.pi-loop.json` and `raw` (0 bytes); HEAD `c71d630a4a651dd8acb7ec6821a06e66c12f7c11`.
 - Historical WSL systemd security report: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 - Static test guards HEAD, suite baseline and BitBake/QEMU limitations in IT/EN status.

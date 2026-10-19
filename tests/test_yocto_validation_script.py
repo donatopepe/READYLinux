@@ -1,3 +1,4 @@
+import os
 import subprocess
 import tempfile
 import unittest
@@ -12,6 +13,14 @@ def shell_pwd(path):
     if result.returncode:
         raise RuntimeError(result.stderr)
     return result.stdout.strip()
+
+
+def to_shell_path(path):
+    if os.name == "nt":
+        result = subprocess.run(["bash", "-lc", "cygpath -u \"$1\"", "bash", str(path)], cwd=ROOT, capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    return str(path)
 
 
 
@@ -41,7 +50,7 @@ class YoctoValidationScriptTests(unittest.TestCase):
             fake = bindir / "bitbake"
             fake.write_text(f"#!/bin/sh\nprintf 'FAKE_BITBAKE %s %s\\n' \"$*\" \"$PWD\"\nexit {bitbake_exit}\n", encoding="utf-8")
             fake.chmod(0o755)
-        env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": str(builddir)}
+        env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": to_shell_path(builddir)}
         return subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True), temp_path
 
     def test_script_fails_when_bitbake_is_missing(self):
@@ -63,6 +72,22 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("missing", result.stderr)
         self.assertNotIn("FAKE_BITBAKE", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "temp directories on Windows are outside the WSL filesystem")
+    def test_script_accepts_build_directory_with_spaces(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp) / "build tree with spaces"
+            conf = builddir / "conf"
+            conf.mkdir(parents=True)
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\\n', encoding="utf-8")
+            (conf / "local.conf").write_text("", encoding="utf-8")
+            expected_path = shell_pwd(builddir)
+            result, fake_root = self.run_with_builddir(builddir)
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(f"Build directory: {expected_path}", result.stdout)
+        self.assertIn(f"FAKE_BITBAKE -p {expected_path}", result.stdout)
 
     def test_script_accepts_symlinked_build_directory(self):
         with tempfile.TemporaryDirectory() as temp:

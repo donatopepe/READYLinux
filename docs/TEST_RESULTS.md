@@ -2,6 +2,7 @@
 
 ## 2026-10-18 — Snapshot guard recipe Yocto
 
+- Yocto env validator regression accepts a valid build directory containing spaces on WSL; Windows skips because its temp path is outside the WSL filesystem.
 - Snapshot firing start: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; HEAD `c71d630a4a651dd8acb7ec6821a06e66c12f7c11`.
 - Historic WSL systemd security report: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 - Test statico protegge HEAD, suite baseline e limiti BitBake/QEMU nei status IT/EN.
