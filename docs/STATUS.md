@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 99 test Windows (1 skip `systemd-analyze`) e WSL; compileall/shell/diff pass. README build/test guard e recipe ownership verificate staticamente.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: snapshot firing iniziale `6778a88adf74563db15223c882a492d2a22f0226`; `.pi-loop.json` non tracciato, ZIP ignorati.
+- **Git**: firing-start HEAD `6778a88adf74563db15223c882a492d2a22f0226`; baseline/limit guard pubblicato in `afcbacf`. `.pi-loop.json` non tracciato, ZIP ignorati.
 - **Prossimo**: parse/build su host OE release-pinned quando selezionato; distinguere audit statici da parse/runtime.
