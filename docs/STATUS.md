@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 110 test Windows/Python 3.11 (7 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Validator Yocto con BUILDDIR path-spaced testato tramite BitBake stub.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `1cf4baf9a6144fc21774d84967f2bb378d601ab9`; `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `1cf4baf9a6144fc21774d84967f2bb378d601ab9`; path-space validator baseline in `6904d4d`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere fake BitBake dai test parse reali.

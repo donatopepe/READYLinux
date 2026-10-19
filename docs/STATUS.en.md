@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 110 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Yocto validator with a path containing spaces tested using fake BitBake.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `1cf4baf9a6144fc21774d84967f2bb378d601ab9`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `1cf4baf9a6144fc21774d84967f2bb378d601ab9`; path-space validator baseline in `6904d4d`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish fake BitBake from real parse tests.
