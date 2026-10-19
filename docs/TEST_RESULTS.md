@@ -1,15 +1,10 @@
 # Risultati test
 
-## 2026-10-18 — Baseline host-preflight/helper
+## 2026-10-18 — Host preflight firing baseline
 
-- Missing-BUILDDIR case with all required tools stubbed still reports INCOMPLETE and no missing commands.
-- Partial-host preflight test keeps a valid BUILDDIR but removes required `gcc`; probe must still report MISSING and INCOMPLETE.
-- Static layer-inventory check ensures exactly the intended recipe set and confirms runtime packages are included in `IMAGE_INSTALL`.
-- Static layer check pins three expected `.bb` recipes, forbids unreviewed `.bbappend` files, and confirms both runtime packages in `IMAGE_INSTALL`.
-- HEAD iniziale: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; `git log -1` = `5c3c030179abaf1a21225389e98b05b3d0c82bd3`.
+- Snapshot iniziale: `git status --short --branch` era `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; `git log -1` = `8ab20c823363df531c2026b6553496c02fad5962`.
 - WSL unit-hardening report storico: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-- Static regression test controlla firing HEAD, test count e limiti BitBake/QEMU nei status IT/EN.
+- Test statico status controlla snapshot/HEAD, conteggio test e limiti BitBake/QEMU.
 - Windows/Python 3.11: 108 test PASS (6 skip platform-specific); WSL Debian 13/Python 3.13: 108 test PASS.
-- Note for latest host-probe run: valid required-command stubs plus valid BUILDDIR passed; omitted BUILDDIR with commands present yielded INCOMPLETE on WSL.
 - Comandi: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
-- Host preflight positivo, negative BUILDDIR e helper statici verificati con stubs; nessuna installazione/fetch o build/parse Yocto.
+- Host probe stub positive/negative copre comandi richiesti e BUILDDIR (unset, valido o file); nessuna installazione/fetch/parse-build BitBake reale.
