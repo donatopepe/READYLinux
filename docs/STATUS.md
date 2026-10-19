@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 114 test Windows/Python 3.11 (8 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Preflight WSL read-only ha trovato tutti i comandi host richiesti, BitBake/BUILDDIR assenti.
+- **Verificato localmente**: 114 test Windows/Python 3.11 (8 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. WSL host probe read-only: 19/19 required host commands presenti, ma BitBake/BUILDDIR assenti.
 - **Non verificato**: BitBake/Yocto parse/build reale, boot immagine READY QEMU, SSH guest, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
-- **Host**: WSL Debian 13/trixie x86_64, 20 CPU; preflight `INCOMPLETE`; nessun checkout/fetch/install.
-- **Git**: firing-start HEAD `6383afedf795c8dd518b4aab3186c2ee4306173c`; baseline/status regression in `df3987c`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
-- **Prossimo**: Gate A parse su host OE release-pinned già provisionato; seguire `docs/VERIFICATION_PLAN.md` per log reali.
+- **Host**: WSL Debian 13/trixie x86_64, 20 CPU; probe `INCOMPLETE`; nessun checkout/fetch/install.
+- **Git**: firing-start HEAD `4f1dd4dea369c0ff07265530fbd3ee990995ae87`; `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Prossimo**: Gate A parse su host OE release-pinned già provisionato; seguire `docs/VERIFICATION_PLAN.md` e conservare stdout/stderr reali.
