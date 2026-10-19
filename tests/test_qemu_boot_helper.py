@@ -127,6 +127,39 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertFalse(overlay.exists(), "overlay should be removed even on QEMU failure")
             self.assertEqual(image.read_bytes(), image_bytes)
 
+    def test_artifact_verifier_accepts_image_before_fake_qemu_boot(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            image = root / "verified base image.wic"
+            kernel = root / "matching kernel Image"
+            image_bytes = b"verified image fixture"
+            image.write_bytes(image_bytes)
+            kernel.write_bytes(b"matching kernel fixture")
+            digest = hashlib.sha256(image_bytes).hexdigest()
+            verified = subprocess.run(["bash", str(ROOT / "scripts/verify-image-artifact.sh"), str(image), digest], cwd=ROOT, capture_output=True, text=True)
+            self.assertEqual(verified.returncode, 0, verified.stderr)
+            overlay_log = root / "overlay.log"
+            bindir = root / "bin"
+            bindir.mkdir()
+            qemu_img = bindir / "qemu-img"
+            qemu_img.write_text("#!/bin/sh\nprintf '%s\\n' \"$6\" > \"$OVERLAY_LOG\"\n: > \"$6\"\n", encoding="utf-8")
+            qemu = bindir / "qemu-system-x86_64"
+            qemu.write_text("#!/bin/sh\noverlay=$(cat \"$OVERLAY_LOG\")\n[ -f \"$overlay\" ] || exit 24\nexit 0\n", encoding="utf-8")
+            qemu_img.chmod(0o755)
+            qemu.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_BIN": self.fake_shell_path(qemu),
+                "READY_QEMU_IMG": self.fake_shell_path(qemu_img),
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0 root=/dev/vda",
+                "OVERLAY_LOG": self.fake_shell_path(overlay_log),
+            }
+            booted = self.run_script(image, digest, "pc", env=env)
+            self.assertEqual(booted.returncode, 0, booted.stderr)
+            self.assertEqual(image.read_bytes(), image_bytes)
+
     def test_script_is_networkless_and_uses_copy_on_write_overlay(self):
         text = SCRIPT.read_text(encoding="utf-8")
         for guard in ("-nic none", "-monitor none", "-kernel", "-append", "-no-reboot", "qemu_img_bin", "qcow2", "-drive"):
