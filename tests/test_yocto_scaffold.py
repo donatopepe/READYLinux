@@ -550,13 +550,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
-            self.assertTrue("hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc)
+            self.assertTrue("hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
             self.assertTrue("HEAD" in doc or "firing-start" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("1ab9e0ce3dbec67cb9b7a201f254e55c5945cbec", doc)
+            self.assertIn("58eae291cecf218c3c2ca9568607e8ef89facd85", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
