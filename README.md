@@ -13,7 +13,20 @@ READY 0.3 è un **prototipo applicativo Linux da terminale**, non una distribuzi
 - GNU/Linux, Python 3.10+ e libreria standard Python.
 - Opzionale per la generazione: `llama-server` (llama.cpp) e modello locale GGUF compatibile. I normali comandi di progetto funzionano anche senza IA.
 - Nessuna GPU necessaria: il servizio opzionale viene compilato CPU-only e avviato con `--n-gpu-layers 0 --device none`.
-- Modello scelto nello script opzionale: **Qwen2.5-Coder-1.5B-Instruct Q4_K_M**, file GGUF di circa **1,12 GB**; **RAM totale necessaria maggiore della dimensione del file**. La velocità varia per CPU e parametri.
+- Modello di default nello script opzionale: **Qwen2.5-Coder-1.5B-Instruct Q4_K_M**, GGUF circa **1,12 GB**; il consumo RAM totale supera la dimensione del file e cresce con il contesto. La velocità dipende da CPU, RAM, build e prompt; provare con pochi file.
+
+### Hardware consigliato (stima, non lista d'acquisto verificata)
+
+Data revisione: 2026-10-18. Stime conservative di capacità per il modello attuale, non requisiti misurati. Il modello non è stato scaricato né benchmarkato; prezzi, stock e SKU non sono verificati. In questo firing non è stata svolta ricerca web: non è disponibile uno strumento browser/search e le regole del repository vietano di avviare operazioni di rete.
+
+| Uso | Configurazione da cercare | Motivazione/limite |
+|---|---|---|
+| Console senza AI | Qualsiasi x86-64 supportato dalla distro, 4 GB RAM | Python/BASIC non richiedono GGUF; storage per progetti separato |
+| AI CPU, prove brevi | CPU x86-64 recente, 4+ core, 16 GB RAM, SSD con almeno 10 GB liberi | Margine per OS, modello e contesto breve; latenza non garantita |
+| AI CPU, uso quotidiano | 6–8 core moderni, 32 GB RAM, SSD NVMe 256+ GB | Più margine per contesto e altri processi; più core non garantiscono scala lineare |
+| Modelli più grandi/contesto lungo futuri | 64 GB RAM o più; valutare GPU solo dopo benchmark del modello scelto | Fuori dal profilo testato; non acquistare GPU sulla base di questa roadmap |
+
+Prima dell'acquisto confrontare benchmark CPU aggiornati, RAM dual-channel espandibile, storage, rumorosità, consumi, supporto Linux/driver e garanzia. Nessun marchio/SKU/prezzo/rivenditore è raccomandato; verificare compatibilità e resi. Aggiornare solo con fonti datate e benchmark riproducibili. Vedere la [policy modello/hardware](docs/AI_HARDWARE.it.md) e la versione [English](docs/AI_HARDWARE.en.md).
 - Modelli piccoli possono fallire nella produzione del JSON richiesto o scrivere codice errato. Usare compiti brevi, pochi file e revisionare sempre.
 
 ## 2. Avvio rapido

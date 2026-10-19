@@ -22,7 +22,7 @@ One variable per experiment; identical builds and reproducible benchmarks; recor
 
 ## M5 — Real CPU inference
 
-Explicitly imported llama.cpp/model; offline CPU inference; measure RAM, latency, and cancellation.
+Explicitly imported llama.cpp/model; offline CPU inference; measure RAM, latency, and cancellation. Selectable model catalog/purchasing guidance requires provenance, version/license/checksum, offline import and negative-path tests; see [`AI_HARDWARE.en.md`](AI_HARDWARE.en.md) and [Italian](AI_HARDWARE.it.md). Current shopping guidance is an estimate, not live research or a verified benchmark. User-requested hardware web research remains pending; it was not started because no web tool is available and repository rules prohibit initiating network operations.
 
 ## M6 — Secure coding agent
 

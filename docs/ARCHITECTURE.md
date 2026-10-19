@@ -8,6 +8,10 @@ Applicazione Python: `readylinux.py` gestisce console READY, programmi numerati 
 
 The `readylinux-console` systemd unit starts `/usr/bin/readylinux` on `/dev/tty1`, restarts on failure, and is enabled in the minimal image. It assumes systemd owns tty1; getty conflict, user/session policy, and actual boot are unverified. No AI model service starts at boot.
 
+## Hardware and model selection
+
+Capacity-based purchasing guidance and the model provenance/verification policy are in [`AI_HARDWARE.it.md`](AI_HARDWARE.it.md) and [English](AI_HARDWARE.en.md). Current tiers are estimates only, not web-researched product recommendations; model selection must remain opt-in and verifiable.
+
 ## Target
 
 1. **Classic runtime**: shell READY indipendente dall'IA e runtime BASIC reale, poi console primaria su Linux.

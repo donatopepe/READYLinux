@@ -6,8 +6,8 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 
 - **Release**: READY Linux 0.3 application prototype.
 - **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened tty1 service; host preflight, BitBake, systemd, artifact checksum, isolated QEMU COW boot helpers.
-- **Locally verified**: recipe MIT/checksum consistency and runtime deps statically checked; full 109-test Windows/WSL suites pass (6 platform skips on Windows).
+- **Locally verified**: 109 tests Windows/WSL PASS (6 Windows platform-specific skips); compileall/shell/diff pass. Hardware guidance docs separate estimates from verified recommendations.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `2d0c1726123dfb7c190a68fd4b5f881319185468`; license/runtime guard published in `abe340b`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `704cdb5e452dba805816e0f865232a28faeb2294`; hardware research request recorded, no-web policy disclosed. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish stub output from real-host evidence.

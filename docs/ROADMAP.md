@@ -22,7 +22,7 @@ Una variabile per esperimento; build identica e benchmark riproducibili, P95/P99
 
 ## M5 — Inferenza CPU reale
 
-llama.cpp e modello importato esplicitamente; inferenza offline su CPU; consumo RAM, latenza e interruzione misurati.
+llama.cpp e modello importato esplicitamente; inferenza offline su CPU; consumo RAM, latenza e interruzione misurati. Modello selezionabile/catalogo e acquisto hardware richiedono provenance/versione/licenza/checksum, procedure offline e test negativi; see [`AI_HARDWARE.md`](AI_HARDWARE.md). La guida acquisto corrente è stima, non ricerca web o benchmark verificato. Web research hardware richiesta dall'utente: pending; non avviata qui perché non disponibile uno strumento web e le regole repo vietano l'avvio di attività di rete.
 
 ## M6 — Coding agent sicuro
 
