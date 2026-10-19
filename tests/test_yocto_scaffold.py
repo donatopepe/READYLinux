@@ -319,7 +319,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         for installed_path in ("${systemd_system_unitdir}/readylinux-console.service", "${sysconfdir}/systemd/system/getty@tty1.service"):
             self.assertIn(installed_path, console)
             self.assertIn(installed_path, console.split("FILES:${PN} +=", 1)[1])
-        self.assertIn("ln -s /dev/null", console)
+        mask_destination = re.search(r"ln -s /dev/null \$\{D\}(\$\{sysconfdir\}/systemd/system/getty@tty1\.service)", console)
+        self.assertIsNotNone(mask_destination)
+        self.assertIn(mask_destination.group(1), console.split("FILES:${PN} +=", 1)[1])
         self.assertIn('SYSTEMD_SERVICE:${PN} = "readylinux-console.service"', console)
 
     def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
