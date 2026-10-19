@@ -54,10 +54,10 @@ class QemuBootHelperTests(unittest.TestCase):
             root_posix = self.fake_shell_path(root)
             bindir = root / "bin"
             bindir.mkdir()
-            image = root / "image.raw"
+            image = root / "base image.raw"
             image_bytes = b"fixture image bytes"
             image.write_bytes(image_bytes)
-            kernel = root / "Image"
+            kernel = root / "kernel Image"
             kernel.write_bytes(b"fixture kernel")
             args_log = root / "qemu-args.txt"
             overlay_log = root / "overlay-path.txt"

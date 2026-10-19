@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 100 test Windows (1 skip `systemd-analyze`) e WSL; compileall/shell/diff pass. QEMU fake controlla overlay materializzato al boot e pulizia.
+- **Verificato localmente**: 101 test Windows (1 skip `systemd-analyze`) e WSL; compileall/shell/diff pass. QEMU fake overlay lifecycle e path con spazi coperti.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: `main` sincronizzato con `origin/main`; overlay lifecycle test pubblicato in `54c2968`. `.pi-loop.json` e `raw` (0 byte) locali/non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `286b76eb1654c7fa3a32a0515894aa08ef64ee28`; QEMU path-with-spaces guard verificato, publish in corso. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; tenere test simulati distinti dalle verifiche hardware/build reali.
