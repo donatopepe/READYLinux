@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 103 Windows tests (1 `systemd-analyze` skip, 1 POSIX FIFO skip) and WSL; artifact verifier rejects Unix FIFO.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `b98084d81e9cebe6e720cad48a5e37593c3d631f`; FIFO artifact-input test verified, publication pending. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `b98084d81e9cebe6e720cad48a5e37593c3d631f`; FIFO artifact-input test published in `6958824`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish helper tests from parse/build/hardware evidence.
