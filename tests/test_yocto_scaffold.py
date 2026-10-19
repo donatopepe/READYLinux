@@ -9,6 +9,16 @@ LAYER = ROOT / "meta-readylinux"
 
 
 class YoctoScaffoldTests(unittest.TestCase):
+    def test_layer_recipe_inventory_is_explicit_and_exact(self):
+        expected = {
+            "recipes-core/images/readylinux-image.bb",
+            "recipes-core/readylinux/readylinux-console_0.1.bb",
+            "recipes-ready/readylinux/readylinux_0.3.bb",
+        }
+        actual = {path.relative_to(LAYER).as_posix() for path in LAYER.rglob("*.bb")}
+        self.assertEqual(actual, expected)
+        self.assertFalse(list(LAYER.rglob("*.bbappend")), "unexpected append files require explicit audit")
+
     def test_repository_ignore_rules_cover_generated_and_sensitive_runtime_files(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
         for pattern in ("__pycache__/", "*.py[cod]", ".pi-loop.json.lock", "*.gguf"):
