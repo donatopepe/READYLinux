@@ -1,12 +1,11 @@
 # Test Results
 
-## 2026-10-18 — Artifact helper baseline
+## 2026-10-18 — Yocto host probe
 
-- Host-probe test stubs every required command and provides an existing BUILDDIR; checks clean completion without claiming BitBake parse.
-- Initial snapshot: `git status --short --branch` showed `main...origin/main` with untracked `.pi-loop.json` and `raw` (0 bytes); `git log -1` = `7b052859821ad357e77aa89b8f580bb78a2dd1e7`.
-- Historical WSL systemd hardening report: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-- Static regression test requires HEAD, baseline and host limits in IT/EN status.
-- Windows/Python 3.11: 104 tests PASS (3 platform-specific skips); WSL Debian 13/Python 3.13: 104 tests PASS.
-- Verifier input audit covers missing/empty files and a non-empty directory bearing an image suffix; the directory is rejected.
-- Commands run: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
-- No BitBake/Yocto parse/build or real QEMU boot.
+- Full suite command: `python -m unittest discover -s tests -v`.
+- Initial snapshot: `git status --short --branch` showed `main...origin/main` and untracked `.pi-loop.json`/`raw`; HEAD `088d7f42bcc37fba1f1d8edca5a68332c757a888`.
+- Historical WSL systemd hardening finding: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- Static test guards snapshot and test-count reporting in both status docs.
+- Windows/Python 3.11: 104 tests PASS (3 skips: `systemd-analyze`, POSIX FIFO, POSIX PATH-stub probe); WSL Debian 13/Python 3.13: 104 tests PASS.
+- Full suites plus `compileall`, `bash -n`, `git diff --check` run on both.
+- Host probe success/failure tested with command stubs; BitBake and QEMU unavailable. No install, fetch or real Yocto build.
