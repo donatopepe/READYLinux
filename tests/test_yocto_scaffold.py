@@ -323,6 +323,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIsNotNone(mask_destination)
         self.assertIn(mask_destination.group(1), console.split("FILES:${PN} +=", 1)[1])
         self.assertIn('SYSTEMD_SERVICE:${PN} = "readylinux-console.service"', console)
+        self.assertEqual(len(re.findall(r"(?m)^\s*ln -s /dev/null \$\{D\}\$\{sysconfdir\}/systemd/system/getty@tty1\.service$", console)), 1)
 
     def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
