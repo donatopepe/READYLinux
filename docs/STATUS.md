@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 114 test Windows/Python 3.11 (8 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. SSH forwarding test QEMU loopback-only con fake tools; guest SSH non verificato.
 - **Non verificato**: BitBake/Yocto parse/build reale, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `4ca49bdd48cbf0ba2f811c2fe1e33d5a951bb855`; `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `4ca49bdd48cbf0ba2f811c2fe1e33d5a951bb855`; opt-in loopback SSH/QEMU change pubblicato in `583cfd3`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando disponibile; distinguere fake-tool validation da guest-SSH/boot.
