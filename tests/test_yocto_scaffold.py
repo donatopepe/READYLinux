@@ -476,11 +476,11 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertRegex(doc, r"(?m)\b96 tests?\b")
+            self.assertRegex(doc, r"(?m)\b97 tests?\b")
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("8e0c5277dae03fdbcfc7d772b24d0689f2be1262", doc)
+            self.assertIn("0d269c5ea2e8802305dce819c4899e631e049579", doc)
             self.assertIn("snapshot", doc.lower())
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
