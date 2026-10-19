@@ -21,7 +21,18 @@ class ImageArtifactVerifierTests(unittest.TestCase):
             directory.mkdir()
             (directory / "not-an-image").write_bytes(b"contents")
             empty.write_bytes(b"")
-            for path in (missing, empty, directory):
+            if hasattr(Path, "is_junction") and os.name == "nt":
+                junction_target = Path(temp) / "directory-target"
+                junction_target.mkdir()
+                junction = Path(temp) / "directory-junction.wic"
+                try:
+                    junction.symlink_to(junction_target, target_is_directory=True)
+                    invalid_paths = (missing, empty, directory, junction)
+                except OSError:
+                    invalid_paths = (missing, empty, directory)
+            else:
+                invalid_paths = (missing, empty, directory)
+            for path in invalid_paths:
                 result = self.run_script(path, "0" * 64)
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("existing non-empty regular file", result.stderr)
