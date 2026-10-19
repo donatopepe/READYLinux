@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 109 test Windows/Python 3.11 (6 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Recipe `file://` inventory/static guard verificato.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `f958f291a97176bc9f8ad8f2286edf61adca77e0`; `.pi-loop.json` e `raw` (0 byte) non tracciati, ZIP ignorati.
+- **Git**: firing-start HEAD `f958f291a97176bc9f8ad8f2286edf61adca77e0`; current snapshot guard published in `10bdc0e`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere test statici da parse/build/runtime.
