@@ -2,7 +2,8 @@
 
 ## 2026-10-18 — Verification-gap audit / SSH forwarding baseline
 
-- Added `docs/VERIFICATION_PLAN.md`, breaking each open status gap into a gated, prerequisite-based path with commands and acceptance evidence. No BitBake/image/guest SSH/GGUF/sandbox evidence claimed or produced here.
+- Read-only `bash scripts/check-yocto-host.sh`: exit 1; Debian 13/trixie x86_64, 20 CPUs; all 19 required host commands found; QEMU+sha256sum found; BitBake/bitbake-layers absent; BUILDDIR unset; no package changes.
+- Added `docs/VERIFICATION_PLAN.md`, breaking open status gaps into gated prerequisites, commands and acceptance evidence. No install, clone, network, parse or build performed.
 - Initial firing snapshot: `git status --short --branch` = `main...origin/main` with untracked `.pi-loop.json` and `raw` (0 bytes); HEAD `b95b50d4e5d6524886ae78adece54500aca99ffb`.
 - Historical WSL hardening check: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 - Historical WSL hardening result: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.

@@ -4,6 +4,16 @@ Purpose: turn open claims in `STATUS.md` into reproducible evidence; never infer
 
 ## Current evidence boundary
 
+### Observed WSL preflight, 2026-10-18
+
+Command: `bash scripts/check-yocto-host.sh`; result exit 1, `Preflight: INCOMPLETE (read-only; no package changes made)`.
+
+- Debian GNU/Linux 13 (trixie), x86_64, 20 CPUs.
+- Required host commands: 19/19 reported `OK` by this probe.
+- Found optional tools: `qemu-system-x86_64`, `sha256sum`; absent: `bitbake`, `bitbake-layers`.
+- `BUILDDIR` unset: source a maintainer-selected release environment on an already provisioned host before Gate A.
+- Do not install/clone BitBake or Poky during this task: repository `AGENTS.md` and current user request prohibit installs/downloads/network. This environment report does not imply metadata parse readiness.
+
 - The automatic suite covers Python behavior, static Yocto metadata/contracts, QEMU argument construction via fake executables, and local artifact checks. It does not prove a Yocto parse, an image build, boot, guest SSH, model inference, sandboxing or performance.
 - `command -v bitbake` is absent; no Poky/OE checkout is present. QEMU binaries were observed on Windows, but there is no READY image/kernel artifact verified for boot. Do not run boot helper against arbitrary host files.
 - Build evidence must be recorded per attempt using `YOCTO_BUILD_EVIDENCE_TEMPLATE.md` and its schema. Never record a success without retained raw command output/artifact digest.

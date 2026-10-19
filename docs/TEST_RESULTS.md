@@ -2,6 +2,7 @@
 
 ## 2026-10-18 — Verification gap audit / SSH forward baseline
 
+- Read-only `bash scripts/check-yocto-host.sh`: exit 1, Debian 13/trixie x86_64, 20 CPUs, 19 required host commands OK, optional QEMU+sha256sum found, BitBake/bitbake-layers absent, BUILDDIR unset; no package changes.
 - Verification plan `docs/VERIFICATION_PLAN.md` decomposes all open status items into gates, prerequisites, commands and pass evidence. No gates were falsely upgraded: no BitBake, image, guest SSH or inference run happened.
 - Snapshot firing iniziale: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; HEAD `b95b50d4e5d6524886ae78adece54500aca99ffb`.
 - Historical WSL hardening check: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.

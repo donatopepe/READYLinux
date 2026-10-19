@@ -10,7 +10,7 @@ Acceptance: real parser/runtime; numbered lines, variables, expressions, conditi
 
 ## M2 — Minimal OS build
 
-Scaffold started: `meta-readylinux` layer metadata, distro config, image recipe, local runtime recipe, systemd tty1 service, and static tests. BitBake parse/build and x86-64 QEMU boot remain unverified. Next acceptance: pin supported Yocto release and machine; validate `bitbake -p`, build image and boot in QEMU on suitable Linux host. No kernel tuning without benchmarks.
+Scaffold started: `meta-readylinux` layer metadata, distro config, image recipe, local runtime recipe, systemd tty1 service, and static tests. BitBake parse/build and x86-64 QEMU boot remain unverified. Observed WSL Debian 13 preflight: 19/19 required host commands OK, QEMU found, but BitBake/bitbake-layers absent and BUILDDIR unset (see [verification plan](VERIFICATION_PLAN.md)). Next acceptance: pin supported Yocto release and machine; validate `bitbake -p`, build image and boot on a provisioned OE host. No kernel tuning without benchmarks.
 
 ## M3 — READY Stable
 

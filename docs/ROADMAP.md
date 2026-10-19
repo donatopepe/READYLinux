@@ -10,7 +10,7 @@ Accettazione: parser/runtime effettivo; numeri di riga, variabili, espressioni, 
 
 ## M2 — Build OS minimo
 
-Scaffolding iniziale `meta-readylinux` aggiunto (layer config, distro, image, runtime recipe, servizio systemd tty1 e test statici). BitBake parse/build e boot QEMU non verificati; host corrente non dispone di BitBake/QEMU. Accettazione restante: pin release/machine, parse, build x86-64 e boot QEMU su Linux. Niente ottimizzazioni kernel senza benchmark.
+Scaffolding iniziale `meta-readylinux` aggiunto (layer config, distro, image, runtime recipe, servizio systemd tty1 e test statici). BitBake parse/build e boot QEMU non verificati. WSL Debian 13 preflight osservato: 19/19 comandi host richiesti OK, QEMU disponibile, ma BitBake/bitbake-layers assenti e BUILDDIR non inizializzato (vedi [verification plan](VERIFICATION_PLAN.md)). Accettazione restante: release/MACHINE pin, parse, build x86-64 e boot QEMU su host OE provisionato. Niente ottimizzazioni kernel senza benchmark.
 
 ## M3 — READY Stable
 
