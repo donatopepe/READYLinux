@@ -1,6 +1,6 @@
 # meta-readylinux
 
-Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete image and does not pin a Yocto release or fetch sources.
+Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete image and does not pin a Yocto release or fetch sources. `LAYERSERIES_COMPAT_readylinux` currently lists candidate series scarthgap, styhead, walnascar, and wrynose; compatibility with these series has not yet been verified by a release-pinned `bitbake -p`.
 
 ## Current contents
 

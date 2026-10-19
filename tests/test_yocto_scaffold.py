@@ -117,6 +117,33 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("exit 1", report.lower())
                 self.assertRegex(report, r"(?m)^- (?:Comandi|Commands):")
 
+    def test_layer_release_compatibility_entries_are_unique_documented_and_not_claimed_verified(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        compatibility = re.search(r"(?m)^LAYERSERIES_COMPAT_readylinux = \"([^\"]+)\"$", layer_conf)
+        self.assertIsNotNone(compatibility)
+        supported = compatibility.group(1).split()
+        self.assertTrue(supported)
+        self.assertEqual(len(supported), len(set(supported)))
+        self.assertNotRegex(compatibility.group(1), r"(?i)(master|latest|main)")
+        compatibility_comment = next(
+            (line for line in layer_conf.splitlines() if "compatibility series" in line.lower()),
+            "",
+        )
+        self.assertTrue(compatibility_comment, "series list needs comment explaining it is an unverified compatibility claim")
+        self.assertTrue("not yet been verified" in compatibility_comment.lower() or "not yet verified" in compatibility_comment.lower())
+
+        readmes = (
+            ((LAYER / "README.md").read_text(encoding="utf-8"), (), ("release-pinned poky/oe-core",)),
+            ((LAYER / "README.en.md").read_text(encoding="utf-8"), (), ("release-pinned poky/oe-core",)),
+        )
+        for readme, mentioned_series, required_phrases in readmes:
+            with self.subTest(readme="English" if not mentioned_series else "Italian"):
+                for phrase in required_phrases:
+                    self.assertIn(phrase, readme.lower())
+                for series in mentioned_series:
+                    self.assertIn(series, readme)
+                self.assertRegex(readme.lower(), r"(?:not tested|not been tested|not verified|non verificat)")
+
     def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
         self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
@@ -622,9 +649,30 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("unittest discover -s tests -v", doc)
                 self.assertIn("bash -n", doc)
                 self.assertIn("QEMU", doc)
+                self.assertIn("bash scripts/check-yocto-host.sh", doc)
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
                 self.assertTrue("preflight" in doc.lower() and "INCOMPLETE" in doc)
-                self.assertIn("e1372e6799214fd26648883acc0416acae9a7c8f", doc)
+                self.assertTrue(
+                    re.search(r"(?m)^- (?:Snapshot firing-start|Firing-start snapshot): .*HEAD `?[0-9a-f]{40}`?", doc)
+                    or re.search(r"(?m)^- Snapshot SHA1 iniziale `git rev-parse HEAD`: `[0-9a-f]{40}`\.$", doc)
+                    or re.search(r"(?m)^- Initial snapshot SHA1 from `git rev-parse HEAD`: `[0-9a-f]{40}`\.$", doc)
+                )
+
+    def test_layer_release_series_claims_are_documented_as_unverified_bilingually(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        compatibility = re.search(r"(?m)^LAYERSERIES_COMPAT_readylinux = \"([^\"]+)\"$", layer_conf)
+        self.assertIsNotNone(compatibility)
+        supported_series = compatibility.group(1).split()
+        self.assertTrue(supported_series)
+        self.assertEqual(len(supported_series), len(set(supported_series)))
+
+        italian = (LAYER / "README.md").read_text(encoding="utf-8")
+        english = (LAYER / "README.en.md").read_text(encoding="utf-8")
+        for doc in (italian, english):
+            with self.subTest(doc="Italian" if doc == italian else "English"):
+                for series in supported_series:
+                    self.assertIn(series, doc)
+                self.assertIn("has not yet been verified", doc.lower())
 
     def test_status_records_current_test_baseline_and_bitbake_limitation(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
@@ -636,8 +684,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
             self.assertTrue("HEAD" in doc or "firing-start" in doc.lower())
-            self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("e1372e6799214fd26648883acc0416acae9a7c8f", doc)
+            self.assertRegex(doc, r"(?m)- \*\*Git\*\*: firing-start HEAD `[0-9a-f]{40}`")
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
