@@ -2,7 +2,8 @@
 
 ## 2026-10-18 — Baseline host-preflight/helper
 
-- New static layer inventory test requires exactly 3 expected `.bb` recipes and no unreviewed `.bbappend` files.
+- Static layer-inventory check ensures exactly the intended recipe set and confirms runtime packages are included in `IMAGE_INSTALL`.
+- Static layer check pins three expected `.bb` recipes, forbids unreviewed `.bbappend` files, and confirms both runtime packages in `IMAGE_INSTALL`.
 - HEAD iniziale: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; `git log -1` = `4ba5fef2746f452a5b5a835c9606121c9815415e`.
 - WSL unit-hardening report storico: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 - Static regression test controlla firing HEAD, test count e limiti BitBake/QEMU nei status IT/EN.

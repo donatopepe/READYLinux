@@ -18,6 +18,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         actual = {path.relative_to(LAYER).as_posix() for path in LAYER.rglob("*.bb")}
         self.assertEqual(actual, expected)
         self.assertFalse(list(LAYER.rglob("*.bbappend")), "unexpected append files require explicit audit")
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        self.assertIn('IMAGE_INSTALL:append = " readylinux readylinux-console"', image)
+        packaged = actual - {"recipes-core/images/readylinux-image.bb"}
+        self.assertEqual(packaged, {
+            "recipes-core/readylinux/readylinux-console_0.1.bb",
+            "recipes-ready/readylinux/readylinux_0.3.bb",
+        })
 
     def test_repository_ignore_rules_cover_generated_and_sensitive_runtime_files(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
@@ -517,13 +524,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
-            self.assertTrue("directory" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "SHA mismatch" in doc)
+            self.assertTrue("directory" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc)
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertTrue("HEAD" in doc or "firing start" in doc.lower() or "all'inizio unità" in doc.lower())
+            self.assertTrue("HEAD" in doc or "firing-start" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("4ba5fef2746f452a5b5a835c9606121c9815415e", doc)
+            self.assertIn("2d0c1726123dfb7c190a68fd4b5f881319185468", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
