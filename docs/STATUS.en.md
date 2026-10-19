@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 102 Windows tests (1 `systemd-analyze` skip) and WSL; compileall/shell/diff pass. SHA-256 mismatch blocks qemu-img/QEMU invocation.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `7b052859821ad357e77aa89b8f580bb78a2dd1e7`; SHA-mismatch gate test committed this firing. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `7b052859821ad357e77aa89b8f580bb78a2dd1e7`; boot digest gate test published in `55c9ad8`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish helper tests from parse/build/hardware evidence.
