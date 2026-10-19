@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 109 test Windows/Python 3.11 (6 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Guida hardware bilingue capacity-based, nessuna ricerca web live.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `e07025bf1b89ca7e6926dae78a0db884100a143f`; `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `e07025bf1b89ca7e6926dae78a0db884100a143f`; hardware-guidance baseline guard in `80b10d5`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere stime da evidenza hardware reale.
