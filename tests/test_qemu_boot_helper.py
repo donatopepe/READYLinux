@@ -41,6 +41,34 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertEqual(bad_hash.returncode, 2)
             self.assertIn("64 hexadecimal", bad_hash.stderr)
 
+    def test_rejects_missing_kernel_cmdline_before_qemu_tools(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "image.raw"
+            image.write_bytes(b"verified image fixture")
+            kernel = root / "kernel"
+            kernel.write_bytes(b"kernel fixture")
+            invocation_log = root / "invoked.log"
+            for name in ("qemu-img", "qemu-system-x86_64"):
+                stub = bindir / name
+                stub.write_text("#!/bin/sh\\ntouch \\\"$INVOCATION_LOG\\\"\\n", encoding="utf-8")
+                stub.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_BIN": self.fake_shell_path(bindir / "qemu-system-x86_64"),
+                "READY_QEMU_IMG": self.fake_shell_path(bindir / "qemu-img"),
+                "READY_QEMU_APPEND": "",
+                "INVOCATION_LOG": self.fake_shell_path(invocation_log),
+            }
+            result = self.run_script(image, hashlib.sha256(image.read_bytes()).hexdigest(), "pc", env=env)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("set READY_QEMU_APPEND", result.stderr)
+        self.assertFalse(invocation_log.exists(), "QEMU tools must not run without explicit kernel cmdline")
+
     def fake_shell_path(self, path):
         if os.name == "nt":
             result = subprocess.run(["bash", "-lc", "cygpath -u \"$1\"", "bash", str(path)], cwd=ROOT, capture_output=True, text=True)
