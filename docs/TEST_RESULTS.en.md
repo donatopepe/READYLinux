@@ -1,11 +1,10 @@
 # Test Results
 
-## 2026-10-18 — Host preflight snapshot baseline
+## 2026-10-18 — Host-preflight/helper baseline
 
-- Initial snapshot: `git status --short --branch` = `main...origin/main` with untracked `.pi-loop.json` and `raw` (0 bytes); HEAD `758d9ddf597d19e258ed00c86570a414347ec6ce`.
-- Historical WSL `systemd-analyze security --offline` finding: MEDIUM/6.7, UMask 0027.
-- Static test requires HEAD, test count and BitBake/QEMU limits in IT/EN status.
-- Status docs and guards were synchronized during this firing; application suite results follow.
+- Initial HEAD: `git status --short --branch` = `main...origin/main` with untracked `.pi-loop.json` and `raw` (0 bytes); `git log -1` = `4ba5fef2746f452a5b5a835c9606121c9815415e`.
+- Historical WSL unit-hardening report: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- Static regression test checks firing HEAD, test count and BitBake/QEMU limits in IT/EN status.
 - Windows/Python 3.11: 105 tests PASS (4 platform-specific skips); WSL Debian 13/Python 3.13: 105 tests PASS.
 - Commands: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
-- Positive and file-BUILDDIR-negative host probe paths tested with stubs; no install, fetch or real BitBake parse/build.
+- Host preflight positive/negative BUILDDIR and static helpers tested with stubs; no installs/fetches or Yocto parse/build.
