@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 101 Windows/Python 3.11 tests (1 `systemd-analyze` skip) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Artifact verifier has local/static coverage.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `8460bab096e72defa1301253dedbaaa8a3f09b08`; `.pi-loop.json` and `raw` (0 bytes) untracked, ZIPs ignored.
+- **Git**: firing-start HEAD `8460bab096e72defa1301253dedbaaa8a3f09b08`; artifact verifier prerequisite test in `652bb55`. `.pi-loop.json` and `raw` (0 bytes) untracked, ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish local helper tests from real builds.
