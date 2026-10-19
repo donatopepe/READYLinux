@@ -17,8 +17,11 @@ class ImageArtifactVerifierTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             missing = Path(temp) / "missing.wic"
             empty = Path(temp) / "empty.wic"
+            directory = Path(temp) / "directory.wic"
+            directory.mkdir()
+            (directory / "not-an-image").write_bytes(b"contents")
             empty.write_bytes(b"")
-            for path in (missing, empty):
+            for path in (missing, empty, directory):
                 result = self.run_script(path, "0" * 64)
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("existing non-empty regular file", result.stderr)
@@ -29,6 +32,7 @@ class ImageArtifactVerifierTests(unittest.TestCase):
             pipe = Path(temp) / "image-pipe.wic"
             os.mkfifo(pipe)
             self.assertTrue(pipe.is_fifo())
+            self.assertFalse(pipe.is_file())
             result = self.run_script(pipe, "0" * 64)
             self.assertEqual(result.returncode, 2)
             self.assertIn("existing non-empty regular file", result.stderr)
