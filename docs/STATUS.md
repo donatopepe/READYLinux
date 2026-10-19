@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: preflight Yocto con BUILDDIR contenente spazi gestito su WSL; regression test PASS, Windows skip platform-specific. Suite completa da rieseguire.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `c71d630a4a651dd8acb7ec6821a06e66c12f7c11`; recipe-source baseline guard pubblicato in `93d610d`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `c71d630a4a651dd8acb7ec6821a06e66c12f7c11`; BUILDDIR-spaces regression in `cb7645d`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere static check da build/boot reali.
