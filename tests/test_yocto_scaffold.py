@@ -26,6 +26,27 @@ class YoctoScaffoldTests(unittest.TestCase):
             "recipes-ready/readylinux/readylinux_0.3.bb",
         })
 
+    def test_layer_recipes_declare_shared_mit_license_and_runtime_dependencies(self):
+        recipes = {
+            path.relative_to(LAYER).as_posix(): path.read_text(encoding="utf-8")
+            for path in LAYER.rglob("*.bb")
+            if path.name != "readylinux-image.bb"
+        }
+        expected_recipe_paths = {
+            "recipes-core/readylinux/readylinux-console_0.1.bb",
+            "recipes-ready/readylinux/readylinux_0.3.bb",
+        }
+        self.assertEqual(set(recipes), expected_recipe_paths)
+        expected_license_checksum = 'LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"'
+        for name, recipe in recipes.items():
+            with self.subTest(recipe=name):
+                self.assertIn('LICENSE = "MIT"', recipe)
+                self.assertIn(expected_license_checksum, recipe)
+                self.assertIn("RDEPENDS:${PN}", recipe)
+        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', recipes["recipes-core/readylinux/readylinux-console_0.1.bb"])
+        for dependency in ("python3-core", "python3-json", "python3-netclient"):
+            self.assertIn(dependency, recipes["recipes-ready/readylinux/readylinux_0.3.bb"])
+
     def test_repository_ignore_rules_cover_generated_and_sensitive_runtime_files(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
         for pattern in ("__pycache__/", "*.py[cod]", ".pi-loop.json.lock", "*.gguf"):
@@ -524,13 +545,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
-            self.assertTrue("gcc" in doc or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc)
+            self.assertTrue("MIT/checksum" in doc or "license/checksum" in doc or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower())
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
             self.assertTrue("HEAD" in doc or "firing-start" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("6bcfb1c5c3d146156d070ee3adcbd2d8f8df92c2", doc)
+            self.assertIn("2d0c1726123dfb7c190a68fd4b5f881319185468", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
