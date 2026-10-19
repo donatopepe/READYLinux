@@ -6,8 +6,8 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 
 - **Release**: READY Linux 0.3 application prototype.
 - **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened tty1 service; host preflight, BitBake, systemd, artifact checksum, isolated QEMU COW boot helpers.
-- **Locally verified**: 109 Windows/Python 3.11 tests (6 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. README/docs hardware guidance is capacity-based estimate, not verified purchase or benchmark advice.
+- **Locally verified**: 109 Windows/Python 3.11 tests (6 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Hardware guide is a capacity estimate, not verified benchmark/purchase advice.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `5ef5181285cb64446d660452c89538f8aa82e462`; bilingual hardware docs/test guard published in `97d69e9`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
-- **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish hardware estimates from benchmark evidence.
+- **Git**: firing-start HEAD `1aaa8c5b882ae04e3d1f70c1be32731b47191e25`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish static checks from build/runtime evidence.
