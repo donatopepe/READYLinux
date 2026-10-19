@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: recipe/source `file://` static guard PASS Windows/WSL; suite completa da rieseguire. Nessun parse BitBake reale.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `e07025bf1b89ca7e6926dae78a0db884100a143f`; hardware-guidance baseline guard in `80b10d5`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `e07025bf1b89ca7e6926dae78a0db884100a143f`; recipe-source inventory guard in `3e945ae`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere stime da evidenza hardware reale.
