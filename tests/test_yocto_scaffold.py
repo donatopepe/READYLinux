@@ -630,7 +630,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("INCOMPLETE", doc)
                 self.assertIn("BUILDDIR", doc)
                 self.assertIn("bitbake-layers", doc)
-                self.assertTrue("nessuna modifica" in doc.lower() if doc == italian else "no package changes" in doc.lower())
+                self.assertTrue("read-only" in doc.lower() or "sola lettura" in doc.lower())
                 self.assertRegex(doc, r"(?i)(?:exit 1.*INCOMPLETE|INCOMPLETE.*exit 1)")
 
     def test_layer_docs_define_reproducibility_evidence(self):
@@ -651,11 +651,10 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("QEMU", doc)
                 self.assertIn("bash scripts/check-yocto-host.sh", doc)
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
-                self.assertTrue("preflight" in doc.lower() and "INCOMPLETE" in doc)
+                self.assertTrue(("preflight" in doc.lower() or "probe" in doc.lower()) and "INCOMPLETE" in doc)
                 self.assertTrue(
-                    re.search(r"(?m)^- (?:Snapshot firing-start|Firing-start snapshot): .*HEAD `?[0-9a-f]{40}`?", doc)
-                    or re.search(r"(?m)^- Snapshot SHA1 iniziale `git rev-parse HEAD`: `[0-9a-f]{40}`\.$", doc)
-                    or re.search(r"(?m)^- Initial snapshot SHA1 from `git rev-parse HEAD`: `[0-9a-f]{40}`\.$", doc)
+                    re.search(r"(?m)^- Snapshot iniziale confermato via `git rev-parse HEAD`: `[0-9a-f]{40}`;", doc)
+                    or re.search(r"(?m)^- Initial snapshot verified by `git rev-parse HEAD`: `[0-9a-f]{40}`;.*`git status --short --branch`", doc)
                 )
 
     def test_layer_release_series_claims_are_documented_as_unverified_bilingually(self):
