@@ -1,13 +1,11 @@
 # Test Results
 
-## 2026-10-18 — Firing baseline and documentation verification
+## 2026-10-18 — QEMU helper firing baseline
 
-- New QEMU COW failure-path test verifies nonzero QEMU exit propagates and temporary overlay is cleaned up.
-- Full suite rerun after this addition is reported below.
-- Verified initial snapshot: `git status --short --branch` was `main...origin/main` plus untracked `.pi-loop.json`; HEAD `23a77ce153a5bfcd347a394c26273d7a3dd4d8b3`.
-- Complete Windows/Python 3.11 and WSL Debian 13/Python 3.13 suites: 100 tests PASS (1 systemd-analyze skip); compileall/shell syntax/diff-check PASS.
-- Historical WSL `systemd-analyze security --offline`: MEDIUM/6.7, UMask 0027.
-- Static test checks snapshot, test count, and BitBake/QEMU limitations in IT/EN status.
-- Windows/Python 3.11 suite: 100 tests PASS (1 `systemd-analyze` skip); WSL Debian 13/Python 3.13 suite: 100 tests PASS.
-- Commands: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
-- No Yocto build/BitBake parse or real QEMU boot performed.
+- Full-suite command: `python -m unittest discover -s tests -v`.
+- Verified initial HEAD: `git status --short --branch` = `main...origin/main` plus untracked `.pi-loop.json`; `git log -1` = `1a4a348cf180e5c43d3d07eae6071ea23b6e364f`.
+- Historical WSL systemd security report: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- New test simulates QEMU exit 23: helper propagates the exit code, removes temporary overlay and preserves the base image.
+- Windows/Python 3.11: 100 tests PASS (1 `systemd-analyze` skip); WSL Debian 13/Python 3.13: 100 tests PASS.
+- `compileall`, `bash -n` and `git diff --check` PASS on both.
+- BitBake/Yocto metadata parse/build not performed; no real QEMU boot.
