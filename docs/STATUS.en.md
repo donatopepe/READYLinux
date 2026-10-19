@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 111 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. QEMU cmdline fail-before-tools test uses fakes only.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `8e838f6eb2420c16ca26f06e970850bbbb616f23`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `8e838f6eb2420c16ca26f06e970850bbbb616f23`; QEMU firing baseline guard in `302e67b`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when available; distinguish fake tools from real parse/build/boot.
