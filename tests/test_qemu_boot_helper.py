@@ -94,6 +94,36 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertIn("-monitor\nnone", qemu_args)
             self.assertIn("qcow2", qemu_args)
 
+    def test_rejects_sha256_mismatch_before_invoking_qemu_tools(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "image.raw"
+            image.write_bytes(b"trusted image bytes")
+            kernel = root / "Image"
+            kernel.write_bytes(b"kernel fixture")
+            invocation_log = root / "invoked.log"
+            qemu_img = bindir / "qemu-img"
+            qemu_img.write_text("#!/bin/sh\\ntouch \\\"$INVOCATION_LOG\\\"\\n", encoding="utf-8")
+            qemu = bindir / "qemu-system-x86_64"
+            qemu.write_text("#!/bin/sh\\ntouch \\\"$INVOCATION_LOG\\\"\\n", encoding="utf-8")
+            qemu_img.chmod(0o755)
+            qemu.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_BIN": self.fake_shell_path(qemu),
+                "READY_QEMU_IMG": self.fake_shell_path(qemu_img),
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0",
+                "INVOCATION_LOG": self.fake_shell_path(invocation_log),
+            }
+            result = self.run_script(image, "0" * 64, "pc", env=env)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("SHA-256 mismatch", result.stderr)
+            self.assertFalse(invocation_log.exists(), "qemu-img/qemu must not run for an unverified image")
+
     def test_qemu_nonzero_exit_propagates_and_cleans_temporary_overlay(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
