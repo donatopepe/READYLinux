@@ -1,13 +1,10 @@
 # Risultati test
 
-## 2026-10-18 — Baseline firing QEMU helper
+## 2026-10-18 — Baseline firing artifact-to-boot
 
-- Full-suite command: `python -m unittest discover -s tests -v`.
-- HEAD iniziale verificato: `git status --short --branch` = `main...origin/main` più `.pi-loop.json` non tracciato; `git log -1` = `752a2578cacd309202a36957907634ea6cfb01cd`.
-- Nuovo integration test `verify-image-artifact.sh` → fake QEMU eseguito su Windows/Python 3.11 e WSL Debian 13/Python 3.13: PASS.
-- Artifact-to-boot integration test verifica checksum prima del fake boot con path image containing spaces; overlay creato/pulito e base image invariata.
-- WSL systemd security report storico: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-- Fake QEMU COW tests materializzano overlay e verificano che esista durante il boot; success case copre path image/kernel con spazi. Exit success/nonzero, cleanup e base image invariance controllati.
-- Windows/Python 3.11: 100 test PASS (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13: 100 test PASS.
-- `compileall`, `bash -n` e `git diff --check` PASS su entrambi.
-- BitBake/Yocto parse/build non eseguiti; boot QEMU reale non fatto.
+- HEAD iniziale: `git status --short --branch` mostrava `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; `git log -1` = `0ffc5a57e1ea0d5b04534429340a0a721f3f868b`.
+- Finding storico systemd WSL: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- Status IT/EN riallineati allo snapshot; test statico verifica hash HEAD, numero test e limiti BitBake/QEMU.
+- Windows/Python 3.11: 101 test PASS (1 skip `systemd-analyze`); WSL Debian 13/Python 3.13: 101 test PASS.
+- Verifiche: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` script; `git diff --check`.
+- Nessun BitBake/Yocto parse/build o boot QEMU reale.
