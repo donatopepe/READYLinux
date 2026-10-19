@@ -1,11 +1,10 @@
 # Test Results
 
-## 2026-10-18 — Firing baseline and static audit
+## 2026-10-18 — Verified baseline at firing start
 
-- Full-suite command: `python -m unittest discover -s tests -v`.
-- Initial HEAD: `git status --short --branch` = `main...origin/main` plus untracked `.pi-loop.json`; `git log -1` = `81298d7dc97c40ab96ac39725d9a0b720b086320`.
-- IT/EN status refreshed to this snapshot; static test guards hash, baseline and host limitations.
+- Start snapshot: `git status --short --branch` showed `main...origin/main` plus untracked `.pi-loop.json`; HEAD `d9c8f9ab6d9832741a38c29f34dac2a3e2d80318`.
+- WSL systemd hardening observation: `systemd-analyze security --offline`, MEDIUM/6.7, residual UMask 0027.
+- Static test verifies IT/EN status records snapshot, baseline and BitBake/QEMU limitations.
 - Windows/Python 3.11: 98 tests PASS (1 `systemd-analyze` skip); WSL Debian 13/Python 3.13: 98 tests PASS.
-- Commands: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `bash -n` scripts; `git diff --check` pass on both.
-- Historical WSL systemd security measurement: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-- No real BitBake/Yocto parse/build or QEMU boot; BitBake and a release-pinned checkout are absent.
+- Commands run: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` install/validation scripts; `git diff --check`.
+- No BitBake/Yocto parse/build, package QA, or real QEMU boot.
