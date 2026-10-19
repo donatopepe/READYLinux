@@ -312,6 +312,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("AUTOREV", runtime + service)
         self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
 
+    def test_runtime_recipe_launcher_matches_packaged_entrypoint_path(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        launcher = re.search(r"(?ms)^\s*cat > \$\{D\}\$\{bindir\}/readylinux <<'EOF'\n(.*?)\nEOF$", recipe)
+        self.assertIsNotNone(launcher)
+        exec_start = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        service_command = re.search(r"(?m)^ExecStart=(\S+)(?:\s|$)", exec_start)
+        self.assertIsNotNone(service_command)
+        self.assertEqual(service_command.group(1), "/usr/bin/readylinux")
+        self.assertIn("exec python3 /usr/share/readylinux/readylinux.py \"$@\"", launcher.group(1))
+        self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
+
     def test_runtime_recipe_copies_each_declared_local_source_to_packaged_destination(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         src_uri = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', recipe)
