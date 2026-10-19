@@ -78,6 +78,20 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("RDEPENDS:${PN}", recipes[0].read_text(encoding="utf-8"))
         self.assertIn("FILESEXTRAPATHS:prepend", recipes[1].read_text(encoding="utf-8"))
 
+    def test_image_recipe_installs_only_declared_runtime_packages(self):
+        runtime_recipe = LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"
+        console_recipe = LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb"
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+
+        image_install = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^"]+)"', image)
+        self.assertIsNotNone(image_install)
+        image_packages = set(image_install.group(1).split())
+        runtime_package = runtime_recipe.name.split("_", 1)[0]
+        console_package = console_recipe.name.split("_", 1)[0]
+        declared_packages = {runtime_package, console_package}
+        self.assertEqual(image_packages, declared_packages)
+        self.assertEqual(len(image_install.group(1).split()), len(image_packages))
+
     def test_image_extends_core_minimal_and_installs_runtime(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
@@ -538,6 +552,20 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("parse", headings[1])
             self.assertEqual(headings[-1], sections[-1])
 
+    def test_layer_recipe_file_sources_resolve_for_runtime_recipe_and_console_recipe(self):
+        runtime_recipe = LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"
+        console_recipe = LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb"
+
+        runtime_sources = (runtime_recipe.parent / "../../../").resolve()
+        console_sources = (console_recipe.parent / "..").resolve()
+
+        self.assertEqual(runtime_sources, ROOT.resolve())
+        self.assertEqual(console_sources, (LAYER / "recipes-core").resolve())
+        for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
+            self.assertTrue((runtime_sources / source).is_file(), source)
+        console_file_search_roots = (console_sources / "readylinux", console_sources)
+        self.assertTrue(any((base / "readylinux-console.service").is_file() for base in console_file_search_roots))
+
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
         english = (LAYER / "README.en.md").read_text(encoding="utf-8")
@@ -556,7 +584,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("QEMU", doc)
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
                 self.assertTrue("preflight" in doc.lower() and "INCOMPLETE" in doc)
-                self.assertIn("665bd248b024a99aa064182bd925142e9387e41b", doc)
+                self.assertIn("a2b2036c63f4b8d848bd9ff80885d08cc31aaffa", doc)
 
     def test_status_records_current_test_baseline_and_bitbake_limitation(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
@@ -569,7 +597,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(".pi-loop.json", doc)
             self.assertTrue("HEAD" in doc or "firing-start" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("665bd248b024a99aa064182bd925142e9387e41b", doc)
+            self.assertIn("a2b2036c63f4b8d848bd9ff80885d08cc31aaffa", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
