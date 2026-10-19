@@ -84,6 +84,32 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("BUILDDIR: unset", result.stdout)
         self.assertIn("Preflight: INCOMPLETE", result.stdout)
 
+    @unittest.skipIf(os.name == "nt", "Unix environment semantics required")
+    def test_marks_absent_required_tool_even_with_valid_builddir_incomplete(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fakebin = root / "bin"
+            fakebin.mkdir()
+            builddir = root / "build"
+            builddir.mkdir()
+            for name in ("bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio", "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip", "wget", "xz", "zstd", "uname", "getconf"):
+                stub = fakebin / name
+                stub.write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
+                stub.chmod(0o755)
+            (fakebin / "gcc").unlink()
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            result = subprocess.run(
+                [bash_path, str(SCRIPT)],
+                cwd=ROOT,
+                env={"PATH": str(fakebin), "BUILDDIR": str(builddir)},
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("MISSING gcc", result.stdout)
+        self.assertIn(f"BUILDDIR: {builddir}", result.stdout)
+        self.assertIn("Preflight: INCOMPLETE", result.stdout)
+
     def test_rejects_invalid_builddir_path(self):
         result = subprocess.run(
             ["bash", str(SCRIPT)],
