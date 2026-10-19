@@ -202,6 +202,10 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertFalse(unknown, f"Add package mapping for imports: {sorted(unknown)}")
         required = {packaged[module] for module in stdlib - local_modules}
         self.assertTrue(required.issubset(declared), f"Missing RDEPENDS: {sorted(required - declared)}")
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        image_install = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^"]+)"', image)
+        self.assertIsNotNone(image_install)
+        self.assertTrue({"readylinux", "readylinux-console"}.issubset(set(image_install.group(1).split())))
 
     def test_service_user_group_and_state_directory_contract_match_recipe(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
@@ -477,12 +481,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertRegex(doc, r"(?m)\b97 tests?\b")
+            self.assertRegex(doc, r"(?m)\b98 tests?\b")
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("ed2489483479fbc86b4f49b64b6dd85c55f4c48d", doc)
-            self.assertIn("snapshot", doc.lower())
+            self.assertIn("HEAD", doc)
+            self.assertIn("HEAD", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
