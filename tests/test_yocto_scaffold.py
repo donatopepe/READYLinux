@@ -312,6 +312,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("AUTOREV", runtime + service)
         self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
 
+    def test_runtime_recipe_is_allarch_and_declares_no_model_or_network_payload(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        self.assertRegex(recipe, r"(?m)^inherit\s+allarch\s*$")
+        src_uri = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', recipe)
+        self.assertIsNotNone(src_uri)
+        self.assertNotRegex(src_uri.group(1), r"(?i)(?:https?://|git://|\b(?:gguf|safetensors|llama-server)\b)")
+        for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
+            self.assertIn(f"file://{source}", src_uri.group(1))
+        self.assertIn('RDEPENDS:${PN} += "python3-core python3-difflib python3-crypt python3-json python3-misc python3-netclient python3-shell"', recipe)
+
     def test_runtime_recipe_launcher_matches_packaged_entrypoint_path(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         launcher = re.search(r"(?ms)^\s*cat > \$\{D\}\$\{bindir\}/readylinux <<'EOF'\n(.*?)\nEOF$", recipe)
