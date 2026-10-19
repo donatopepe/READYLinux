@@ -555,6 +555,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("bash -n", doc)
                 self.assertIn("QEMU", doc)
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
+                self.assertIn("WSL read-only host probe", doc)
                 self.assertIn("52901d3c5d1aba4a0b01707052bb95b3d6c10f99", doc)
 
     def test_status_records_current_test_baseline_and_bitbake_limitation(self):
