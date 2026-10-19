@@ -143,6 +143,7 @@ class YoctoHostCheckTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 1)
         self.assertIn("BUILDDIR: unset", result.stdout)
+        self.assertIn("Preflight: INCOMPLETE", result.stdout)
 
 
 if __name__ == "__main__":
