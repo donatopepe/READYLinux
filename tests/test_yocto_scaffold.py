@@ -469,7 +469,8 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("firing", doc.lower())
+            self.assertIn("704a563c7d7a8252e2205304222e7ce0c0dd7384", doc)
+            self.assertIn("28f5bba753f44fe58ae5063eb93f06f470bec5bd", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
