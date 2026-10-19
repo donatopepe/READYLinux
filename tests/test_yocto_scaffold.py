@@ -664,10 +664,23 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("bash scripts/check-yocto-host.sh", doc)
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
                 self.assertTrue(("preflight" in doc.lower() or "probe" in doc.lower()) and "INCOMPLETE" in doc)
-                self.assertTrue(
-                    re.search(r"(?m)^- Snapshot iniziale confermato via `git rev-parse HEAD`: `[0-9a-f]{40}`;", doc)
-                    or re.search(r"(?m)^- Initial snapshot verified by `git rev-parse HEAD`: `[0-9a-f]{40}`;.*`git status --short --branch`", doc)
+                snapshot = re.search(
+                    r"(?m)^- (?:Snapshot iniziale confermato via|Initial snapshot verified by) `git rev-parse HEAD`: `([0-9a-f]{40})`",
+                    doc,
                 )
+                self.assertIsNotNone(snapshot, f"missing firing-start HEAD snapshot in {'Italian' if doc == italian else 'English'} results")
+                self.assertIn("git status --short --branch", doc)
+
+        statuses = (
+            (ROOT / "docs/STATUS.md").read_text(encoding="utf-8"),
+            (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8"),
+        )
+        reported_heads = []
+        for status in statuses:
+            match = re.search(r"(?m)^- \*\*Git\*\*: firing-start HEAD `([0-9a-f]{40})`", status)
+            self.assertIsNotNone(match, "status must record firing-start HEAD")
+            reported_heads.append(match.group(1))
+        self.assertEqual(len(set(reported_heads)), 1, "Italian and English status firing HEADs diverge")
 
     def test_layer_release_series_claims_are_documented_as_unverified_bilingually(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
