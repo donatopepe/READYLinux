@@ -1,4 +1,5 @@
 import hashlib
+import os
 import subprocess
 import tempfile
 import unittest
@@ -21,6 +22,15 @@ class ImageArtifactVerifierTests(unittest.TestCase):
                 result = self.run_script(path, "0" * 64)
                 self.assertEqual(result.returncode, 2)
                 self.assertIn("existing non-empty regular file", result.stderr)
+
+    @unittest.skipIf(os.name == "nt", "FIFO creation requires Unix")
+    def test_rejects_named_pipe_image_without_reading_it(self):
+        with tempfile.TemporaryDirectory() as temp:
+            pipe = Path(temp) / "image-pipe.wic"
+            os.mkfifo(pipe)
+            result = self.run_script(pipe, "0" * 64)
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("existing non-empty regular file", result.stderr)
 
     def test_rejects_malformed_expected_digest(self):
         with tempfile.TemporaryDirectory() as temp:
