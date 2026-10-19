@@ -6,8 +6,8 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 
 - **Release**: READY Linux 0.3 application prototype.
 - **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened tty1 service; host preflight, BitBake, systemd, artifact checksum, isolated QEMU COW boot helpers.
-- **Locally verified**: 110 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Yocto validator with a space-containing BUILDDIR tested using fake BitBake on WSL.
+- **Locally verified**: 110 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Yocto validator accepts BUILDDIR containing spaces with fake BitBake on WSL.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `d5bb2bab37fdcc99d364d1fc4eed9ce67e928da2`; path-space baseline updated in `0b9cfc9`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
-- **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish real parse from stubbed checks.
+- **Git**: firing-start HEAD `1ab9e0ce3dbec67cb9b7a201f254e55c5945cbec`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish fake BitBake checks from real parse.
