@@ -104,6 +104,19 @@ class YoctoScaffoldTests(unittest.TestCase):
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
 
+    def test_host_preflight_report_is_part_of_historical_firing_evidence(self):
+        italian = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
+        for report in (italian, english):
+            with self.subTest(report=report):
+                self.assertIn("check-yocto-host.sh", report)
+                self.assertIn("INCOMPLETE", report)
+                self.assertIn("19/19", report)
+                self.assertIn("bitbake-layers", report)
+                self.assertIn("BUILDDIR", report)
+                self.assertIn("exit 1", report.lower())
+                self.assertRegex(report, r"(?m)^- (?:Comandi|Commands):")
+
     def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
         self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
