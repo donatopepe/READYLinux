@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: recipe/source `file://` static guard PASS Windows/WSL; suite completa da rieseguire. Nessun parse BitBake reale.
+- **Verificato localmente**: 109 test Windows/Python 3.11 (6 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Recipe `file://` inventory/static guard verificato.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `e07025bf1b89ca7e6926dae78a0db884100a143f`; recipe-source inventory guard in `3e945ae`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
-- **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere stime da evidenza hardware reale.
+- **Git**: firing-start HEAD `f958f291a97176bc9f8ad8f2286edf61adca77e0`; `.pi-loop.json` e `raw` (0 byte) non tracciati, ZIP ignorati.
+- **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere test statici da parse/build/runtime.
