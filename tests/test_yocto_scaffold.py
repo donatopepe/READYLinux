@@ -9,6 +9,20 @@ LAYER = ROOT / "meta-readylinux"
 
 
 class YoctoScaffoldTests(unittest.TestCase):
+    def test_image_installs_console_package_that_owns_tty1_getty_mask(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        console = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        image_install = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^"]+)"', image)
+        self.assertIsNotNone(image_install)
+        image_packages = set(image_install.group(1).split())
+
+        mask_install = re.search(r"(?m)^\s*ln -s /dev/null \$\{D\}(\$\{sysconfdir\}/systemd/system/getty@tty1\.service)\s*$", console)
+        self.assertIsNotNone(mask_install, "console recipe must install the tty1 getty mask")
+        self.assertIn('SYSTEMD_SERVICE:${PN} = "readylinux-console.service"', console)
+        self.assertEqual(image_packages, {"readylinux", "readylinux-console"})
+        self.assertIn("readylinux-console", image_packages)
+        self.assertIn(mask_install.group(1), console.split("FILES:${PN} +=", 1)[1])
+
     def test_layer_recipe_inventory_is_explicit_and_exact(self):
         expected = {
             "recipes-core/images/readylinux-image.bb",
