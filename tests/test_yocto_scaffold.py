@@ -144,6 +144,22 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertTrue((source_root / source).is_file(), source)
         self.assertNotRegex(recipe, r"(?i)(?:gguf|safetensors|llama-server|https?://)")
 
+    def test_license_checksum_is_consistent_across_local_recipes(self):
+        recipes = (
+            LAYER / "recipes-ready/readylinux/readylinux_0.3.bb",
+            LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb",
+        )
+        checksum_pattern = r'LIC_FILES_CHKSUM\s*=\s*"file://\$\{COMMON_LICENSE_DIR\}/MIT;md5=([0-9a-f]{32})"'
+        checksums = []
+        for recipe_path in recipes:
+            recipe = recipe_path.read_text(encoding="utf-8")
+            self.assertIn('LICENSE = "MIT"', recipe)
+            match = re.search(checksum_pattern, recipe)
+            self.assertIsNotNone(match, recipe_path.name)
+            checksums.append(match.group(1))
+        self.assertEqual(len(set(checksums)), 1)
+        self.assertEqual(checksums[0], "0835ade698e0bcf8506ecda2f7b4f302")
+
     def test_recipes_declare_license_provenance_and_runtime_dependencies(self):
         runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         service = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
@@ -485,8 +501,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("HEAD", doc)
-            self.assertIn("HEAD", doc)
+            self.assertIn("firing-start", doc.lower())
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
