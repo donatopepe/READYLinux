@@ -1,12 +1,11 @@
 # Test Results
 
-## 2026-10-18 — Static layer and preflight evidence checks
+## 2026-10-18 — Offline Yocto contracts and regression suite
 
-- Historical WSL unit-security observation: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-
-- Layer metadata regression checks collection/pattern/priority and unique candidate compatibility series; bilingual README states these have no release-pinned parse evidence.
-- Static preflight-evidence regression checks the firing reports' probe result; recipe/package tests cover getty-mask symlink ownership and `FILES` inclusion, plus image installation of the console package that owns it.
-- Targeted tests PASS; full suite 123 PASS (8 platform-specific skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+- Historical WSL systemd-security result: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- Static contracts cover layer metadata and explicitly unverified compatibility candidates; local recipe sources, package closure and launcher-to-service `ExecStart`; getty-mask symlink ownership/image inclusion; READY home, persistent StateDirectory and UMask; plus preflight evidence.
+- Relevant regressions pass; full suite: 124 tests PASS (8 platform-specific skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+- No BitBake metadata parse, image build or QEMU boot: BitBake/OE checkout and `BUILDDIR` are absent; no install/download performed.
 
 ## 2026-10-18 — Firing-start snapshot and host probe
 
