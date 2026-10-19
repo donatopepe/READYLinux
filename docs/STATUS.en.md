@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 117 Windows/Python 3.11 tests (8 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Offline tests check local recipe sources and image package closure; BitBake/BUILDDIR absent.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, guest SSH, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: WSL Debian 13/trixie x86_64, 20 CPUs; preflight `INCOMPLETE`; no checkout/fetch/install.
-- **Git**: firing-start HEAD `c4f4129d76f00c42214edcef632a3e417bfea1f1`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `c4f4129d76f00c42214edcef632a3e417bfea1f1`; closure/baseline regression in `4f33418`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: Gate A parse on an already provisioned release-pinned OE host; capture actual evidence per `docs/VERIFICATION_PLAN.md`.
