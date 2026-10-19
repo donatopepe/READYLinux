@@ -1,16 +1,14 @@
 # Risultati test
 
-## 2026-10-18 — Offline Yocto source/package closure test
+## 2026-10-18 — Test statico offline ricette Yocto
 
-- Added a static closure test requiring local `file://` sources to resolve at documented recipe search roots and image `IMAGE_INSTALL` to equal declared runtime recipe packages. This catches missing source files and package-name drift without BitBake/downloads.
-- Targeted test on Windows and WSL passed; full suite result follows below.
+- Storico WSL `systemd-analyze security --offline`: MEDIUM/6.7, UMask 0027.
+- Il test statico risolve le fonti `file://` della recipe runtime nella root del repository e verifica i percorsi `FILESEXTRAPATHS` della recipe console. Richiede inoltre che `IMAGE_INSTALL` coincida esattamente con i package runtime e console dichiarati, rilevando fonti mancanti e drift dei nomi senza BitBake o download.
+- Test mirato PASS su Windows e WSL; suite completa: 117 test PASS (8 skip platform-specific) su entrambi.
 
-## 2026-10-18 — Snapshot preflight WSL
+## 2026-10-18 — Snapshot iniziale preflight host
 
-- Snapshot firing-start: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; HEAD `a2b2036c63f4b8d848bd9ff80885d08cc31aaffa`.
-- Historical WSL unit review: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
-- Probe WSL host preflight read-only: exit 1 `INCOMPLETE`; 19/19 comandi richiesti presenti; BitBake/bitbake-layers e BUILDDIR assenti; nessuna modifica pacchetti.
-- Test statico status protegge firing HEAD, suite count e limiti BitBake/QEMU.
-- Windows/Python 3.11: 117 test PASS (8 skip platform-specific); WSL Debian 13/Python 3.13: 117 test PASS.
-- Comandi: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
-- Nessun fetch/install, Yocto parse/build, image build o QEMU boot reale.
+- `git status --short --branch` iniziale: `main...origin/main`; `.pi-loop.json` e `raw` (0 byte) non tracciati; HEAD `9c1211592da48bd8f43e87a7d4cff1565a87abe6`.
+- WSL `bash scripts/check-yocto-host.sh`: exit 1 `INCOMPLETE`; 19/19 comandi richiesti presenti; BitBake/bitbake-layers e BUILDDIR assenti; nessuna modifica pacchetti.
+- Comandi: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n install.sh setup-ai-cpu.sh scripts/validate-yocto-env.sh scripts/validate-systemd-unit.sh scripts/verify-image-artifact.sh scripts/check-yocto-host.sh scripts/boot-image-qemu.sh`; `git diff --check`.
+- Nessun parse/build Yocto, build immagine o boot QEMU reale.
