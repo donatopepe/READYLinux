@@ -38,6 +38,34 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("BUILDDIR: unset", result.stdout)
         self.assertIn("no package changes made", result.stdout)
 
+    @unittest.skipIf(os.name == "nt", "PATH executable stubs require Unix")
+    def test_reports_complete_when_required_commands_and_builddir_exist(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fakebin = root / "bin"
+            fakebin.mkdir()
+            builddir = root / "build"
+            builddir.mkdir()
+            for name in (
+                "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
+                "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
+                "wget", "xz", "zstd", "uname", "getconf",
+            ):
+                stub = fakebin / name
+                stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+                stub.chmod(0o755)
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            result = subprocess.run(
+                [bash_path, str(SCRIPT)],
+                cwd=ROOT,
+                env={"PATH": str(fakebin), "BUILDDIR": str(builddir)},
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Preflight: required Debian host commands and BUILDDIR found", result.stdout)
+        self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
+
     def test_rejects_invalid_builddir_path(self):
         result = subprocess.run(
             ["bash", str(SCRIPT)],
