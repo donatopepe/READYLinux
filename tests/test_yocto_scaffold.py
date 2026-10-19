@@ -99,6 +99,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(installed), len(set(installed)), "IMAGE_INSTALL contains duplicate package entries")
         self.assertEqual(set(installed), package_names)
 
+    def test_src_uri_local_source_extraction_ignores_non_local_tokens(self):
+        samples = {
+            'SRC_URI = "file://alpha.py file://dir/beta.patch https://example.invalid/file.tar.gz"': ["alpha.py", "dir/beta.patch"],
+            'SRC_URI = "\\\n file://one\\\n file://two\\\n"': ["one", "two"],
+            'SRC_URI = "https://example.invalid/source.tar.gz"': [],
+        }
+        for assignment, expected in samples.items():
+            match = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', assignment)
+            extracted = re.findall(r"file://([^\s\\]+)", match.group(1)) if match else []
+            self.assertEqual(extracted, expected, assignment)
+
     def test_all_recipe_file_uri_sources_resolve_inside_repository(self):
         for recipe_path in sorted(LAYER.rglob("*.bb")):
             recipe = recipe_path.read_text(encoding="utf-8")
@@ -469,8 +480,8 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("704a563c7d7a8252e2205304222e7ce0c0dd7384", doc)
-            self.assertIn("28f5bba753f44fe58ae5063eb93f06f470bec5bd", doc)
+            self.assertIn("8e0c5277dae03fdbcfc7d772b24d0689f2be1262", doc)
+            self.assertIn("snapshot", doc.lower())
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
