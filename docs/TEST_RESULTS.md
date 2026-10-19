@@ -2,6 +2,8 @@
 
 ## 2026-10-18 — Static tests closure recipe Yocto
 
+- Nuovo test layer metadata: controlla collection, pattern `${LAYERDIR}`, priorità positiva e lista unica di serie Yocto supportate; non seleziona una release specifica senza parse reale.
+
 - Storico WSL `systemd-analyze security --offline`: MEDIUM/6.7, UMask 0027.
 - Regression offline: risoluzione `file://` runtime alla root repo; search path `FILESEXTRAPATHS` console per il service; `IMAGE_INSTALL` coincide coi package runtime/console senza duplicati.
 - Test mirati Windows/WSL PASS; suite completa 117 PASS (8 skip platform-specific) su entrambi.

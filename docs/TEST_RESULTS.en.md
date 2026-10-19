@@ -2,6 +2,8 @@
 
 ## 2026-10-18 — Yocto recipe closure static tests
 
+- New layer-metadata test checks collection, `${LAYERDIR}` pattern, positive priority and unique supported series; it makes no claim that any series has parsed.
+
 - Historical WSL `systemd-analyze security --offline`: MEDIUM/6.7, UMask 0027.
 - Offline regressions check runtime `file://` resolution to repo root, console `FILESEXTRAPATHS` service search, and exact `IMAGE_INSTALL` equality with runtime/console packages (no duplicates).
 - Targeted Windows/WSL tests PASS; full suite 117 PASS (8 platform-specific skips) on both.

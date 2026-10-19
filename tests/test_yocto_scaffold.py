@@ -104,6 +104,19 @@ class YoctoScaffoldTests(unittest.TestCase):
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
 
+    def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
+        self.assertIn('BBFILE_PATTERN_readylinux = "^${LAYERDIR}/"', layer_conf)
+        self.assertRegex(layer_conf, r"(?m)^BBFILE_PRIORITY_readylinux = \"[1-9][0-9]*\"$")
+
+        compatibility = re.search(r"(?m)^LAYERSERIES_COMPAT_readylinux = \"([^\"]+)\"$", layer_conf)
+        self.assertIsNotNone(compatibility)
+        series = compatibility.group(1).split()
+        self.assertGreaterEqual(len(series), 1)
+        self.assertEqual(len(series), len(set(series)), "duplicate Yocto compatibility series")
+        self.assertNotRegex(compatibility.group(1), r"(?i)(master|latest|main)")
+
     def test_readylinux_distro_is_opt_in_and_documented_for_builds(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
@@ -567,6 +580,18 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertTrue((runtime_sources / source).is_file(), source)
         console_file_search_roots = (console_sources / "readylinux", console_sources)
         self.assertTrue(any((base / "readylinux-console.service").is_file() for base in console_file_search_roots))
+
+    def test_host_preflight_evidence_has_current_independent_wsl_gate_result(self):
+        italian = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
+        for doc in (italian, english):
+            with self.subTest(report="Italian" if doc == italian else "English"):
+                self.assertIn("19/19", doc)
+                self.assertIn("INCOMPLETE", doc)
+                self.assertIn("BUILDDIR", doc)
+                self.assertIn("bitbake-layers", doc)
+                self.assertTrue("nessuna modifica" in doc.lower() if doc == italian else "no package changes" in doc.lower())
+                self.assertRegex(doc, r"(?i)(?:exit 1.*INCOMPLETE|INCOMPLETE.*exit 1)")
 
     def test_layer_docs_define_reproducibility_evidence(self):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
