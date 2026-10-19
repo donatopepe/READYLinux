@@ -348,6 +348,15 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("ready", docs)
         self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
 
+    def test_layer_docs_make_distro_machine_and_cached_sources_requirements_explicit(self):
+        for doc_path in (LAYER / "README.md", LAYER / "README.en.md"):
+            doc = doc_path.read_text(encoding="utf-8")
+            self.assertIn('DISTRO = "readylinux"', doc)
+            self.assertIn('MACHINE = "<selected-bsp-machine>"', doc)
+            self.assertIn("release series", doc.lower())
+            self.assertTrue("cached" in doc.lower() or "cache" in doc.lower())
+            self.assertLess(doc.index("DISTRO ="), doc.index("bash scripts/validate-yocto-env.sh"))
+
     def test_layer_docs_order_environment_layer_parse_and_build(self):
         for doc_path in (LAYER / "README.md", LAYER / "README.en.md"):
             doc = doc_path.read_text(encoding="utf-8")
@@ -497,13 +506,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIsNotNone(re.search(r"98\s+tests?\b|98\s+Windows", doc, re.IGNORECASE))
+            self.assertIsNotNone(re.search(r"99\s+tests?\b|99\s+Windows", doc, re.IGNORECASE))
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
             self.assertTrue("HEAD" in doc or "snapshot" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("d9c8f9ab6d9832741a38c29f34dac2a3e2d80318", doc)
+            self.assertIn("f22e7b969edbe56de9f4412481daf381d8bd4fe6", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
