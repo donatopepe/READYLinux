@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 111 test Windows/Python 3.11 (7 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. QEMU cmdline reject-before-tools test verificato con fake QEMU tools.
 - **Non verificato**: BitBake/Yocto parse/build reale, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `89813789130d06875c045f4216ba2add142b8ff6`; `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Git**: firing-start HEAD `89813789130d06875c045f4216ba2add142b8ff6`; QEMU baseline guard in `a88b2f6`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando disponibile; distinguere test fake da boot/build reali.
