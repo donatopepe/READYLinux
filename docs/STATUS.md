@@ -9,5 +9,5 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 - **Verificato localmente**: 98 test Windows (1 skip `systemd-analyze`) e WSL; compileall/shell/diff pass. License checksum consistency test copre le recipe MIT.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti, BitBake assente; nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `87d402bd7fe16642117b57f09e70dc0aca867227`; license test/report aggiornati in questo firing. ZIP ignorati; `.pi-loop.json` locale.
+- **Git**: firing snapshot `87d402bd7fe16642117b57f09e70dc0aca867227`; recipe license guard pubblicato in `6e703ef`. ZIP ignorati; `.pi-loop.json` locale.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere audit statici da parse/runtime.
