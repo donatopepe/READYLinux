@@ -100,7 +100,8 @@ class QemuBootHelperTests(unittest.TestCase):
             bindir = root / "bin"
             bindir.mkdir()
             image = root / "image.raw"
-            image.write_bytes(b"trusted image bytes")
+            original_image = b"trusted image bytes"
+            image.write_bytes(original_image)
             kernel = root / "Image"
             kernel.write_bytes(b"kernel fixture")
             invocation_log = root / "invoked.log"
@@ -123,6 +124,7 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertEqual(result.returncode, 1)
             self.assertIn("SHA-256 mismatch", result.stderr)
             self.assertFalse(invocation_log.exists(), "qemu-img/qemu must not run for an unverified image")
+            self.assertEqual(image.read_bytes(), original_image, "rejected image must remain unchanged")
 
     def test_qemu_nonzero_exit_propagates_and_cleans_temporary_overlay(self):
         with tempfile.TemporaryDirectory() as temp:
