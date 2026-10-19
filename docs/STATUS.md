@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 101 test Windows/Python 3.11 (1 skip `systemd-analyze`) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Artifact verification → fake QEMU path-spaces integration, overlay cleanup, base invariance.
+- **Verificato localmente**: 101 test Windows/Python 3.11 (1 skip `systemd-analyze`) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Artifact verifier + fake QEMU coprono spaced paths, overlay e preservazione base.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `ea9ad866c04453ef67ba5b9a8c8e25294917aba4`; artifact-to-fake-boot baseline pubblicata in `185a061`. `.pi-loop.json` e `raw` (0 byte) non tracciati, ZIP ignorati.
-- **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere verifiche simulate da build/hardware reali.
+- **Git**: firing-start HEAD `2957a95d7d8041992f2ab3c1e9ba71ea044c828a`; `.pi-loop.json` e `raw` (0 byte) non tracciati, ZIP ignorati.
+- **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; separare evidenza simulata da quella reale.
