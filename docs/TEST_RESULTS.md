@@ -1,10 +1,11 @@
 # Risultati test
 
-## 2026-10-18 — Baseline host-preflight WSL
+## 2026-10-18 — WSL Yocto preflight evidence baseline
 
-- Snapshot firing: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; HEAD `eee12774e2408514a6839eaa286de25890fdf4f0`.
-- Probe read-only `bash scripts/check-yocto-host.sh` su WSL Debian 13/trixie: exit 1 INCOMPLETE; 19/19 comandi richiesti OK; BitBake/bitbake-layers assenti; QEMU e sha256sum presenti; BUILDDIR unset; nessun package change.
-- Test statico status protegge firing HEAD, test count e limiti BitBake/QEMU.
+- Firing snapshot: `git status --short --branch` = `main...origin/main` con `.pi-loop.json` e `raw` (0 byte) non tracciati; HEAD `433928a503e426512b5415ec6bb77a0d73314230`.
+- Historical WSL hardening result: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
+- Host preflight WSL è read-only: exit 1 `INCOMPLETE`; 19/19 comandi richiesti OK, QEMU+sha256sum presenti, BitBake/bitbake-layers e BUILDDIR assenti. No install/fetch.
+- Status regression verifica firing HEAD, count test e limiti BitBake/QEMU.
 - Windows/Python 3.11: 114 test PASS (8 skip platform-specific); WSL Debian 13/Python 3.13: 114 test PASS.
-- Comandi: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` script; `git diff --check`.
-- Nessun fetch/install, BitBake parse, build immagine, QEMU boot o inference GGUF.
+- Comandi: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
+- Nessun BitBake parse/build, image build, boot QEMU o guest SSH eseguito.
