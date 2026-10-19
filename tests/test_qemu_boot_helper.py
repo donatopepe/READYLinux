@@ -63,12 +63,12 @@ class QemuBootHelperTests(unittest.TestCase):
             overlay_log = root / "overlay-path.txt"
             qemu_img = bindir / "qemu-img"
             qemu_img.write_text(
-                "#!/bin/sh\nprintf '%s\\n' \"$6\" > \"$OVERLAY_LOG\"\n",
+                "#!/bin/sh\nprintf '%s\\n' \"$6\" > \"$OVERLAY_LOG\"\n: > \"$6\"\n",
                 encoding="utf-8",
             )
             qemu = bindir / "qemu-system-x86_64"
             qemu.write_text(
-                "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$QEMU_ARGS_LOG\"\nexit 0\n",
+                "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$QEMU_ARGS_LOG\"\noverlay=$(cat \"$OVERLAY_LOG\")\n[ -f \"$overlay\" ] || exit 24\nexit 0\n",
                 encoding="utf-8",
             )
             qemu_img.chmod(0o755)
