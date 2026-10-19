@@ -381,9 +381,9 @@ class YoctoScaffoldTests(unittest.TestCase):
 
         umask = directives.get("UMask")
         self.assertTrue(umask)
-        state_mode = int(directives["StateDirectoryMode"], 8)
         umask_value = int(umask, 8)
-        self.assertEqual(umask_value & state_mode, 0, "UMask removes required state-directory permissions")
+        self.assertLessEqual(umask_value, 0o777)
+        self.assertEqual(umask_value & 0o0750, 0, "UMask removes permissions required by the persistent state dir")
         self.assertIn(user_home.group(1), ("/var/lib/readylinux", directives.get("Environment", "")))
 
     def test_systemd_writable_paths_are_scoped_to_persistent_state_directory(self):
