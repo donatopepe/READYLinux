@@ -196,6 +196,19 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn('DISTRO = "readylinux"', readme)
             self.assertIn('MACHINE = "<selected-bsp-machine>"', readme)
 
+    def test_distro_feature_append_preserves_defaults_and_selects_systemd_init(self):
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        feature_append = re.search(r'(?m)^DISTRO_FEATURES:append\s*=\s*"([^"]+)"$', distro)
+        init_manager = re.search(r'(?m)^VIRTUAL-RUNTIME_init_manager\s*=\s*"([^"]+)"$', distro)
+        self.assertIsNotNone(feature_append)
+        self.assertIsNotNone(init_manager)
+        features = feature_append.group(1).split()
+        self.assertIn("systemd", features)
+        self.assertNotIn("DISTRO_FEATURES:remove", distro)
+        self.assertEqual(init_manager.group(1), "systemd")
+        self.assertIn('DISTRO = "readylinux"', distro)
+        self.assertNotIn('DISTRO = "readylinux"', (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8"))
+
     def test_ready_distro_selects_systemd_without_forcing_service_runtime(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         service_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
