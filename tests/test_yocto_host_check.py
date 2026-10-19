@@ -66,6 +66,24 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("Preflight: required Debian host commands and BUILDDIR found", result.stdout)
         self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
 
+    @unittest.skipIf(os.name == "nt", "Unix directory/file semantics required")
+    def test_rejects_file_as_builddir(self):
+        with tempfile.TemporaryDirectory() as temp:
+            fakebin = Path(temp)
+            file_builddir = fakebin / "not-a-directory"
+            file_builddir.write_text("not a build directory", encoding="utf-8")
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            result = subprocess.run(
+                [bash_path, str(SCRIPT)],
+                cwd=ROOT,
+                env={"PATH": "/usr/bin:/bin", "BUILDDIR": str(file_builddir)},
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("BUILDDIR: unset", result.stdout)
+        self.assertIn("BUILDDIR: unset", result.stdout)
+
     def test_rejects_invalid_builddir_path(self):
         result = subprocess.run(
             ["bash", str(SCRIPT)],

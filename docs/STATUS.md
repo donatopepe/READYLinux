@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 104 test Windows (3 skip: `systemd-analyze`, FIFO POSIX, host probe PATH POSIX) e WSL; SHA-mismatch QEMU gate lascia l'immagine base invariata.
+- **Verificato localmente**: 105 test WSL PASS; Windows 105 test con 4 skip platform-specific. BUILDDIR=file viene rifiutato dal probe.
 - **Non verificato**: BitBake/Yocto parse/build, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `e930fff2e4b3d1efb8c19141bb875625fdfb1f0f`; rejected-image immutability regression published in `ec1fb92`. `.pi-loop.json` e `raw` (0 byte) non tracciati, ZIP ignorati.
+- **Git**: firing-start HEAD `35f6506d310678b2387c542bef0c492a10e3e5c8`; malformed BUILDDIR test verificato, docs in refresh. `.pi-loop.json` e `raw` (0 byte) non tracciati, ZIP ignorati.
 - **Prossimo**: metadata parse/build su host OE release-pinned quando selezionato; distinguere test stub da host build reale.
