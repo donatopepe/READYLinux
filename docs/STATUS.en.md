@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 105 tests WSL PASS; Windows 105 tests with 4 platform-specific skips. Probe rejects BUILDDIR set to a regular file.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `35f6506d310678b2387c542bef0c492a10e3e5c8`; malformed BUILDDIR test verified, docs refreshing. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `35f6506d310678b2387c542bef0c492a10e3e5c8`; malformed BUILDDIR regression published in `80fec32`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish stub tests from real build-host evidence.
