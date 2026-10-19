@@ -94,6 +94,39 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertIn("-monitor\nnone", qemu_args)
             self.assertIn("qcow2", qemu_args)
 
+    def test_qemu_nonzero_exit_propagates_and_cleans_temporary_overlay(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "image with spaces.raw"
+            image_bytes = b"base image stays intact"
+            image.write_bytes(image_bytes)
+            kernel = root / "Image"
+            kernel.write_bytes(b"kernel fixture")
+            overlay_log = root / "overlay-path.txt"
+            qemu_img = bindir / "qemu-img"
+            qemu_img.write_text("#!/bin/sh\nprintf '%s\\n' \"$6\" > \"$OVERLAY_LOG\"\n", encoding="utf-8")
+            qemu = bindir / "qemu-system-x86_64"
+            qemu.write_text("#!/bin/sh\nexit 23\n", encoding="utf-8")
+            qemu_img.chmod(0o755)
+            qemu.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_BIN": self.fake_shell_path(qemu),
+                "READY_QEMU_IMG": self.fake_shell_path(qemu_img),
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0",
+                "OVERLAY_LOG": self.fake_shell_path(overlay_log),
+            }
+            result = self.run_script(image, hashlib.sha256(image_bytes).hexdigest(), "q35", env=env)
+            self.assertEqual(result.returncode, 23, result.stderr)
+            overlay_raw = overlay_log.read_text(encoding="utf-8").strip()
+            overlay = root / Path(overlay_raw).name
+            self.assertFalse(overlay.exists(), "overlay should be removed even on QEMU failure")
+            self.assertEqual(image.read_bytes(), image_bytes)
+
     def test_script_is_networkless_and_uses_copy_on_write_overlay(self):
         text = SCRIPT.read_text(encoding="utf-8")
         for guard in ("-nic none", "-monitor none", "-kernel", "-append", "-no-reboot", "qemu_img_bin", "qcow2", "-drive"):
