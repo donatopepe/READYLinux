@@ -6,8 +6,8 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 
 - **Release**: READY Linux 0.3 application prototype.
 - **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened tty1 service; host preflight, BitBake, systemd, artifact checksum, isolated QEMU COW boot helpers.
-- **Locally verified**: 111 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. QEMU cmdline input gate checked with stub tools.
+- **Locally verified**: 111 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. QEMU cmdline reject-before-tools regression tested with fake QEMU tools.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `3fff85ca0c45b62954ff5df2fe0c0255f9daf169`; QEMU cmdline baseline guard in `a2e504a`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
-- **Next**: metadata parse/build on a release-pinned OE host when available; distinguish stub tools from real parse/build/boot.
+- **Git**: firing-start HEAD `89813789130d06875c045f4216ba2add142b8ff6`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Next**: metadata parse/build on a release-pinned OE host when available; distinguish fake-tool checks from real build/boot evidence.
