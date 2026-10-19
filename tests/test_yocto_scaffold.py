@@ -91,6 +91,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         declared_packages = {runtime_package, console_package}
         self.assertEqual(image_packages, declared_packages)
         self.assertEqual(len(image_install.group(1).split()), len(image_packages))
+        for package in image_packages:
+            self.assertIn(package, {runtime_recipe.name.split("_", 1)[0], console_recipe.name.split("_", 1)[0]})
 
     def test_image_extends_core_minimal_and_installs_runtime(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
