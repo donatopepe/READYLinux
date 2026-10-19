@@ -7,4 +7,5 @@
 - Static status test checks firing HEAD, test count and BitBake/QEMU limitations.
 - Windows/Python 3.11: 109 tests PASS (6 platform-specific skips); WSL Debian 13/Python 3.13: 109 tests PASS.
 - Commands: `python -m compileall -q readylinux.py ai_local.py vibe.py basic.py`; `python -m unittest discover -s tests -v`; `bash -n` scripts; `git diff --check`.
-- README/docs link the bilingual capacity-estimate hardware guide; no web research/download/real inference was performed. No Yocto parse/build or QEMU boot.
+- README/docs link bilingual capacity-based hardware guidance; no web research/model download/real inference. No Yocto parse/build or QEMU boot.
+- New recipe check verifies each application `file://` source exists in the repository.

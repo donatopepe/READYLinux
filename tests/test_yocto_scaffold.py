@@ -44,8 +44,13 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn(expected_license_checksum, recipe)
                 self.assertIn("RDEPENDS:${PN}", recipe)
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', recipes["recipes-core/readylinux/readylinux-console_0.1.bb"])
+        app_recipe = recipes["recipes-ready/readylinux/readylinux_0.3.bb"]
         for dependency in ("python3-core", "python3-json", "python3-netclient"):
-            self.assertIn(dependency, recipes["recipes-ready/readylinux/readylinux_0.3.bb"])
+            self.assertIn(dependency, app_recipe)
+        app_sources = re.findall(r"(?m)^\s+file://([^\s\\]+)", app_recipe)
+        self.assertEqual(set(app_sources), {"readylinux.py", "basic.py", "ai_local.py", "vibe.py"})
+        for source in app_sources:
+            self.assertTrue((ROOT / source).is_file(), f"recipe source missing: {source}")
 
     def test_repository_ignore_rules_cover_generated_and_sensitive_runtime_files(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
