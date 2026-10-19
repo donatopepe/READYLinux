@@ -3,6 +3,7 @@
 ## 2026-10-18 — Firing baseline and documentation verification
 
 - New QEMU COW failure-path test verifies nonzero QEMU exit propagates and temporary overlay is cleaned up.
+- Full suite rerun after this addition is reported below.
 - Verified initial snapshot: `git status --short --branch` was `main...origin/main` plus untracked `.pi-loop.json`; HEAD `23a77ce153a5bfcd347a394c26273d7a3dd4d8b3`.
 - Complete Windows/Python 3.11 and WSL Debian 13/Python 3.13 suites: 100 tests PASS (1 systemd-analyze skip); compileall/shell syntax/diff-check PASS.
 - Historical WSL `systemd-analyze security --offline`: MEDIUM/6.7, UMask 0027.

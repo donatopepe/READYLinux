@@ -512,7 +512,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(".pi-loop.json", doc)
             self.assertTrue("HEAD" in doc or "snapshot" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("57068b06c3c6e913a5b709f49f288d80d0687353", doc)
+            self.assertIn("23a77ce153a5bfcd347a394c26273d7a3dd4d8b3", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
