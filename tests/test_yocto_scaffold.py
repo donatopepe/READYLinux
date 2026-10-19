@@ -480,7 +480,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("0d269c5ea2e8802305dce819c4899e631e049579", doc)
+            self.assertIn("0c7196213755826a75c7f3a55b023d180e2772eb", doc)
             self.assertIn("snapshot", doc.lower())
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
