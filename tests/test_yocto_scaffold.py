@@ -102,19 +102,20 @@ class YoctoScaffoldTests(unittest.TestCase):
     def test_src_uri_local_source_extraction_ignores_non_local_tokens(self):
         samples = {
             'SRC_URI = "file://alpha.py file://dir/beta.patch https://example.invalid/file.tar.gz"': ["alpha.py", "dir/beta.patch"],
+            'SRC_URI = "file://patch.diff;apply=yes file://archive.tar.gz;unpack=0"': ["patch.diff", "archive.tar.gz"],
             'SRC_URI = "\\\n file://one\\\n file://two\\\n"': ["one", "two"],
             'SRC_URI = "https://example.invalid/source.tar.gz"': [],
         }
         for assignment, expected in samples.items():
             match = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', assignment)
-            extracted = re.findall(r"file://([^\s\\]+)", match.group(1)) if match else []
+            extracted = [token.split(";", 1)[0] for token in re.findall(r"file://([^\s\\]+)", match.group(1))] if match else []
             self.assertEqual(extracted, expected, assignment)
 
     def test_all_recipe_file_uri_sources_resolve_inside_repository(self):
         for recipe_path in sorted(LAYER.rglob("*.bb")):
             recipe = recipe_path.read_text(encoding="utf-8")
             src_uri_match = re.search(r'(?m)^SRC_URI\\s*=\\s*"([^"]*)"', recipe)
-            sources = re.findall(r"file://([^\\s\\\\]+)", src_uri_match.group(1)) if src_uri_match else []
+            sources = [token.split(";", 1)[0] for token in re.findall(r"file://([^\\s\\\\]+)", src_uri_match.group(1))] if src_uri_match else []
             search_roots = [recipe_path.parent, ROOT]
             prepend_match = re.search(r'FILESEXTRAPATHS:prepend\\s*:?=\\s*"([^\"]+)"', recipe)
             if prepend_match:
@@ -480,7 +481,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertIn("0c7196213755826a75c7f3a55b023d180e2772eb", doc)
+            self.assertIn("ed2489483479fbc86b4f49b64b6dd85c55f4c48d", doc)
             self.assertIn("snapshot", doc.lower())
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
