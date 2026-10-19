@@ -2,6 +2,7 @@
 
 ## 2026-10-18 — Yocto host-preflight baseline
 
+- Regular-file BUILDDIR regression checks the explicit `Preflight: INCOMPLETE` result.
 - Initial snapshot: `git status --short --branch` showed `main...origin/main` with untracked `.pi-loop.json` and `raw` (0 bytes); HEAD `614b1fb8964a992e358b51dd2d0bcf736f5b9a0e`.
 - Historical WSL systemd report: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 - Static test requires HEAD, test baseline and BitBake/QEMU limitations in both status documents.

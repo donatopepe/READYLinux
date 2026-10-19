@@ -82,7 +82,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 1)
         self.assertIn("BUILDDIR: unset", result.stdout)
-        self.assertIn("BUILDDIR: unset", result.stdout)
+        self.assertIn("Preflight: INCOMPLETE", result.stdout)
 
     def test_rejects_invalid_builddir_path(self):
         result = subprocess.run(
