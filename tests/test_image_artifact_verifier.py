@@ -28,6 +28,7 @@ class ImageArtifactVerifierTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             pipe = Path(temp) / "image-pipe.wic"
             os.mkfifo(pipe)
+            self.assertTrue(pipe.is_fifo())
             result = self.run_script(pipe, "0" * 64)
             self.assertEqual(result.returncode, 2)
             self.assertIn("existing non-empty regular file", result.stderr)
