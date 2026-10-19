@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 97 tests on Windows/Python 3.11 (1 `systemd-analyze` skip) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Static recipe/image/distro checks verified.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present, BitBake absent; no Yocto checkout/fetch.
-- **Git**: firing-start snapshot `0c7196213755826a75c7f3a55b023d180e2772eb`; .pi-loop/ZIP remain untracked/ignored.
+- **Git**: firing-start snapshot `0c7196213755826a75c7f3a55b023d180e2772eb`; SRC_URI extractor test published in `2b3f300`. ZIPs ignored; `.pi-loop.json` local.
 - **Next**: metadata parse/build on a release-pinned OE host once selected; distinguish static audits from parse/runtime evidence.
