@@ -71,10 +71,22 @@ class YoctoScaffoldTests(unittest.TestCase):
             LAYER / "recipes-ready/readylinux/readylinux_0.3.bb",
         )
         self.assertIn("LAYERSERIES_COMPAT_readylinux", layer_conf)
+        recipe_tokens = "\n".join(recipe_path.read_text(encoding="utf-8") for recipe_path in recipes)
+        self.assertNotRegex(recipe_tokens, r"(?m)^\s*(?:OVERRIDES|DISTRO_FEATURES|IMAGE_INSTALL)_(?:append|prepend|remove)\s*=")
+        legacy_assignment = re.compile(
+            r"(?m)^\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE|FILESEXTRAPATHS)_[A-Za-z]\w*\s*[+:?]?="
+        )
+        legacy_override = re.compile(
+            r"(?m)^\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE):[A-Za-z_]+\s*="
+        )
+        legacy_src_uri = re.compile(r"(?m)^\s*SRC_URI_append\s*=")
+        legacy_recipe_overrides = re.compile(r"(?m)^\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE):(?:append|prepend|remove)\s*=")
         for recipe_path in recipes:
             recipe = recipe_path.read_text(encoding="utf-8")
-            self.assertNotRegex(recipe, r"(?m)^\\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE|FILESEXTRAPATHS)_[A-Za-z]\\w*\\s*[+:?]?=")
-            self.assertNotRegex(recipe, r"(?m)^\\s*(?:RDEPENDS|FILES|SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE):[A-Za-z_]+\\s*=")
+            self.assertIsNone(legacy_assignment.search(recipe), f"legacy underscore assignment in {recipe_path.name}")
+            self.assertIsNone(legacy_override.search(recipe), f"override appears after variable name in {recipe_path.name}")
+            self.assertIsNone(legacy_src_uri.search(recipe), f"legacy SRC_URI_append in {recipe_path.name}")
+            self.assertIsNone(legacy_recipe_overrides.search(recipe), f"legacy override operator syntax in {recipe_path.name}")
         self.assertIn("RDEPENDS:${PN}", recipes[0].read_text(encoding="utf-8"))
         self.assertIn("FILESEXTRAPATHS:prepend", recipes[1].read_text(encoding="utf-8"))
 
