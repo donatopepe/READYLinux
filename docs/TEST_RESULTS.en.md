@@ -5,7 +5,7 @@
 - Historical WSL unit-security observation: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 
 - Layer metadata regression checks collection/pattern/priority and unique candidate compatibility series; bilingual README states these have no release-pinned parse evidence.
-- Static preflight evidence regression guards both result reports for the observed incomplete state, required command count, absent BitBake/BUILDDIR, and command identity.
+- Static preflight-evidence regression checks both reports capture incomplete status, required-command count, blockers and probe command; package-closure test verifies the getty-mask symlink target uses `${sysconfdir}` and is listed in `FILES`.
 - Targeted tests PASS; full suite 122 PASS (8 platform-specific skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
 
 ## 2026-10-18 — Firing-start snapshot and host probe
