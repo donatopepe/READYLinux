@@ -545,6 +545,18 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(requirement, italian)
             self.assertIn(requirement, english)
 
+    def test_test_results_has_current_firing_snapshot_and_command_evidence(self):
+        italian = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
+        english = (ROOT / "docs/TEST_RESULTS.en.md").read_text(encoding="utf-8")
+        for doc in (italian, english):
+            with self.subTest(report="Italian" if doc == italian else "English"):
+                self.assertIn("compileall", doc)
+                self.assertIn("unittest discover -s tests -v", doc)
+                self.assertIn("bash -n", doc)
+                self.assertIn("QEMU", doc)
+                self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
+                self.assertIn("52901d3c5d1aba4a0b01707052bb95b3d6c10f99", doc)
+
     def test_status_records_current_test_baseline_and_bitbake_limitation(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
