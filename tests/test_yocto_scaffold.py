@@ -528,9 +528,9 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(".pi-loop.json", doc)
-            self.assertTrue("HEAD" in doc or "firing-start" in doc.lower())
+            self.assertTrue("HEAD" in doc or "firing start" in doc.lower())
             self.assertRegex(doc, r"(?m)\*\*Git\*\*:.*[0-9a-f]{7}")
-            self.assertIn("e235522d23620db53f91ac86e4b9f205ec24fec2", doc)
+            self.assertIn("5c3c030179abaf1a21225389e98b05b3d0c82bd3", doc)
 
     def test_console_tty_reservation_and_getty_mask_are_explained_bilingually(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")

@@ -66,6 +66,29 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("Preflight: required Debian host commands and BUILDDIR found", result.stdout)
         self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
 
+    @unittest.skipIf(os.name == "nt", "PATH executable stubs require Unix")
+    def test_marks_missing_builddir_incomplete_when_tools_are_present(self):
+        with tempfile.TemporaryDirectory() as temp:
+            fakebin = Path(temp) / "bin"
+            fakebin.mkdir()
+            required = (
+                "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
+                "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
+                "wget", "xz", "zstd", "uname", "getconf",
+            )
+            for name in required:
+                stub = fakebin / name
+                stub.write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
+                stub.chmod(0o755)
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            env = {"PATH": str(fakebin)}
+            env.pop("BUILDDIR", None)
+            result = subprocess.run([bash_path, str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("BUILDDIR: unset", result.stdout)
+        self.assertIn("Preflight: INCOMPLETE", result.stdout)
+        self.assertNotIn("MISSING ", result.stdout)
+
     @unittest.skipIf(os.name == "nt", "Unix directory/file semantics required")
     def test_rejects_file_as_builddir(self):
         with tempfile.TemporaryDirectory() as temp:
