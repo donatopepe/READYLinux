@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 114 Windows/Python 3.11 tests (8 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Opt-in SSH forward is loopback-only in fake-argument tests; guest SSH not verified.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `a0be463c6e46d433e3db08bba29743d43d10d2c1`; SSH opt-in feature/test coverage under verification. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `a0be463c6e46d433e3db08bba29743d43d10d2c1`; opt-in loopback SSH forward and tests published in `79ee232`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when available; distinguish fake tests from real build/boot evidence.
