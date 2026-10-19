@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 111 Windows/Python 3.11 tests (7 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. QEMU cmdline negative-path regression uses fake tools.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `a6af4f7cd67d341b4ad4bf3d3bb7e2b5406b53fb`; `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `a6af4f7cd67d341b4ad4bf3d3bb7e2b5406b53fb`; QEMU baseline guard in `4385158`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when available; distinguish fake tools from real parse/build/boot.
