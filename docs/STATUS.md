@@ -6,8 +6,8 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 114 test Windows/Python 3.11 (8 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. SSH forwarding test QEMU loopback-only con fake tools; guest SSH non verificato.
-- **Non verificato**: BitBake/Yocto parse/build reale, boot immagine READY QEMU, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
+- **Verificato localmente**: suite+QEMU test con tool fake documentati in `TEST_RESULTS.md`; SSH bridge opt-in attende immagine/server guest, nessun boot SSH reale.
+- **Non verificato**: BitBake/Yocto parse/build reale, boot immagine READY QEMU, servizio SSH guest, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: Windows AMD64 + WSL Debian 13, GCC/QEMU x86_64 presenti; BitBake assente, nessun checkout/fetch Yocto.
-- **Git**: firing-start HEAD `4ca49bdd48cbf0ba2f811c2fe1e33d5a951bb855`; opt-in loopback SSH/QEMU change pubblicato in `583cfd3`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
-- **Prossimo**: metadata parse/build su host OE release-pinned quando disponibile; distinguere fake-tool validation da guest-SSH/boot.
+- **Git**: firing-start HEAD `f8cc86b7f0c21af5fe389478fffb3e9ecaa6fd5d`; gated verification plan aggiunto in questo firing. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
+- **Prossimo**: metadata parse/build su host OE release-pinned quando disponibile; distinguere fake arguments da boot e guest SSH reali.

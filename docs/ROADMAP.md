@@ -39,3 +39,7 @@ Solo backend e target disponibili; fallback CPU, QEMU ARM64 o BSP specifico veri
 ## M9 — Release
 
 Immagini, manifest SBOM/licenze, installazione/recovery e matrice completa dei test.
+
+## Gate per chiudere gap di verifica
+
+I limiti attuali hanno dipendenze esplicite (host OE/BitBake, immagine, kernel, SSH guest, modello e isolamento). Usare [piano gated di verifica](VERIFICATION_PLAN.md) per prerequisites, comandi, evidenze accettabili e scope no-download; fake tool non chiudono gate runtime.

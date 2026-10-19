@@ -21,6 +21,8 @@ Capacity-based purchase guidance and model provenance/verification policy are do
 
 ## Security boundaries
 
+Gate prerequisites and accepted runtime evidence are defined in [`VERIFICATION_PLAN.md`](VERIFICATION_PLAN.md). Optional SSH test forwarding must bind only to loopback; never expose host interfaces by default.
+
 The model gets neither unrestricted filesystem access nor privileges. Static checks are not a sandbox. Untrusted generated code stays non-executable automatically until an isolated, tested runner exists. No model/toolchain downloads in the base build.
 
 ## Open decisions

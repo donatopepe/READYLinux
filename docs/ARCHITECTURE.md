@@ -21,6 +21,8 @@ Capacity-based purchasing guidance and the model provenance/verification policy 
 
 ## Confini di sicurezza
 
+Piano vincolante per gate, prerequisiti ed evidenze runtime: [`VERIFICATION_PLAN.md`](VERIFICATION_PLAN.md). SSH test bridge, se abilitato, va solo su loopback; mai esporre host interfaces per default.
+
 Il modello non ottiene accesso filesystem generale né privilegi. I controlli statici non equivalgono a sandbox. Codice generato non attendibile resta non eseguibile automaticamente finché un runner isolato e testato non è disponibile. Niente download di modelli o toolchain durante build base.
 
 ## Decisioni aperte

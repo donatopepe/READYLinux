@@ -39,3 +39,7 @@ Only verified backends/targets; CPU fallback; QEMU ARM64 or specific BSP tested.
 ## M9 — Release
 
 Images, SBOM/license manifest, installation/recovery, complete test matrix.
+
+## Verification gap gates
+
+Open gaps depend on explicit prerequisites (OE/BitBake host, image/kernel, guest SSH, model, isolation). Use the [gated verification plan](VERIFICATION_PLAN.md) for prerequisites, commands, acceptance evidence and no-download scope; fake-tool tests never close a runtime gate.

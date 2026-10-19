@@ -1,7 +1,8 @@
 # Test Results
 
-## 2026-10-18 — QEMU SSH forwarding baseline
+## 2026-10-18 — Verification-gap audit / SSH forwarding baseline
 
+- Added `docs/VERIFICATION_PLAN.md`, breaking each open status gap into a gated, prerequisite-based path with commands and acceptance evidence. No BitBake/image/guest SSH/GGUF/sandbox evidence claimed or produced here.
 - Initial firing snapshot: `git status --short --branch` = `main...origin/main` with untracked `.pi-loop.json` and `raw` (0 bytes); HEAD `4ca49bdd48cbf0ba2f811c2fe1e33d5a951bb855`.
 - Historical WSL hardening result: `systemd-analyze security --offline`, MEDIUM/6.7, UMask 0027.
 - Static status regression protects firing HEAD, suite count and BitBake/QEMU limits in both languages.

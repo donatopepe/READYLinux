@@ -26,7 +26,7 @@ Data revisione: 2026-10-18. Stime conservative di capacità per il modello attua
 | AI CPU, uso quotidiano | 6–8 core moderni, 32 GB RAM, SSD NVMe 256+ GB | Più margine per contesto e altri processi; più core non garantiscono scala lineare |
 | Modelli più grandi/contesto lungo futuri | 64 GB RAM o più; valutare GPU solo dopo benchmark del modello scelto | Fuori dal profilo testato; non acquistare GPU sulla base di questa roadmap |
 
-Prima dell'acquisto confrontare benchmark CPU aggiornati, RAM dual-channel espandibile, storage, rumorosità, consumi, supporto Linux/driver e garanzia. Nessun marchio/SKU/prezzo/rivenditore è raccomandato; verificare compatibilità e resi. Aggiornare solo con fonti datate e benchmark riproducibili. Vedere la [policy modello/hardware](docs/AI_HARDWARE.it.md) e la versione [English](docs/AI_HARDWARE.en.md).
+Prima dell'acquisto confrontare benchmark CPU aggiornati, RAM dual-channel espandibile, storage, rumorosità, consumi, supporto Linux/driver e garanzia. Nessun marchio/SKU/prezzo/rivenditore è raccomandato; verificare compatibilità e resi. Aggiornare solo con fonti datate e benchmark riproducibili. Vedere la [policy modello/hardware](docs/AI_HARDWARE.it.md) e la versione [English](docs/AI_HARDWARE.en.md). Il piano gated per chiudere le verifiche aperte è in [docs/VERIFICATION_PLAN.md](docs/VERIFICATION_PLAN.md).
 - Modelli piccoli possono fallire nella produzione del JSON richiesto o scrivere codice errato. Usare compiti brevi, pochi file e revisionare sempre.
 
 ## 2. Avvio rapido

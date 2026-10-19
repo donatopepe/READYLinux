@@ -24,7 +24,7 @@ Reviewed 2026-10-18. Conservative capacity guidance for the current model, not m
 | Daily CPU AI | Modern 6–8 cores, 32 GB RAM, 256+ GB NVMe SSD | More room for context and other processes; more cores do not ensure linear scaling |
 | Larger models/long contexts later | 64 GB RAM or more; evaluate GPU only after benchmarking the selected model | Outside the tested profile; do not buy a GPU based on this roadmap |
 
-Before purchase, compare current CPU benchmarks, upgradeable dual-channel RAM, storage, noise, power, Linux/driver support and warranty. No brand/model/price/retailer recommendation is made; confirm compatibility and return terms with the seller. Keep this guidance dated and update only after source-backed research and reproducible benchmarks. See [model/hardware selection policy](docs/AI_HARDWARE.en.md) and [Italian](docs/AI_HARDWARE.it.md).
+Before purchase, compare current CPU benchmarks, upgradeable dual-channel RAM, storage, noise, power, Linux/driver support and warranty. No brand/model/price/retailer recommendation is made; confirm compatibility and return terms with the seller. Keep this guidance dated and update only after source-backed research and reproducible benchmarks. See [model/hardware selection policy](docs/AI_HARDWARE.en.md) and [Italian](docs/AI_HARDWARE.it.md). The gated plan for closing open verification gaps is in [docs/VERIFICATION_PLAN.md](docs/VERIFICATION_PLAN.md).
 
 ## Quick start
 
