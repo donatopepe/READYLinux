@@ -9,5 +9,5 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 - **Locally verified**: 101 Windows tests (1 `systemd-analyze` skip) and WSL; compileall/shell/diff pass. Artifact verification→fake QEMU integration covers spaced paths, overlay cleanup, and base-image preservation.
 - **Not verified**: BitBake/Yocto parse/build, READY QEMU image boot, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: Windows AMD64 + WSL Debian 13; GCC/QEMU x86_64 present; BitBake unavailable; no Yocto checkout/fetch.
-- **Git**: firing-start HEAD `0ffc5a57e1ea0d5b04534429340a0a721f3f868b`; `.pi-loop.json` and `raw` (0-byte) local/untracked; ZIPs ignored.
+- **Git**: firing-start HEAD `0ffc5a57e1ea0d5b04534429340a0a721f3f868b`; artifact-to-fake-boot test published in `86c8d8c`. `.pi-loop.json` and `raw` (0-byte) untracked; ZIPs ignored.
 - **Next**: metadata parse/build on a release-pinned OE host when selected; distinguish fake tests from real build/hardware evidence.
