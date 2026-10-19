@@ -76,6 +76,105 @@ class QemuBootHelperTests(unittest.TestCase):
                 return result.stdout.strip()
         return str(path)
 
+    @unittest.skipIf(os.name == "nt", "temp directory is outside the WSL filesystem")
+    def test_opt_in_ssh_forward_binds_only_to_loopback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "ssh-test-image.raw"
+            image_bytes = b"verified ssh test image fixture"
+            image.write_bytes(image_bytes)
+            kernel = root / "kernel"
+            kernel.write_bytes(b"kernel fixture")
+            args_log = root / "qemu-args.txt"
+            overlay_log = root / "overlay-path.txt"
+            qemu_img = bindir / "qemu-img"
+            qemu_img.write_text("#!/bin/sh\nprintf '%s\\n' \"$6\" > \"$OVERLAY_LOG\"\n: > \"$6\"\n", encoding="utf-8")
+            qemu = bindir / "qemu-system-x86_64"
+            qemu.write_text("#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$QEMU_ARGS_LOG\"\nexit 0\n", encoding="utf-8")
+            qemu_img.chmod(0o755)
+            qemu.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_BIN": self.fake_shell_path(qemu),
+                "READY_QEMU_IMG": self.fake_shell_path(qemu_img),
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0",
+                "READY_QEMU_SSH_PORT": "2222",
+                "OVERLAY_LOG": self.fake_shell_path(overlay_log),
+                "QEMU_ARGS_LOG": self.fake_shell_path(args_log),
+            }
+            result = self.run_script(image, hashlib.sha256(image_bytes).hexdigest(), "pc", env=env)
+            args_text = args_log.read_text(encoding="utf-8") if args_log.exists() else ""
+        self.assertEqual(result.returncode, 0, result.stderr)
+        args = args_text
+        self.assertIn("hostfwd=tcp:127.0.0.1:2222-:22", args)
+        self.assertNotIn("hostfwd=tcp::", args)
+        self.assertNotIn("0.0.0.0", args)
+        self.assertNotIn("hostfwd=tcp::2222", args)
+
+    def test_rejects_non_numeric_ssh_forward_port_before_invoking_qemu_tools(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "image.raw"
+            image_bytes = b"verified fixture"
+            image.write_bytes(image_bytes)
+            kernel = root / "kernel"
+            kernel.write_bytes(b"kernel fixture")
+            invocation_log = root / "invoked.log"
+            for name in ("qemu-img", "qemu-system-x86_64"):
+                stub = bindir / name
+                stub.write_text("#!/bin/sh\\ntouch \\\"$INVOCATION_LOG\\\"\\n", encoding="utf-8")
+                stub.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0",
+                "READY_QEMU_BIN": self.fake_shell_path(bindir / "qemu-system-x86_64"),
+                "READY_QEMU_IMG": self.fake_shell_path(bindir / "qemu-img"),
+                "READY_QEMU_SSH_PORT": "22; touch /tmp/not-allowed",
+                "INVOCATION_LOG": self.fake_shell_path(invocation_log),
+            }
+            result = self.run_script(image, hashlib.sha256(image_bytes).hexdigest(), "pc", env=env)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("TCP port from 1 to 65535", result.stderr)
+        self.assertFalse(invocation_log.exists(), "invalid SSH port must not invoke tools")
+
+    def test_rejects_invalid_ssh_forward_port_before_invoking_qemu_tools(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bindir = root / "bin"
+            bindir.mkdir()
+            image = root / "image.raw"
+            image_bytes = b"verified fixture"
+            image.write_bytes(image_bytes)
+            kernel = root / "kernel"
+            kernel.write_bytes(b"kernel fixture")
+            invocation_log = root / "invoked.log"
+            for name in ("qemu-img", "qemu-system-x86_64"):
+                stub = bindir / name
+                stub.write_text("#!/bin/sh\\ntouch \\\"$INVOCATION_LOG\\\"\\n", encoding="utf-8")
+                stub.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{self.fake_shell_path(bindir)}:/usr/bin:/bin",
+                "READY_QEMU_KERNEL": self.fake_shell_path(kernel),
+                "READY_QEMU_APPEND": "console=ttyS0",
+                "READY_QEMU_BIN": self.fake_shell_path(bindir / "qemu-system-x86_64"),
+                "READY_QEMU_IMG": self.fake_shell_path(bindir / "qemu-img"),
+                "READY_QEMU_SSH_PORT": "70000",
+                "INVOCATION_LOG": self.fake_shell_path(invocation_log),
+            }
+            result = self.run_script(image, hashlib.sha256(image_bytes).hexdigest(), "pc", env=env)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("TCP port from 1 to 65535", result.stderr)
+        self.assertFalse(invocation_log.exists(), "invalid SSH port must be rejected before tools run")
+
     def test_verified_boot_uses_temporary_overlay_and_preserves_image(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -119,6 +218,7 @@ class QemuBootHelperTests(unittest.TestCase):
             self.assertEqual(image.read_bytes(), image_bytes, "base image must remain unchanged")
             qemu_args = args_log.read_text(encoding="utf-8")
             self.assertIn("-nic\nnone", qemu_args)
+            self.assertNotIn("hostfwd", qemu_args, "forwarding remains disabled unless explicitly requested")
             self.assertIn("-monitor\nnone", qemu_args)
             self.assertIn("qcow2", qemu_args)
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Explicit, network-isolated QEMU boot for a verified x86_64 READY image artifact.
+# Explicit QEMU boot for a verified x86_64 READY image artifact.
+# Networking stays disabled unless loopback-only SSH forwarding is explicitly requested.
 set -euo pipefail
 
 usage() {
     echo "Usage: $0 <image-path> <expected-sha256> <machine>" >&2
     echo "Example: $0 image.wic <64-hex-sha256> pc" >&2
+    echo "Optional SSH test forward: set READY_QEMU_SSH_PORT to a host TCP port; it binds only to 127.0.0.1." >&2
 }
 
 if [[ $# -ne 3 ]]; then
@@ -51,11 +53,25 @@ if [[ -z "${READY_QEMU_APPEND:-}" ]]; then
     echo "ERROR: set READY_QEMU_APPEND to the kernel cmdline for the selected image/machine." >&2
     exit 2
 fi
+ssh_forward=()
+if [[ -n "${READY_QEMU_SSH_PORT:-}" ]]; then
+    if [[ ! "${READY_QEMU_SSH_PORT}" =~ ^[0-9]{1,5}$ ]] || (( READY_QEMU_SSH_PORT < 1 || READY_QEMU_SSH_PORT > 65535 )); then
+        echo "ERROR: READY_QEMU_SSH_PORT must be a TCP port from 1 to 65535." >&2
+        exit 2
+    fi
+    ssh_forward=( -nic "user,model=virtio-net-pci,hostfwd=tcp:127.0.0.1:${READY_QEMU_SSH_PORT}-:22" )
+else
+    ssh_forward=( -nic none )
+fi
 printf 'Verified image SHA-256: %s\n' "${actual_hash}"
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "${tmp_dir}"' EXIT INT TERM
 "${qemu_img_bin}" create -q -f qcow2 -F raw -b "${image_path}" "${tmp_dir}/overlay.qcow2"
-echo "Starting QEMU (${machine}) using a disposable COW overlay, no network, host sharing, or monitor. Press Ctrl-C to stop."
+if [[ -n "${READY_QEMU_SSH_PORT:-}" ]]; then
+    echo "Starting QEMU with SSH forwarded only on 127.0.0.1:${READY_QEMU_SSH_PORT} (guest port 22). Disposable COW overlay; no host sharing or monitor."
+else
+    echo "Starting QEMU (${machine}) using a disposable COW overlay, no network, host sharing, or monitor. Press Ctrl-C to stop."
+fi
 set +e
 "${qemu_bin}" \
     -machine "${machine}" \
@@ -67,7 +83,7 @@ set +e
     -display none \
     -serial stdio \
     -monitor none \
-    -nic none \
+    "${ssh_forward[@]}" \
     -no-reboot
 qemu_status=$?
 set -e
