@@ -597,6 +597,23 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(directives.get("Restart"), "on-failure")
         self.assertRegex(directives.get("RestartSec", ""), r"^[1-9][0-9]*$")
 
+    def test_systemd_unit_install_is_enabled_by_the_owning_recipe(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        unit_install = re.search(r"(?m)^WantedBy=([^\s]+)$", service)
+        unit_name = re.search(r"(?m)^SYSTEMD_SERVICE:\$\{PN\}\s*=\s*\"([^\"]+)\"$", recipe)
+        auto_enable = re.search(r"(?m)^SYSTEMD_AUTO_ENABLE:\$\{PN\}\s*=\s*\"([^\"]+)\"$", recipe)
+        install_statement = re.search(r"(?m)^\s*install -m 0644 \$\{WORKDIR\}/([^\s]+) \$\{D\}\$\{systemd_system_unitdir\}/([^\s]+)$", recipe)
+        self.assertIsNotNone(unit_install)
+        self.assertIsNotNone(unit_name)
+        self.assertIsNotNone(auto_enable)
+        self.assertIsNotNone(install_statement)
+        self.assertEqual(unit_name.group(1), "readylinux-console.service")
+        self.assertEqual(auto_enable.group(1), "enable")
+        self.assertEqual(install_statement.group(1), unit_name.group(1))
+        self.assertEqual(install_statement.group(2), unit_name.group(1))
+        self.assertIn("multi-user.target", unit_install.group(1))
+
     def test_systemd_console_has_only_one_definition_per_directive(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = [line.split("=", 1)[0] for line in service.splitlines() if "=" in line and not line.startswith("#")]
