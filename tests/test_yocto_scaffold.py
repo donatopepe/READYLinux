@@ -447,6 +447,23 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(umask_value & 0o0750, 0, "UMask removes permissions required by the persistent state dir")
         self.assertIn(user_home.group(1), ("/var/lib/readylinux", directives.get("Environment", "")))
 
+    def test_systemd_console_runs_without_privilege_escalation_or_writable_system_paths(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("User"), "ready")
+        self.assertEqual(directives.get("Group"), "ready")
+        self.assertEqual(directives.get("NoNewPrivileges"), "yes")
+        self.assertEqual(directives.get("ProtectSystem"), "strict")
+        self.assertEqual(directives.get("ProtectHome"), "yes")
+        self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
+        self.assertEqual(directives.get("StateDirectory"), "readylinux")
+        for system_path in ("/etc", "/usr", "/opt", "/home"):
+            self.assertNotIn(system_path, directives.get("ReadWritePaths", ""))
+
     def test_systemd_writable_paths_are_scoped_to_persistent_state_directory(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
