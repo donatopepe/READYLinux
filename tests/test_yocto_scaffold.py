@@ -731,6 +731,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(re.findall(r"(?m)^GROUPADD_PARAM:\$\{PN\}\s*=", recipe)), 1)
         self.assertEqual(len(re.findall(r"(?m)^GROUPADD_PARAM(?:_[A-Za-z]|:append|:prepend|:remove)", recipe)), 0)
 
+    def test_console_recipe_package_paths_do_not_use_legacy_override_syntax(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        modern_variables = r"(?:SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE|RDEPENDS|FILES|USERADD_PARAM|GROUPADD_PARAM)"
+        self.assertNotRegex(recipe, rf"(?m)^\s*{modern_variables}_[A-Za-z]\w*\s*[+:?]?=")
+        self.assertNotRegex(recipe, rf"(?m)^\s*{modern_variables}:(?:append|prepend|remove)\s*=")
+        self.assertRegex(recipe, r"(?m)^SYSTEMD_SERVICE:\$\{PN\}\s*=")
+        self.assertRegex(recipe, r"(?m)^SYSTEMD_AUTO_ENABLE:\$\{PN\}\s*=")
+        self.assertRegex(recipe, r"(?m)^RDEPENDS:\$\{PN\}\s*\+=")
+
     def test_console_recipe_useradd_contract_is_scoped_and_noninteractive(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         package_scope = re.search(r"(?m)^USERADD_PACKAGES\s*=\s*\"([^\"]+)\"$", recipe)
