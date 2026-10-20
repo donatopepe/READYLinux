@@ -1442,10 +1442,16 @@ class YoctoScaffoldTests(unittest.TestCase):
     def test_status_docs_state_current_build_limits_and_host_prereqs(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
-        for doc, localized_status in ((italian, "Non verificato"), (english, "Not verified")):
+        cases = (
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "173 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "173 Windows/Python 3.11 tests"),
+        )
+        for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)
             self.assertIn("QEMU", doc)
             self.assertIn(localized_status, doc)
+            self.assertRegex(doc, baseline_heading)
+            self.assertIn(expected_count, doc)
         for doc in (italian, english):
             self.assertIn("Git", doc)
             self.assertIn(".pi-loop", doc)
