@@ -219,6 +219,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(sum(pattern.endswith(".bbappend") for pattern in patterns), 1)
         for pattern in patterns:
             self.assertTrue(pattern.startswith("${LAYERDIR}/recipes-"))
+        self.assertEqual(patterns[0].count("*"), 3)
+        self.assertEqual(patterns[1].count("*"), 3)
+        self.assertNotIn("conf/", " ".join(patterns), "BBFILES should not scan configuration directories")
 
     def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
