@@ -1009,6 +1009,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
         self.assertEqual(directives.get("StateDirectory"), "readylinux")
         self.assertEqual(directives.get("StateDirectoryMode"), "0750")
+        self.assertEqual(len(re.findall(r"(?m)^StateDirectory=", service)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^StateDirectoryMode=", service)), 1)
         self.assertEqual(directives.get("UMask"), "0027")
         self.assertEqual(directives.get("Environment"), "XDG_DATA_HOME=/var/lib/readylinux")
         self.assertEqual(directives.get("Type"), "simple")
