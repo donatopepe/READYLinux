@@ -354,6 +354,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(entries, list(dict.fromkeys(entries)), "IMAGE_INSTALL package ordering has duplicates")
         self.assertEqual(image.count("IMAGE_INSTALL:append"), 1)
 
+    def test_image_recipe_whitespace_and_recipe_line_endings_are_stable(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        service = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        for name, content in (("image", image), ("runtime", runtime), ("service", service)):
+            with self.subTest(recipe=name):
+                self.assertEqual(content, content.rstrip() + "\n", "recipe should end in one newline")
+                self.assertFalse(any(line.rstrip() != line for line in content.splitlines()), "recipe has trailing whitespace")
+                self.assertNotIn("\t", content, "recipe should use spaces, not tab indentation")
+
     def test_image_recipe_has_one_summary_license_and_minimal_image_base(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         summary = re.findall(r"(?m)^SUMMARY\s*=", image)
