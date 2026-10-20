@@ -568,6 +568,20 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(umask_value & 0o0750, 0, "UMask removes permissions required by the persistent state dir")
         self.assertIn(user_home.group(1), ("/var/lib/readylinux", directives.get("Environment", "")))
 
+    def test_systemd_console_tty_restart_and_logging_policy_are_explicit(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("StandardInput"), "tty")
+        self.assertEqual(directives.get("StandardOutput"), "tty")
+        self.assertEqual(directives.get("StandardError"), "journal")
+        self.assertEqual(directives.get("TTYPath"), "/dev/tty1")
+        self.assertEqual(directives.get("Restart"), "on-failure")
+        self.assertRegex(directives.get("RestartSec", ""), r"^[1-9][0-9]*$")
+
     def test_systemd_console_has_only_one_definition_per_directive(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = [line.split("=", 1)[0] for line in service.splitlines() if "=" in line and not line.startswith("#")]
