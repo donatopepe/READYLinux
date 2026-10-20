@@ -614,6 +614,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(install_statement.group(2), unit_name.group(1))
         self.assertIn("multi-user.target", unit_install.group(1))
 
+    def test_systemd_unit_has_single_install_target_declaration(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        install_section = service.split("[Install]", 1)
+        self.assertEqual(len(install_section), 2, "unit must declare one install section")
+        before_install, install_body = install_section
+        self.assertNotIn("[Install]", install_body, "unit must not repeat install section")
+        wanted_by = re.findall(r"(?m)^WantedBy=([^\s]+)$", install_body)
+        self.assertEqual(wanted_by, ["multi-user.target"])
+        self.assertNotRegex(before_install, r"(?m)^WantedBy=")
+
     def test_systemd_console_has_only_one_definition_per_directive(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = [line.split("=", 1)[0] for line in service.splitlines() if "=" in line and not line.startswith("#")]
