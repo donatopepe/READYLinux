@@ -229,6 +229,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('DISTRO = "readylinux"', distro)
         self.assertNotIn('DISTRO = "readylinux"', (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8"))
 
+    def test_distro_requires_poky_base_and_has_no_floating_requirements(self):
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        self.assertRegex(distro, r"(?m)^require conf/distro/poky\.conf$")
+        requires = re.findall(r"(?m)^(?:require|include)\s+(.+)$", distro)
+        self.assertEqual(requires, ["conf/distro/poky.conf"])
+        self.assertNotRegex(distro, r"(?i)(?:https?://|git://|AUTOREV|\bmaster\b|\blatest\b)")
+        self.assertEqual(len(re.findall(r"(?m)^DISTRO = ", distro)), 1)
+
     def test_generic_distro_does_not_pin_a_machine_or_bsp(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         self.assertNotRegex(distro, r"(?m)^\s*MACHINE\s*[:+?]?=")
