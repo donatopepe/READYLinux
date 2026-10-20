@@ -726,6 +726,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(service, service.rstrip() + "\n", "unit file should end with exactly one newline")
         self.assertFalse(any(line.rstrip() != line for line in service.splitlines()), "unit directives have trailing whitespace")
 
+    def test_runtime_recipe_launcher_uses_posix_shell_and_exec_replacement(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        launcher = re.search(r"(?ms)^\s*cat > \$\{D\}\$\{bindir\}/readylinux <<'EOF'\n(.*?)\nEOF$", recipe)
+        self.assertIsNotNone(launcher)
+        lines = launcher.group(1).splitlines()
+        self.assertEqual(lines[0], "#!/bin/sh")
+        self.assertRegex(lines[1], r"^exec python3 /usr/share/readylinux/readylinux\.py \"\$@\"$")
+        self.assertEqual(len(lines), 2, "launcher should not execute an intermediate shell command")
+
     def test_runtime_recipe_exposes_only_one_console_entrypoint_install(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         launcher_targets = re.findall(r"(?m)^\s*cat > \$\{D\}\$\{bindir\}/([^\s]+) <<'EOF'$", recipe)
