@@ -311,6 +311,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(set(checksums)), 1)
         self.assertEqual(checksums[0], "0835ade698e0bcf8506ecda2f7b4f302")
 
+    def test_console_recipe_runtime_dependencies_include_every_required_package(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        dependency = re.search(r'RDEPENDS:\$\{PN\}\s*\+=\s*"([^"]+)"', recipe)
+        self.assertIsNotNone(dependency)
+        declared = set(dependency.group(1).split())
+
+        inherited = re.search(r"(?m)^inherit\s+([^\n]+)$", recipe)
+        self.assertIsNotNone(inherited)
+        self.assertIn("systemd", inherited.group(1).split())
+        self.assertTrue({"readylinux", "systemd"}.issubset(declared))
+        self.assertEqual(declared, {"readylinux", "systemd"})
+
     def test_recipes_declare_license_provenance_and_runtime_dependencies(self):
         runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         service = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
