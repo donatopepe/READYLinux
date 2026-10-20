@@ -172,6 +172,24 @@ class YoctoScaffoldTests(unittest.TestCase):
                     self.assertIn(series, readme)
                 self.assertRegex(readme.lower(), r"(?:not tested|not been tested|not verified|non verificat)")
 
+    def test_layer_metadata_discovers_only_expected_recipe_roots(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        bbfiles = re.search(r'(?m)^BBFILES\s*\+=\s*"([^"]+)"$', layer_conf)
+        self.assertIsNotNone(bbfiles)
+        patterns = bbfiles.group(1).split()
+        self.assertEqual(patterns, [
+            "${LAYERDIR}/recipes-*/*/*.bb",
+            "${LAYERDIR}/recipes-*/*/*.bbappend",
+        ])
+        actual_recipes = {path.relative_to(LAYER).as_posix() for path in LAYER.rglob("*.bb")}
+        expected_paths = {
+            "recipes-core/images/readylinux-image.bb",
+            "recipes-core/readylinux/readylinux-console_0.1.bb",
+            "recipes-ready/readylinux/readylinux_0.3.bb",
+        }
+        self.assertEqual(actual_recipes, expected_paths)
+        self.assertEqual(len(actual_recipes), 3)
+
     def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
         self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
