@@ -362,6 +362,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("READY Linux", summary.group(1))
         self.assertEqual(len(re.findall(r"(?m)^SUMMARY\s*=", image)), 1)
 
+    def test_image_recipe_modern_image_install_override_has_expected_order_and_scope(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        install_line = re.search(r'(?m)^IMAGE_INSTALL:append\s*=\s*"([^"]+)"$', image)
+        self.assertIsNotNone(install_line)
+        self.assertEqual(install_line.group(1).split(), ["readylinux", "readylinux-console"])
+        self.assertNotRegex(image, r"(?m)^\s*IMAGE_INSTALL_(?:append|prepend|remove)\s*=")
+        self.assertEqual(len(re.findall(r"(?m)^IMAGE_INSTALL:append\s*=", image)), 1)
+
     def test_image_recipe_declares_exactly_one_image_install_override(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         assignments = re.findall(r"(?m)^([A-Z][A-Z0-9_]*(?::[A-Za-z0-9_-]+)?)\s*[:+?]?=", image)
