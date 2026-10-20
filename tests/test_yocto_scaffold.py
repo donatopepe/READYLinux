@@ -693,6 +693,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(install_statement.group(2), unit_name.group(1))
         self.assertIn("multi-user.target", unit_install.group(1))
 
+    def test_systemd_description_matches_console_identity_metadata(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        description = re.search(r"(?m)^Description=(.+)$", service)
+        distro_name = re.search(r'(?m)^DISTRO_NAME\s*=\s*"([^\"]+)"$', distro)
+        self.assertIsNotNone(description)
+        self.assertIsNotNone(distro_name)
+        self.assertIn(distro_name.group(1), description.group(1))
+        self.assertEqual(distro_name.group(1), "READY Linux")
+
     def test_systemd_unit_has_required_sections_once_and_in_order(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         sections = [line.strip() for line in service.splitlines() if line.strip().startswith("[") and line.strip().endswith("]")]
