@@ -607,6 +607,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(workspace.group(1), "/var/lib/readylinux/programs")
         self.assertTrue(workspace.group(1).startswith("/var/lib/readylinux/"))
 
+    def test_systemd_service_runs_with_explicit_restart_rate_limit(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("Restart"), "on-failure")
+        self.assertRegex(directives.get("RestartSec", ""), r"^[1-9][0-9]*$")
+        self.assertEqual(directives.get("Type"), "simple")
+
     def test_systemd_service_does_not_order_on_optional_network(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         unit_section = service.split("[Service]", 1)[0]
