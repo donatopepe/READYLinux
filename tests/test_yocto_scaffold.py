@@ -1072,7 +1072,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertRegex(doc, r"full suite:?\s+\d+ tests PASS")
                 self.assertRegex(doc, r"(?i)(?:8 platform-specific skips|8 skip platform-specific)")
                 snapshot = re.search(
-                    r"(?m)^- (?:Snapshot iniziale confermato via|Initial snapshot verified by) `git rev-parse HEAD`: `([0-9a-f]{40})`",
+                    r"(?m)^- (?:Snapshot iniziale (?:confermato via|verificato con)|Initial snapshot verified by) `git rev-parse HEAD`: `([0-9a-f]{40})`",
                     doc,
                 )
                 self.assertIsNotNone(snapshot, f"missing firing-start HEAD snapshot in {'Italian' if doc == italian else 'English'} results")
