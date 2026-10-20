@@ -1094,6 +1094,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(example["identity"]["host_arch"], "UNRECORDED")
         self.assertEqual(example["identity"]["machine"], "UNSELECTED")
         self.assertEqual(example["identity"]["distro"], "readylinux")
+        self.assertEqual(example["identity"]["tclibc"], "")
+        self.assertEqual(example["identity"]["bsp_revision"], "")
         self.assertEqual(example["identity"]["init_system"], "systemd")
         self.assertEqual(example["identity"]["bitbake_version"], "NOT-RUN")
         self.assertEqual(example["identity"]["poky_commit"], "0" * 40)
