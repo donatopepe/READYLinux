@@ -42,7 +42,7 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertIn("source the target build environment first", result.stderr)
         self.assertNotIn("bitbake -p", result.stdout)
 
-    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0):
+    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0, collection="readylinux", registered_layer=None):
         temp_path = tempfile.TemporaryDirectory()
         bindir = Path(temp_path.name) / "bin"
         bindir.mkdir()
@@ -50,6 +50,15 @@ class YoctoValidationScriptTests(unittest.TestCase):
             fake = bindir / "bitbake"
             fake.write_text(f"#!/bin/sh\nprintf 'FAKE_BITBAKE %s %s\\n' \"$*\" \"$PWD\"\nexit {bitbake_exit}\n", encoding="utf-8")
             fake.chmod(0o755)
+            layer_stub = bindir / "bitbake-layers"
+            layer_path = registered_layer if registered_layer is not None else shell_pwd(ROOT / "meta-readylinux")
+            stub_lines = [
+                "#!/bin/sh",
+                "printf 'layer path priority\n%s %s 8\n' '" + collection + "' '" + layer_path + "'",
+                "",
+            ]
+            layer_stub.write_text(chr(10).join(stub_lines), encoding="utf-8")
+            layer_stub.chmod(0o755)
         env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": to_shell_path(builddir)}
         return subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True), temp_path
 
@@ -63,6 +72,36 @@ class YoctoValidationScriptTests(unittest.TestCase):
             self.addCleanup(fake_root.cleanup)
         self.assertEqual(result.returncode, 2)
         self.assertIn("bitbake is not available", result.stderr)
+        self.assertNotIn("FAKE_BITBAKE", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_rejects_misnamed_layer_collection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"\n', encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, collection="wrongname")
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 4, result.stdout + result.stderr)
+        self.assertIn("expected 'readylinux'", result.stderr)
+        self.assertNotIn("FAKE_BITBAKE", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_rejects_build_layers_reporting_a_different_path(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"\n', encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, registered_layer="/tmp/other-layer")
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 4, result.stdout + result.stderr)
+        self.assertIn("does not report", result.stderr)
         self.assertNotIn("FAKE_BITBAKE", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")

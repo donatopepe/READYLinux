@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Gate di registrazione layer prima del parse
+
+- `scripts/validate-yocto-env.sh` ora interroga `bitbake-layers show-layers`: richiede che il path del layer compaia nel report, che la collection sia `readylinux` e che la priority sia numerica; altrimenti exit 4. Se `bitbake-layers` manca, exit 2.
+- Run reale su WSL: `Layer collection: readylinux (priority 8)` seguito da `bitbake -p` con 0 errori.
+- Test: helper aggiornato con stub `bitbake-layers`; due nuovi casi (collection errata → exit 4; report con path diverso → exit 4). Totale modulo 15 test.
+- Suite: 203 test PASS (19 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Test degli installer utente (`install.sh`, `setup-ai-cpu.sh`)
 
 - Nuovo modulo `tests/test_install_script.py` (5 test) per i due script finora coperti solo dalla sintassi.

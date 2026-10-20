@@ -28,6 +28,32 @@ if ! grep -Fq "${layer_dir}" "${build_dir}/conf/bblayers.conf"; then
     exit 2
 fi
 
+if ! command -v bitbake-layers >/dev/null 2>&1; then
+    echo "ERROR: bitbake-layers is not available in PATH; source the target build environment." >&2
+    exit 2
+fi
+layers_report="$(cd "${build_dir}" && bitbake-layers show-layers 2>/dev/null || true)"
+if [[ -z "${layers_report}" ]]; then
+    echo "ERROR: bitbake-layers show-layers produced no output in ${build_dir}." >&2
+    exit 4
+fi
+layer_line="$(printf '%s\n' "${layers_report}" | grep -F -- "${layer_dir}" | head -n 1 || true)"
+if [[ -z "${layer_line}" ]]; then
+    echo "ERROR: bitbake-layers does not report ${layer_dir} as a registered layer." >&2
+    exit 4
+fi
+layer_collection="$(printf '%s' "${layer_line}" | awk '{print $1}')"
+layer_priority="$(printf '%s' "${layer_line}" | awk '{print $NF}')"
+if [[ "${layer_collection}" != "readylinux" ]]; then
+    echo "ERROR: layer ${layer_dir} is registered as collection '${layer_collection}', expected 'readylinux'." >&2
+    exit 4
+fi
+if ! [[ "${layer_priority}" =~ ^[0-9]+$ ]]; then
+    echo "ERROR: cannot read the registered priority of ${layer_dir} from: ${layer_line}" >&2
+    exit 4
+fi
+printf 'Layer collection: %s (priority %s)\n' "${layer_collection}" "${layer_priority}"
+
 distro_line="$(grep -E '^[[:space:]]*DISTRO[[:space:]]*=' "${build_dir}/conf/local.conf" | tail -n 1 || true)"
 if [[ -n "${distro_line}" ]]; then
     distro_value="${distro_line#*=}"
