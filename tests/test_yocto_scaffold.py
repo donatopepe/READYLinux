@@ -709,6 +709,20 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(sections, ["[Unit]", "[Service]", "[Install]"])
         self.assertEqual(len(set(sections)), len(sections), "duplicate systemd section")
 
+    def test_console_recipe_useradd_contract_is_scoped_and_noninteractive(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        package_scope = re.search(r"(?m)^USERADD_PACKAGES\s*=\s*\"([^\"]+)\"$", recipe)
+        useradd = re.search(r"(?m)^USERADD_PARAM:\$\{PN\}\s*=\s*\"([^\"]+)\"$", recipe)
+        groupadd = re.search(r"(?m)^GROUPADD_PARAM:\$\{PN\}\s*=\s*\"([^\"]+)\"$", recipe)
+        self.assertIsNotNone(package_scope)
+        self.assertIsNotNone(useradd)
+        self.assertIsNotNone(groupadd)
+        self.assertEqual(package_scope.group(1).split(), ["${PN}"])
+        self.assertIn("--system", useradd.group(1).split())
+        self.assertIn("--no-create-home", useradd.group(1).split())
+        self.assertIn("--shell /sbin/nologin", useradd.group(1))
+        self.assertEqual(groupadd.group(1), "--system ready")
+
     def test_systemd_unit_has_single_install_target_declaration(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         install_section = service.split("[Install]", 1)
