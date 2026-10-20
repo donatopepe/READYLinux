@@ -511,7 +511,10 @@ class YoctoScaffoldTests(unittest.TestCase):
         unknown = stdlib - local_modules - set(packaged)
         self.assertFalse(unknown, f"Add package mapping for imports: {sorted(unknown)}")
         required = {packaged[module] for module in stdlib - local_modules}
+        # The externally discovered llama-server executable is a runtime prerequisite too.
+        required.add("python3-shell")
         self.assertTrue(required.issubset(declared), f"Missing RDEPENDS: {sorted(required - declared)}")
+        self.assertEqual(declared, required, f"Unused RDEPENDS package entries: {sorted(declared - required)}")
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         image_install = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^"]+)"', image)
         self.assertIsNotNone(image_install)
