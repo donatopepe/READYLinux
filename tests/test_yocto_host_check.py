@@ -20,6 +20,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertNotRegex(text, r"(?m)^\s*(?:apt-get|apt|dnf|yum|zypper|curl|wget)\s+(?:install|download|fetch)")
         self.assertIn("if command -v bitbake >/dev/null 2>&1 && command -v bitbake-layers >/dev/null 2>&1", text)
         self.assertIn("BitBake executables found on PATH.", text)
+        self.assertIn("Environment tools (not provided by this probe):", text)
+        self.assertIn("optional_commands=(bitbake bitbake-layers", text)
 
     def test_reports_missing_host_tools_without_modifying_system(self):
         with tempfile.TemporaryDirectory() as temp:
