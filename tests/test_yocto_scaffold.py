@@ -530,6 +530,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(umask_value & 0o0750, 0, "UMask removes permissions required by the persistent state dir")
         self.assertIn(user_home.group(1), ("/var/lib/readylinux", directives.get("Environment", "")))
 
+    def test_systemd_console_has_only_one_definition_per_directive(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = [line.split("=", 1)[0] for line in service.splitlines() if "=" in line and not line.startswith("#")]
+        self.assertEqual(len(directives), len(set(directives)), "duplicate unit directives can override the intended policy")
+        self.assertIn("User", directives)
+        self.assertIn("ExecStart", directives)
+        self.assertIn("ReadWritePaths", directives)
+
     def test_systemd_console_runs_without_privilege_escalation_or_writable_system_paths(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
