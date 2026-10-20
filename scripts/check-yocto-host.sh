@@ -6,12 +6,16 @@ required_commands=(bash git gcc g++ make python3 chrpath cpio diffstat file gawk
 optional_commands=(bitbake bitbake-layers qemu-system-x86_64 sha256sum)
 missing=0
 
-if [[ -r /etc/os-release ]]; then
-    # shellcheck disable=SC1091
-    . /etc/os-release
+os_release="${READYLINUX_OS_RELEASE:-/etc/os-release}"
+if [[ -r "${os_release}" ]]; then
+    # shellcheck disable=SC1090
+    . "${os_release}"
     printf 'OS: %s (%s)\n' "${PRETTY_NAME:-unknown}" "${ID:-unknown}"
 else
     echo 'OS: /etc/os-release unavailable'
+    echo 'WRONG-ENVIRONMENT: this probe only describes a Linux build host; a Windows/shell-interop run is not evidence.'
+    echo 'Preflight: NOT-A-LINUX-HOST (read-only; no package changes made).'
+    exit 2
 fi
 printf 'Architecture: %s\n' "$(uname -m 2>/dev/null || echo unknown)"
 printf 'CPUs: %s\n' "$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo unknown)"

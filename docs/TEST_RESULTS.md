@@ -7,6 +7,7 @@
 - Aggiunto un test che impone agli STATUS IT/EN di riportare il risultato WSL Debian e vieta di registrare l'output della shell Windows come evidenza host.
 - Suite completa: 174 test PASS (8 skip platform-specific) su Windows/Python 3.11 e WSL Debian 13/Python 3.13; `compileall`, `bash -n` e `git diff --check` pass.
 - Nessun download, installazione, parse BitBake, build immagine o boot QEMU eseguito.
+- `scripts/check-yocto-host.sh` ora è fail-closed sull'ambiente: senza `/etc/os-release` leggibile termina con exit 2 `NOT-A-LINUX-HOST` e `WRONG-ENVIRONMENT`, perché l'output di una shell Windows non è evidenza host. Exit 0 = pronto, 1 = `INCOMPLETE`, 2 = ambiente sbagliato. Suite: 175 test PASS.
 
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 

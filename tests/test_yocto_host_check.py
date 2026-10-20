@@ -6,6 +6,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/check-yocto-host.sh"
+DEBIAN_OS_RELEASE = (
+    'PRETTY_NAME="Debian GNU/Linux 13 (trixie)"\nID=debian\nID_LIKE=debian\n'
+)
+
+
+def debian_os_release(directory):
+    path = Path(directory) / "os-release"
+    path.write_text(DEBIAN_OS_RELEASE, encoding="utf-8")
+    return str(path)
+
+
+def host_env(directory, **extra):
+    env = {"READYLINUX_OS_RELEASE": debian_os_release(directory)}
+    env.update(extra)
+    return env
 
 
 class YoctoHostCheckTests(unittest.TestCase):
@@ -36,7 +51,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             result = subprocess.run(
                 ["bash", str(SCRIPT)],
                 cwd=ROOT,
-                env={"PATH": str(fakebin), "ID": "debian"},
+                env=host_env(temp, PATH=str(fakebin), ID="debian"),
                 capture_output=True,
                 text=True,
             )
@@ -66,7 +81,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             result = subprocess.run(
                 [bash_path, str(SCRIPT)],
                 cwd=ROOT,
-                env={"PATH": str(fakebin), "BUILDDIR": str(builddir)},
+                env=host_env(root, PATH=str(fakebin), BUILDDIR=str(builddir)),
                 capture_output=True,
                 text=True,
             )
@@ -94,7 +109,7 @@ class YoctoHostCheckTests(unittest.TestCase):
                 stub.write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
                 stub.chmod(0o755)
             bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
-            env = {"PATH": str(fakebin)}
+            env = host_env(temp, PATH=str(fakebin))
             env.pop("BUILDDIR", None)
             result = subprocess.run([bash_path, str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True)
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
@@ -116,7 +131,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             result = subprocess.run(
                 [bash_path, str(SCRIPT)],
                 cwd=ROOT,
-                env={"PATH": "/usr/bin:/bin", "BUILDDIR": str(file_builddir)},
+                env=host_env(temp, PATH="/usr/bin:/bin", BUILDDIR=str(file_builddir)),
                 capture_output=True,
                 text=True,
             )
@@ -141,7 +156,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             result = subprocess.run(
                 [bash_path, str(SCRIPT)],
                 cwd=ROOT,
-                env={"PATH": str(fakebin), "BUILDDIR": str(builddir)},
+                env=host_env(root, PATH=str(fakebin), BUILDDIR=str(builddir)),
                 capture_output=True,
                 text=True,
             )
@@ -153,16 +168,32 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("Preflight: INCOMPLETE", result.stdout)
 
     def test_rejects_invalid_builddir_path(self):
-        result = subprocess.run(
-            ["bash", str(SCRIPT)],
-            cwd=ROOT,
-            env={"PATH": "/usr/bin:/bin", "BUILDDIR": "/does/not/exist"},
-            capture_output=True,
-            text=True,
-        )
+        with tempfile.TemporaryDirectory() as temp:
+            result = subprocess.run(
+                ["bash", str(SCRIPT)],
+                cwd=ROOT,
+                env=host_env(temp, PATH="/usr/bin:/bin", BUILDDIR="/does/not/exist"),
+                capture_output=True,
+                text=True,
+            )
         self.assertEqual(result.returncode, 1)
         self.assertIn("BUILDDIR: unset", result.stdout)
         self.assertIn("Preflight: INCOMPLETE", result.stdout)
+
+    def test_fails_closed_when_no_linux_os_release_is_available(self):
+        with tempfile.TemporaryDirectory() as temp:
+            result = subprocess.run(
+                ["bash", str(SCRIPT)],
+                cwd=ROOT,
+                env={"READYLINUX_OS_RELEASE": str(Path(temp) / "missing-os-release")},
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("OS: /etc/os-release unavailable", result.stdout)
+        self.assertIn("WRONG-ENVIRONMENT", result.stdout)
+        self.assertIn("Preflight: NOT-A-LINUX-HOST", result.stdout)
+        self.assertNotIn("Preflight: INCOMPLETE", result.stdout)
 
 
 if __name__ == "__main__":
