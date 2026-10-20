@@ -726,6 +726,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(service, service.rstrip() + "\n", "unit file should end with exactly one newline")
         self.assertFalse(any(line.rstrip() != line for line in service.splitlines()), "unit directives have trailing whitespace")
 
+    def test_runtime_recipe_exposes_only_one_console_entrypoint_install(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        launcher_targets = re.findall(r"(?m)^\s*cat > \$\{D\}\$\{bindir\}/([^\s]+) <<'EOF'$", recipe)
+        self.assertEqual(launcher_targets, ["readylinux"])
+        chmod_targets = re.findall(r"(?m)^\s*chmod 0755 \$\{D\}\$\{bindir\}/([^\s]+)$", recipe)
+        self.assertEqual(chmod_targets, launcher_targets)
+        self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
+
     def test_console_recipe_scopes_user_and_system_group_creation_to_package(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertEqual(len(re.findall(r"(?m)^USERADD_PACKAGES\s*=", recipe)), 1)
