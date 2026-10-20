@@ -1050,8 +1050,9 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("readylinux-console", docs)
             self.assertIn("getty@tty1.service", docs)
             self.assertIn("ready", docs)
-            self.assertIn("RDEPENDS", docs)
-            self.assertIn('readylinux-console` declares `RDEPENDS:${PN} += "readylinux systemd"', docs)
+            self.assertIn('readylinux-console` declares `RDEPENDS:${PN} += "readylinux systemd"`', docs)
+            self.assertIn("`FILES:${PN}`", docs)
+            self.assertIn("readylinux-console.service", docs)
         self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
 
     def test_layer_docs_make_distro_machine_and_cached_sources_requirements_explicit(self):
