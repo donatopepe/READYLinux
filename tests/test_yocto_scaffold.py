@@ -532,6 +532,9 @@ class YoctoScaffoldTests(unittest.TestCase):
             checksums.append(match.group(1))
         self.assertEqual(len(set(checksums)), 1)
         self.assertEqual(checksums[0], "0835ade698e0bcf8506ecda2f7b4f302")
+        for recipe_path in recipes:
+            recipe = recipe_path.read_text(encoding="utf-8")
+            self.assertEqual(len(re.findall(r"(?m)^LIC_FILES_CHKSUM\s*=", recipe)), 1, recipe_path.name)
         self.assertTrue(all(re.fullmatch(r"[0-9a-f]{32}", checksum) for checksum in checksums))
 
     def test_console_recipe_runtime_dependencies_include_every_required_package(self):
