@@ -2,7 +2,7 @@ import ast
 import json
 import re
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
 LAYER = ROOT / "meta-readylinux"
@@ -1079,9 +1079,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(directives.get("TTYPath"), "/dev/tty1")
         self.assertEqual(directives.get("Restart"), "on-failure")
         self.assertEqual(directives.get("RestartSec"), "1")
-        self.assertIn("--home-dir /var/lib/readylinux", recipe)
-        self.assertIn("--gid ready", recipe)
-        self.assertIn("/var/lib/readylinux/programs", directives.get("ExecStart", ""))
+        useradd = re.search(r'USERADD_PARAM:\$\{PN\}\s*=\s*"([^"]+)"', recipe)
+        self.assertIsNotNone(useradd)
+        self.assertIn("--home-dir /var/lib/readylinux", useradd.group(1))
+        self.assertIn("--gid ready", useradd.group(1))
+        workspace = re.search(r"--workspace\s+(\S+)", directives["ExecStart"])
+        self.assertIsNotNone(workspace)
+        home_path = useradd.group(1).split("--home-dir ", 1)[1].split()[0]
+        self.assertEqual(PurePosixPath(home_path) / "programs", PurePosixPath(workspace.group(1)))
+        self.assertIn("/var/lib/readylinux/programs", workspace.group(1))
         self.assertNotIn("CapabilityBoundingSet", directives)
         self.assertNotIn("AmbientCapabilities", directives)
         self.assertNotEqual(directives.get("User"), "root")
