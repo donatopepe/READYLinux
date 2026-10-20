@@ -887,6 +887,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("bash scripts/check-yocto-host.sh", doc)
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
                 self.assertTrue(("preflight" in doc.lower() or "probe" in doc.lower()) and "INCOMPLETE" in doc)
+                self.assertRegex(doc, r"full suite:?\s+\d+ tests PASS")
                 snapshot = re.search(
                     r"(?m)^- (?:Snapshot iniziale confermato via|Initial snapshot verified by) `git rev-parse HEAD`: `([0-9a-f]{40})`",
                     doc,
