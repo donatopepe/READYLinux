@@ -37,6 +37,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 1)
         self.assertIn("MISSING gcc", result.stdout)
+        self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout.", result.stdout)
         self.assertIn("BUILDDIR: unset", result.stdout)
         self.assertIn("no package changes made", result.stdout)
 
