@@ -300,6 +300,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("READY Linux", summary.group(1))
         self.assertEqual(len(re.findall(r"(?m)^SUMMARY\s*=", image)), 1)
 
+    def test_image_recipe_declares_exactly_one_image_install_override(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        assignments = re.findall(r"(?m)^([A-Z][A-Z0-9_]*(?::[A-Za-z0-9_-]+)?)\s*[:+?]?=", image)
+        self.assertEqual(assignments.count("IMAGE_INSTALL:append"), 1)
+        self.assertEqual(assignments.count("SUMMARY"), 1)
+        self.assertEqual(assignments.count("LICENSE"), 1)
+        self.assertNotIn("IMAGE_INSTALL", assignments)
+
     def test_image_recipe_has_license_and_minimal_local_package_contract(self):
         image_path = LAYER / "recipes-core/images/readylinux-image.bb"
         image = image_path.read_text(encoding="utf-8")
