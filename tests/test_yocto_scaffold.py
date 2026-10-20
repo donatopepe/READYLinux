@@ -921,6 +921,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         enabled_units = re.findall(r'(?m)^SYSTEMD_SERVICE:\$\{PN\}\s*=\s*"([^"]+)"$', recipe)
         self.assertEqual(wanted_by, ["multi-user.target"])
         self.assertEqual(enabled_units, ["readylinux-console.service"])
+        self.assertEqual(len(re.findall(r"(?m)^WantedBy=", service)), 1)
         self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', recipe)
         self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
         self.assertEqual(len(re.findall(r"(?m)^SYSTEMD_SERVICE:\$\{PN\}", recipe)), 1)
