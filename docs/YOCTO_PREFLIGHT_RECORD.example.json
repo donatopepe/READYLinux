@@ -1,0 +1,48 @@
+{
+  "preflight": {
+    "arch": "x86_64",
+    "builddir": {
+      "path": "/path/to/example/build",
+      "set": true
+    },
+    "cpus": 1,
+    "missing_required": [],
+    "optional": {
+      "bitbake": true,
+      "bitbake-layers": true,
+      "qemu-system-x86_64": true,
+      "sha256sum": true
+    },
+    "os": {
+      "id": "example",
+      "name": "EXAMPLE-DISTRO"
+    },
+    "required": {
+      "bash": true,
+      "chrpath": true,
+      "cpio": true,
+      "diffstat": true,
+      "file": true,
+      "g++": true,
+      "gawk": true,
+      "gcc": true,
+      "git": true,
+      "ip": true,
+      "make": true,
+      "ping": true,
+      "python3": true,
+      "socat": true,
+      "texi2any": true,
+      "unzip": true,
+      "wget": true,
+      "xz": true,
+      "zstd": true
+    },
+    "schema_version": 1,
+    "verdict": "ready"
+  },
+  "readylinux_commit": "0000000000000000000000000000000000000000",
+  "recorded_utc": "2000-01-01T00:00:00Z",
+  "schema_version": 1,
+  "scope": "EXAMPLE ONLY: preflight-only placeholders, not build evidence"
+}

@@ -8,6 +8,7 @@
 - Full suite: 179 tests PASS (10 platform-specific skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13; `compileall`, `bash -n` and `git diff --check` pass.
 - No download, install, BitBake parse, image build or QEMU boot performed.
 - New `scripts/record-yocto-preflight.py` records the `--json` report with commit/UTC and a "preflight-only, not build evidence" scope; it refuses to write a non-`ready` verdict (exit 3) or to overwrite without `--force` (exit 4). Suite: 184 tests PASS (13 Windows skips).
+- Added `docs/YOCTO_PREFLIGHT_RECORD.schema.json` with a placeholder example and tests for record structure and recorder output; a `ready` verdict must agree with builddir and BitBake. Suite: 188 tests PASS (14 Windows skips).
 - `scripts/check-yocto-host.sh` now fails closed on the environment: with no readable `/etc/os-release` it exits 2 `NOT-A-LINUX-HOST` (`WRONG-ENVIRONMENT`), because Windows-shell output is not host evidence. Exit 0 = ready, 1 = `INCOMPLETE`, 2 = wrong environment. Suite: 175 tests PASS.
 
 ## 2026-10-18 — Offline Yocto contracts and regression suite

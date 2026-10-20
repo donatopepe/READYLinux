@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://readylinux.example/schemas/yocto-preflight-record.schema.json",
+  "title": "READY Linux Yocto Preflight Record",
+  "description": "Read-only host preflight recorded with provenance. This record never claims a BitBake parse, image build or QEMU boot.",
+  "$comment": "docs/YOCTO_PREFLIGHT_RECORD.example.json contains placeholders only; it is not host evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "recorded_utc",
+    "readylinux_commit",
+    "scope",
+    "preflight"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "recorded_utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "readylinux_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "os",
+        "arch",
+        "cpus",
+        "required",
+        "missing_required",
+        "optional",
+        "builddir",
+        "verdict"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "os": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "id"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "arch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cpus": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0 means the CPU count could not be read"
+        },
+        "required": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "missing_required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "optional": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "builddir": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "set",
+            "path"
+          ],
+          "properties": {
+            "set": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "verdict": {
+          "enum": [
+            "ready",
+            "incomplete",
+            "not-a-linux-host"
+          ]
+        }
+      }
+    }
+  }
+}
