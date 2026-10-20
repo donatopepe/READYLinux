@@ -345,6 +345,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(entries, ["readylinux", "readylinux-console"])
         self.assertFalse(any(entry != entry.strip() for entry in entries))
 
+    def test_image_recipe_installs_exactly_the_expected_packages_in_declared_order(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        install_match = re.search(r'(?m)^IMAGE_INSTALL:append\s*=\s*"([^"]+)"$', image)
+        self.assertIsNotNone(install_match)
+        entries = install_match.group(1).split()
+        self.assertEqual(entries, ["readylinux", "readylinux-console"])
+        self.assertEqual(entries, list(dict.fromkeys(entries)), "IMAGE_INSTALL package ordering has duplicates")
+        self.assertEqual(image.count("IMAGE_INSTALL:append"), 1)
+
     def test_image_recipe_has_one_summary_license_and_minimal_image_base(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         summary = re.findall(r"(?m)^SUMMARY\s*=", image)
