@@ -648,6 +648,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(install_statement.group(2), unit_name.group(1))
         self.assertIn("multi-user.target", unit_install.group(1))
 
+    def test_systemd_unit_has_required_sections_once_and_in_order(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        sections = [line.strip() for line in service.splitlines() if line.strip().startswith("[") and line.strip().endswith("]")]
+        self.assertEqual(sections, ["[Unit]", "[Service]", "[Install]"])
+        self.assertEqual(len(set(sections)), len(sections), "duplicate systemd section")
+
     def test_systemd_unit_has_single_install_target_declaration(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         install_section = service.split("[Install]", 1)
