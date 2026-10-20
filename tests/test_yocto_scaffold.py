@@ -1061,6 +1061,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(directives.get("ProtectHome"), "yes")
         self.assertEqual(directives.get("PrivateTmp"), "yes")
         self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
+        writable_path = Path(directives["ReadWritePaths"])
+        state_root = Path("/var/lib") / directives["StateDirectory"]
+        self.assertEqual(writable_path, state_root)
         self.assertEqual(directives.get("StateDirectory"), "readylinux")
         self.assertEqual(directives.get("StateDirectoryMode"), "0750")
         self.assertEqual(int(directives["StateDirectoryMode"], 8), 0o750)
