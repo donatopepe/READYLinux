@@ -1252,6 +1252,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         example = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.example.json").read_text(encoding="utf-8"))
         self.assertEqual(example["environment"]["parse_exit_code"], None)
         self.assertEqual(example["environment"]["parse_log"], "NOT-RUN")
+        self.assertEqual(example["identity"]["bitbake_version"], "NOT-RUN")
+        self.assertEqual(example["image"]["build_command"], "NOT-RUN")
         self.assertEqual(example["image"]["source_cache_state"], "not-built")
         self.assertIsNone(example["image"]["exit_code"])
         self.assertIsNone(example["image"]["artifact_path"])
