@@ -603,6 +603,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(workspace.group(1), "/var/lib/readylinux/programs")
         self.assertTrue(workspace.group(1).startswith("/var/lib/readylinux/"))
 
+    def test_systemd_dependency_orders_critical_local_filesystem_before_console(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("After"), "local-fs.target")
+        self.assertNotIn("network.target", directives.get("After", ""))
+        self.assertNotIn("network-online.target", directives.get("After", ""))
+
     def test_systemd_console_requests_only_the_declared_device_tty(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
