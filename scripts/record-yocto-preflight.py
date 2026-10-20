@@ -3,7 +3,8 @@
 
 The recorder refuses to invent build results: it only captures the preflight
 report plus provenance (UTC time, READY Linux commit) and states the scope.
-Exit codes: 0 written, 3 preflight not ready, 4 output exists without --force.
+Exit codes: 0 written, 3 preflight not ready, 4 output exists without --force,
+5 preflight report contradicts its own "ready" verdict.
 """
 
 from __future__ import annotations
@@ -64,6 +65,18 @@ def parse_report(result: subprocess.CompletedProcess) -> dict:
     return report
 
 
+def inconsistent_ready_report(report: dict) -> str | None:
+    """Return a reason when a "ready" verdict contradicts its own fields."""
+    if report.get("verdict") != "ready":
+        return None
+    if report.get("missing_required"):
+        return "verdict is ready but missing_required is not empty"
+    builddir = report.get("builddir") or {}
+    if not builddir.get("set"):
+        return "verdict is ready but builddir is not set"
+    return None
+
+
 def repository_commit(repo: Path) -> str:
     git = os.environ.get("READYLINUX_GIT", "git")
     result = subprocess.run(
@@ -103,6 +116,14 @@ def main(argv: list[str]) -> int:
             file=sys.stderr,
         )
         return 3
+
+    contradiction = inconsistent_ready_report(report)
+    if contradiction is not None:
+        print(
+            f"record-yocto-preflight: refusing inconsistent report: {contradiction}",
+            file=sys.stderr,
+        )
+        return 5
 
     record = {
         "schema_version": SCHEMA_VERSION,

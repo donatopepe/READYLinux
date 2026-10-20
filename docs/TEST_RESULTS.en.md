@@ -11,6 +11,8 @@
 - Added `docs/YOCTO_PREFLIGHT_RECORD.schema.json` with a placeholder example and tests for record structure and recorder output; a `ready` verdict must agree with builddir and BitBake. Suite: 188 tests PASS (14 Windows skips).
 - `scripts/check-yocto-host.sh` now fails closed on the environment: with no readable `/etc/os-release` it exits 2 `NOT-A-LINUX-HOST` (`WRONG-ENVIRONMENT`), because Windows-shell output is not host evidence. Exit 0 = ready, 1 = `INCOMPLETE`, 2 = wrong environment. Suite: 175 tests PASS.
 
+- Stricter recorder: a report claiming `ready` with non-empty `missing_required` or an unset `builddir` is rejected (exit 5) and nothing is written; 2 tests added. Suite: 190 tests PASS (14 Windows skips).
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe regression asserts `inherit allarch`, repository-local `file://` application sources, no model/network payload and declared Python dependencies. Distro test checks systemd is appended without removing inherited features and is selected as init manager.

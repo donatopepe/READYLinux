@@ -139,5 +139,75 @@ class UnsafeRecorderTests(unittest.TestCase):
             self.assertFalse(output.exists())
 
 
+    def _run_fake_preflight(self, root, report_json):
+        fake_preflight = root / "fake-preflight.sh"
+        lines = [
+            "#!/bin/sh",
+            "cat <<'JSON'",
+            report_json,
+            "JSON",
+            "exit 0",
+            "",
+        ]
+        fake_preflight.write_text(chr(10).join(lines), encoding="utf-8")
+        fake_preflight.chmod(0o755)
+        output = root / "record.json"
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(RECORDER),
+                str(output),
+                "--repo",
+                str(ROOT),
+                "--preflight-script",
+                str(fake_preflight),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        return result, output
+
+    def test_refuses_report_that_claims_ready_without_builddir(self):
+        report = json.dumps(
+            {
+                "schema_version": 1,
+                "os": {"name": "x", "id": "debian"},
+                "arch": "x86_64",
+                "cpus": 1,
+                "required": {},
+                "missing_required": [],
+                "optional": {},
+                "builddir": {"set": False, "path": None},
+                "verdict": "ready",
+            }
+        )
+        with tempfile.TemporaryDirectory() as temp:
+            result, output = self._run_fake_preflight(Path(temp), report)
+            self.assertEqual(result.returncode, 5, result.stdout + result.stderr)
+            self.assertIn("builddir is not set", result.stderr)
+            self.assertFalse(output.exists())
+
+    def test_refuses_report_that_claims_ready_with_missing_commands(self):
+        report = json.dumps(
+            {
+                "schema_version": 1,
+                "os": {"name": "x", "id": "debian"},
+                "arch": "x86_64",
+                "cpus": 1,
+                "required": {"gcc": False},
+                "missing_required": ["gcc"],
+                "optional": {},
+                "builddir": {"set": True, "path": "/build"},
+                "verdict": "ready",
+            }
+        )
+        with tempfile.TemporaryDirectory() as temp:
+            result, output = self._run_fake_preflight(Path(temp), report)
+            self.assertEqual(result.returncode, 5, result.stdout + result.stderr)
+            self.assertIn("missing_required is not empty", result.stderr)
+            self.assertFalse(output.exists())
+
+
 if __name__ == "__main__":
     unittest.main()

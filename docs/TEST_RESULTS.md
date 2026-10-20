@@ -11,6 +11,8 @@
 - Aggiunto schema `docs/YOCTO_PREFLIGHT_RECORD.schema.json` + esempio placeholder e test su struttura del record e output del recorder; il verdetto `ready` deve essere coerente con builddir e BitBake. Suite: 188 test PASS (14 skip su Windows).
 - `scripts/check-yocto-host.sh` ora è fail-closed sull'ambiente: senza `/etc/os-release` leggibile termina con exit 2 `NOT-A-LINUX-HOST` e `WRONG-ENVIRONMENT`, perché l'output di una shell Windows non è evidenza host. Exit 0 = pronto, 1 = `INCOMPLETE`, 2 = ambiente sbagliato. Suite: 175 test PASS.
 
+- Recorder più severo: un report che si dichiara `ready` con `missing_required` non vuoto o `builddir` non impostata viene rifiutato (exit 5) senza scrivere nulla; aggiunti 2 test. Suite: 190 test PASS (14 skip su Windows).
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe test asserts `inherit allarch`, repo-local `file://` app sources, no model/network payload, and declared Python dependencies. Distro static contract also checks that systemd is appended without removing inherited features and selected as init manager.
