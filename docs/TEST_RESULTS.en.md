@@ -1,5 +1,15 @@
 # Test Results
 
+## 2026-10-20 — `usrmerge` distro feature fix and image graph (noexec)
+
+- Recipe verification via `bitbake -e` (no fetch, no build): `readylinux-runtime` resolves `PN=readylinux-runtime`, `PV=0.3`, package-specific `RDEPENDS` and `FILES` covering `/usr/share/readylinux` and `/usr/bin/readylinux`.
+- `bitbake -e readylinux-console` **failed**: `ERROR: Nothing RPROVIDES 'systemd' ... systemd was skipped: missing required distro feature 'usrmerge'`. A metadata parse alone did not reveal this.
+- Fix: `DISTRO_FEATURES:append = " systemd usrmerge"` in `conf/distro/readylinux.conf`; tests updated to require `usrmerge`.
+- After the fix: `bitbake -e readylinux-console` → `RDEPENDS:readylinux-console=" readylinux-runtime systemd"`, `FILES` include unit and mask, `SYSTEMD_SERVICE`/`SYSTEMD_AUTO_ENABLE` correct.
+- `bitbake -n readylinux-image` (dry run, no execution and no fetch): `Attempted 5006 tasks ... all succeeded`, including `readylinux-image.bb:do_build`. One warning: Debian 13 not validated by OE.
+- Suite: 195 tests PASS (17 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+- Still unverified: real image build (needs source fetch), QEMU boot, guest SSH, getty mask in image, artifact hash.
+
 ## 2026-10-20 — First real BitBake parse (pinned Poky scarthgap)
 
 - Host: WSL Debian 13, unprivileged user. Commands: `bash scripts/check-yocto-host.sh` (19/19 `OK`, `qemu` found, `bitbake` absent, `BUILDDIR` unset before provisioning).

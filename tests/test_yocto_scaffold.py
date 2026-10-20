@@ -283,8 +283,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
         english = (LAYER / "README.en.md").read_text(encoding="utf-8")
         self.assertIn('DISTRO = "readylinux"', distro)
-        self.assertIn('DISTRO_FEATURES:append = " systemd"', distro)
+        self.assertIn('DISTRO_FEATURES:append = " systemd usrmerge"', distro)
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
+        self.assertIn("usrmerge", distro, "systemd recipe requires the usrmerge distro feature")
         self.assertNotIn("DISTRO =", image)
         for readme in (italian, english):
             self.assertIn('DISTRO = "readylinux"', readme)
@@ -376,7 +377,7 @@ class YoctoScaffoldTests(unittest.TestCase):
     def test_ready_distro_selects_systemd_without_forcing_service_runtime(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         service_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
-        self.assertIn('DISTRO_FEATURES:append = " systemd"', distro)
+        self.assertIn('DISTRO_FEATURES:append = " systemd usrmerge"', distro)
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
         self.assertIn('inherit systemd useradd allarch', service_recipe)
         self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', service_recipe)
@@ -417,7 +418,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(image, r"(?i)(?:https?://|git://|AUTOREV|gguf|safetensors)")
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
-        self.assertIn('DISTRO_FEATURES:append = " systemd"', distro)
+        self.assertIn('DISTRO_FEATURES:append = " systemd usrmerge"', distro)
 
     def test_image_recipe_extends_minimal_and_does_not_select_target_policy(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
