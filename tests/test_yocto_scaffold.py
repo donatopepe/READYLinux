@@ -822,6 +822,20 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn(distro_name.group(1), description.group(1))
         self.assertEqual(distro_name.group(1), "READY Linux")
 
+    def test_systemd_startup_and_persistent_state_directives_match_service_type(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("Type"), "simple")
+        self.assertEqual(directives.get("After"), "local-fs.target")
+        self.assertEqual(directives.get("StateDirectory"), "readylinux")
+        self.assertEqual(directives.get("StateDirectoryMode"), "0750")
+        self.assertEqual(directives.get("UMask"), "0027")
+        self.assertEqual(directives.get("ReadWritePaths"), "/var/lib/readylinux")
+
     def test_systemd_unit_has_required_sections_once_and_in_order(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         sections = [line.strip() for line in service.splitlines() if line.strip().startswith("[") and line.strip().endswith("]")]
