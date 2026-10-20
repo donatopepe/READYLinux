@@ -6,7 +6,7 @@ Nota: gli archivi ZIP locali sono esclusi da Git (`*.zip`); possono restare non 
 
 - **Release**: READY Linux 0.3, prototipo applicativo.
 - **Implementato**: console, vibe/BASIC, scaffolding Yocto, servizio tty1 hardenizzato; helper host preflight, BitBake, systemd, checksum artifact e boot QEMU isolato con overlay COW.
-- **Verificato localmente**: 145 test Windows/Python 3.11 (8 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Test statici richiedono lista immagine esatta, senza duplicati e in ordine deterministico. BitBake/BUILDDIR assenti.
+- **Verificato localmente**: 146 test Windows/Python 3.11 (8 skip platform-specific) e WSL Debian 13/Python 3.13; compileall/shell/diff pass. Guard systemd conferma console solo su `/dev/tty1`; BitBake/BUILDDIR assenti.
 - **Non verificato**: BitBake/Yocto parse/build reale, boot immagine READY QEMU, guest SSH, getty mask nell'immagine, comportamento unit reale, hash artifact READY, GGUF, sandbox, GPU/ARM64/benchmark.
 - **Host**: WSL Debian 13/trixie x86_64, 20 CPU; preflight `INCOMPLETE`; nessun checkout/fetch/install.
 - **Git**: firing-start HEAD `1d11a30128cc7b3c4fe0ce3defdfc42d46b18044`; image/package getty-mask contract test in `afbb45b`. `.pi-loop.json` e `raw` (0 byte) non tracciati; ZIP ignorati.
