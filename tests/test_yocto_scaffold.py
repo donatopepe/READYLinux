@@ -532,6 +532,8 @@ class YoctoScaffoldTests(unittest.TestCase):
             checksums.append(match.group(1))
         self.assertEqual(len(set(checksums)), 1)
         self.assertEqual(checksums[0], "0835ade698e0bcf8506ecda2f7b4f302")
+        self.assertEqual(recipes[0].name, "readylinux_0.3.bb")
+        self.assertEqual(recipes[1].name, "readylinux-console_0.1.bb")
         for recipe_path in recipes:
             recipe = recipe_path.read_text(encoding="utf-8")
             self.assertEqual(len(re.findall(r"(?m)^LIC_FILES_CHKSUM\s*=", recipe)), 1, recipe_path.name)
