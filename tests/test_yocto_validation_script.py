@@ -42,7 +42,7 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertIn("source the target build environment first", result.stderr)
         self.assertNotIn("bitbake -p", result.stdout)
 
-    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0, collection="readylinux", registered_layer=None, core_series="scarthgap styhead"):
+    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0, collection="readylinux", registered_layer=None, core_series="scarthgap styhead", image_fstypes="tar.bz2 ext4 wic"):
         temp_path = tempfile.TemporaryDirectory()
         bindir = Path(temp_path.name) / "bin"
         bindir.mkdir()
@@ -64,6 +64,12 @@ class YoctoValidationScriptTests(unittest.TestCase):
             stub_lines.insert(1, "printf 'core %s 5" + chr(92) + "n' '" + shell_pwd(core_dir) + "'")
             layer_stub.write_text(chr(10).join(stub_lines), encoding="utf-8")
             layer_stub.chmod(0o755)
+            getvar = bindir / "bitbake-getvar"
+            getvar.write_text(
+                "#!/bin/sh" + chr(10) + "printf '%s" + chr(92) + "n' '" + image_fstypes + "'" + chr(10),
+                encoding="utf-8",
+            )
+            getvar.chmod(0o755)
         env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": to_shell_path(builddir)}
         return subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, env=env, capture_output=True, text=True), temp_path
 
@@ -169,6 +175,35 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("does not set DISTRO", result.stderr)
         self.assertIn("FAKE_BITBAKE -p", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_requires_wic_in_image_fstypes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"' + chr(10), encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"' + chr(10), encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, image_fstypes="tar.bz2 ext4")
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 6, result.stdout + result.stderr)
+        self.assertIn("does not include wic", result.stderr)
+        self.assertIn("FAKE_BITBAKE -p", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_reports_image_fstypes_when_wic_is_present(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"' + chr(10), encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"' + chr(10), encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, image_fstypes="ext4 wic")
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Image fstypes: ext4 wic", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
     def test_script_accepts_ready_distro_selection(self):

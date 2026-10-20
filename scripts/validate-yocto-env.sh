@@ -54,8 +54,7 @@ if ! [[ "${layer_priority}" =~ ^[0-9]+$ ]]; then
 fi
 printf 'Layer collection: %s (priority %s)\n' "${layer_collection}" "${layer_priority}"
 
-core_line="$(printf '%s
-' "${layers_report}" | awk '$1 == "core" {print; exit}')"
+core_line="$(printf '%s\n' "${layers_report}" | awk '$1 == "core" {print; exit}')"
 if [[ -z "${core_line}" ]]; then
     echo "ERROR: bitbake-layers does not report a 'core' layer; cannot verify the OE release series." >&2
     exit 4
@@ -85,8 +84,7 @@ if [[ -z "${matched_series}" ]]; then
     echo "ERROR: OE series (${core_series_raw:-unknown}) is not among LAYERSERIES_COMPAT_readylinux (${layer_series_raw:-none})." >&2
     exit 5
 fi
-printf 'OE series: %s
-' "${matched_series}"
+printf 'OE series: %s\n' "${matched_series}"
 
 distro_line="$(grep -E '^[[:space:]]*DISTRO[[:space:]]*=' "${build_dir}/conf/local.conf" | tail -n 1 || true)"
 if [[ -n "${distro_line}" ]]; then
@@ -107,3 +105,19 @@ echo "Running metadata parse only in build directory (no fetch/image build): bit
     cd "${build_dir}"
     bitbake -p
 )
+
+if command -v bitbake-getvar >/dev/null 2>&1; then
+    image_fstypes="$(cd "${build_dir}" && bitbake-getvar --recipe readylinux-image --value IMAGE_FSTYPES 2>/dev/null || true)"
+    image_fstypes="${image_fstypes//$'\n'/ }"
+    case " ${image_fstypes} " in
+        *" wic "*)
+            printf 'Image fstypes: %s\n' "${image_fstypes}"
+            ;;
+        *)
+            echo "ERROR: IMAGE_FSTYPES for readylinux-image does not include wic (got: ${image_fstypes:-unknown}); verify-image-artifact.sh and boot-image-qemu.sh require a .wic." >&2
+            exit 6
+            ;;
+    esac
+else
+    echo "NOTE: bitbake-getvar is unavailable; skipped the IMAGE_FSTYPES wic contract check." >&2
+fi

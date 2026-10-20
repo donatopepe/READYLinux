@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Contratto artefatto verificato nel validatore
+
+- `scripts/validate-yocto-env.sh`, dopo `bitbake -p`, interroga `bitbake-getvar --recipe readylinux-image --value IMAGE_FSTYPES`; se `wic` non è presente esce con **6** e non dichiara l'ambiente valido. Se `bitbake-getvar` manca stampa un NOTE non fatale.
+- Run reale su WSL/Poky scarthgap: `Image fstypes:  tar.bz2 ext4 wic`, exit 0.
+- Test: stub `bitbake-getvar` nell'helper; due nuovi casi (`tar.bz2 ext4` → exit 6; `ext4 wic` → exit 0 con stampa). Modulo validatore: 19 test.
+- Suite: 208 test PASS (23 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Artefatto `.wic` coerente con la documentazione
 
 - La documentazione e gli helper `verify-image-artifact.sh` / `boot-image-qemu.sh` consumano un `.wic`, ma la image recipe non impostava `IMAGE_FSTYPES`: il default di `core-image-minimal` è `tar.bz2 ext4`, quindi il file documentato non sarebbe mai stato prodotto.
