@@ -102,6 +102,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertNotIn("MISSING ", result.stdout)
         self.assertIn("BitBake executables found on PATH.", result.stdout)
         self.assertNotIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
+        self.assertIn("ABSENT  qemu-system-x86_64", result.stdout)
+        self.assertIn("ABSENT  sha256sum", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "Unix directory/file semantics required")
     def test_rejects_file_as_builddir(self):
