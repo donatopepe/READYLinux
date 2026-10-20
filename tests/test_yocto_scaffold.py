@@ -71,6 +71,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         for source in app_sources:
             self.assertTrue((ROOT / source).is_file(), f"recipe source missing: {source}")
 
+    def test_scripts_and_yocto_sources_use_unix_line_endings(self):
+        patterns = ("*.py", "scripts/*.sh", "scripts/*.py", "tests/*.py")
+        candidates = [path for pattern in patterns for path in ROOT.glob(pattern)]
+        candidates += list(LAYER.rglob("*.bb")) + list(LAYER.rglob("*.service")) + list(LAYER.rglob("*.conf"))
+        self.assertTrue(candidates)
+        for path in candidates:
+            with self.subTest(path=str(path.relative_to(ROOT))):
+                self.assertNotIn(bytes([13, 10]), path.read_bytes(), "CRLF breaks shell scripts on WSL/Linux")
+
     def test_repository_ignore_rules_cover_generated_and_sensitive_runtime_files(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
         for pattern in ("__pycache__/", "*.py[cod]", ".pi-loop.json.lock", "*.gguf"):
@@ -1414,7 +1423,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("179", doc)
+            self.assertIn("184", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1461,8 +1470,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "179 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "179 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "184 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "184 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

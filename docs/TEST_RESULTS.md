@@ -7,6 +7,7 @@
 - Aggiunto un test che impone agli STATUS IT/EN di riportare il risultato WSL Debian e vieta di registrare l'output della shell Windows come evidenza host.
 - Suite completa: 179 test PASS (10 skip platform-specific) su Windows/Python 3.11 e WSL Debian 13/Python 3.13; `compileall`, `bash -n` e `git diff --check` pass.
 - Nessun download, installazione, parse BitBake, build immagine o boot QEMU eseguito.
+- Nuovo `scripts/record-yocto-preflight.py`: registra il report `--json` con commit/UTC e scope "preflight-only, non build evidence"; rifiuta di scrivere se il verdetto non è `ready` (exit 3) o se il file esiste senza `--force` (exit 4). Suite: 184 test PASS (13 skip su Windows).
 - `scripts/check-yocto-host.sh` ora è fail-closed sull'ambiente: senza `/etc/os-release` leggibile termina con exit 2 `NOT-A-LINUX-HOST` e `WRONG-ENVIRONMENT`, perché l'output di una shell Windows non è evidenza host. Exit 0 = pronto, 1 = `INCOMPLETE`, 2 = ambiente sbagliato. Suite: 175 test PASS.
 
 ## 2026-10-18 — Offline Yocto contracts and regression suite
