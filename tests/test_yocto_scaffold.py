@@ -344,6 +344,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIsNotNone(service_command)
         self.assertEqual(service_command.group(1), "/usr/bin/readylinux")
         self.assertIn("exec python3 /usr/share/readylinux/readylinux.py \"$@\"", launcher.group(1))
+        self.assertRegex(recipe, r"(?m)^\s*chmod 0755 \$\{D\}\$\{bindir\}/readylinux\s*$")
         self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
 
     def test_runtime_recipe_copies_each_declared_local_source_to_packaged_destination(self):
