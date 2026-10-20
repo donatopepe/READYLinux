@@ -1124,8 +1124,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertTrue(all(char in "0123456789abcdef" for char in example["identity"]["poky_commit"]))
         self.assertEqual(len(example["environment"]["local_conf_sha256"]), 64)
         self.assertTrue(all(char in "0123456789abcdef" for char in example["environment"]["local_conf_sha256"]))
+        self.assertIsNone(example["environment"]["parse_exit_code"])
         self.assertEqual(example["image"]["exit_code"], None)
         self.assertEqual(example["boot"]["status"], "not-run")
+        self.assertIsNone(example["boot"]["qemu_version"])
+        self.assertIsNone(example["boot"]["command"])
+        self.assertIsNone(example["boot"]["console_log"])
         self.assertEqual(example["verdict"], "not-verified")
         if example["image"]["source_cache_state"] == "not-built":
             self.assertIsNone(example["image"]["exit_code"])
