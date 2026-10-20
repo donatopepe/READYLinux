@@ -936,6 +936,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(wanted_by, ["multi-user.target"])
         self.assertNotRegex(before_install, r"(?m)^WantedBy=")
 
+    def test_console_package_file_list_has_no_duplicate_entries(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        files_assignment = re.search(r'(?m)^FILES:\$\{PN\} \+= "([^"]+)"$', recipe)
+        self.assertIsNotNone(files_assignment)
+        paths = files_assignment.group(1).split()
+        self.assertEqual(len(paths), len(set(paths)), "duplicate packaged console path")
+        self.assertEqual(set(paths), {
+            "${systemd_system_unitdir}/readylinux-console.service",
+            "${sysconfdir}/systemd/system/getty@tty1.service",
+        })
+
     def test_systemd_console_has_only_one_definition_per_directive(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = [line.split("=", 1)[0] for line in service.splitlines() if "=" in line and not line.startswith("#")]
