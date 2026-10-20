@@ -213,6 +213,8 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("candidate series", readme.lower())
                 self.assertIn("release-pinned `bitbake -p`", readme.lower())
                 self.assertRegex(readme.lower(), r"has not yet been verified")
+                self.assertIn("LAYERSERIES_COMPAT_readylinux", readme)
+                self.assertIn("conf/layer.conf", readme)
 
     def test_distro_feature_append_preserves_defaults_and_selects_systemd_init(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
