@@ -603,6 +603,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(workspace.group(1), "/var/lib/readylinux/programs")
         self.assertTrue(workspace.group(1).startswith("/var/lib/readylinux/"))
 
+    def test_systemd_service_does_not_order_on_optional_network(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        unit_section = service.split("[Service]", 1)[0]
+        self.assertIn("After=local-fs.target", unit_section)
+        self.assertNotRegex(unit_section, r"(?im)^\s*(?:After|Wants|Requires)=.*(?:network|remote-fs)")
+        self.assertIn("file://", (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8"))
+
     def test_systemd_dependency_orders_critical_local_filesystem_before_console(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
