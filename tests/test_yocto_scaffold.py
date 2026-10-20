@@ -20,7 +20,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         mask_install = re.search(r"(?m)^\s*ln -s /dev/null \$\{D\}(\$\{sysconfdir\}/systemd/system/getty@tty1\.service)\s*$", console)
         self.assertIsNotNone(mask_install, "console recipe must install the tty1 getty mask")
         self.assertIn('SYSTEMD_SERVICE:${PN} = "readylinux-console.service"', console)
-        self.assertEqual(image_packages, {"readylinux", "readylinux-console"})
+        self.assertEqual(image_packages, {"readylinux-runtime", "readylinux-console"})
         self.assertIn("readylinux-console", image_packages)
         self.assertIn(mask_install.group(1), console.split("FILES:${PN} +=", 1)[1])
 
@@ -28,7 +28,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         expected = {
             "recipes-core/images/readylinux-image.bb",
             "recipes-core/readylinux/readylinux-console_0.1.bb",
-            "recipes-ready/readylinux/readylinux_0.3.bb",
+            "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
         }
         actual = {path.relative_to(LAYER).as_posix() for path in LAYER.rglob("*.bb")}
         self.assertEqual(actual, expected)
@@ -39,11 +39,11 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIsNotNone(bbfiles)
         self.assertEqual(len([token for token in bbfiles.group(1).split() if token.endswith(".bbappend")]), 1)
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
-        self.assertIn('IMAGE_INSTALL:append = " readylinux readylinux-console"', image)
+        self.assertIn('IMAGE_INSTALL:append = " readylinux-runtime readylinux-console"', image)
         packaged = actual - {"recipes-core/images/readylinux-image.bb"}
         self.assertEqual(packaged, {
             "recipes-core/readylinux/readylinux-console_0.1.bb",
-            "recipes-ready/readylinux/readylinux_0.3.bb",
+            "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
         })
 
     def test_layer_recipes_declare_shared_mit_license_and_runtime_dependencies(self):
@@ -54,7 +54,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         }
         expected_recipe_paths = {
             "recipes-core/readylinux/readylinux-console_0.1.bb",
-            "recipes-ready/readylinux/readylinux_0.3.bb",
+            "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
         }
         self.assertEqual(set(recipes), expected_recipe_paths)
         expected_license_checksum = 'LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"'
@@ -63,8 +63,8 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn('LICENSE = "MIT"', recipe)
                 self.assertIn(expected_license_checksum, recipe)
                 self.assertIn("RDEPENDS:${PN}", recipe)
-        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', recipes["recipes-core/readylinux/readylinux-console_0.1.bb"])
-        app_recipe = recipes["recipes-ready/readylinux/readylinux_0.3.bb"]
+        self.assertIn('RDEPENDS:${PN} += "readylinux-runtime systemd"', recipes["recipes-core/readylinux/readylinux-console_0.1.bb"])
+        app_recipe = recipes["recipes-ready/readylinux/readylinux-runtime_0.3.bb"]
         for dependency in ("python3-core", "python3-json", "python3-netclient"):
             self.assertIn(dependency, app_recipe)
         app_sources = re.findall(r"(?m)^\s+file://([^\s\\]+)", app_recipe)
@@ -115,7 +115,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
         recipes = (
             LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb",
-            LAYER / "recipes-ready/readylinux/readylinux_0.3.bb",
+            LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
         )
         self.assertIn("LAYERSERIES_COMPAT_readylinux", layer_conf)
         recipe_tokens = "\n".join(recipe_path.read_text(encoding="utf-8") for recipe_path in recipes)
@@ -138,7 +138,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("FILESEXTRAPATHS:prepend", recipes[1].read_text(encoding="utf-8"))
 
     def test_image_recipe_installs_only_declared_runtime_packages(self):
-        runtime_recipe = LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"
+        runtime_recipe = LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb"
         console_recipe = LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb"
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
 
@@ -158,10 +158,10 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
         install_match = re.search(r'IMAGE_INSTALL:append = "([^"]+)"', image)
         self.assertIsNotNone(install_match)
-        self.assertEqual(set(install_match.group(1).split()), {"readylinux", "readylinux-console"})
+        self.assertEqual(set(install_match.group(1).split()), {"readylinux-runtime", "readylinux-console"})
         self.assertNotRegex(image, r"(?i)(?:gguf|safetensors|llama-server|https?://|SRC_URI)")
         console_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
-        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', console_recipe)
+        self.assertIn('RDEPENDS:${PN} += "readylinux-runtime systemd"', console_recipe)
 
     def test_host_preflight_report_is_part_of_historical_firing_evidence(self):
         italian = (ROOT / "docs/TEST_RESULTS.md").read_text(encoding="utf-8")
@@ -220,7 +220,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         expected_paths = {
             "recipes-core/images/readylinux-image.bb",
             "recipes-core/readylinux/readylinux-console_0.1.bb",
-            "recipes-ready/readylinux/readylinux_0.3.bb",
+            "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
         }
         self.assertEqual(actual_recipes, expected_paths)
         self.assertEqual(len(actual_recipes), 3)
@@ -380,7 +380,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
         self.assertIn('inherit systemd useradd allarch', service_recipe)
         self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', service_recipe)
-        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', service_recipe)
+        self.assertIn('RDEPENDS:${PN} += "readylinux-runtime systemd"', service_recipe)
         self.assertNotIn("DISTRO_FEATURES:remove", distro)
 
     def test_image_recipe_summary_identifies_the_ready_distribution(self):
@@ -394,7 +394,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         install_line = re.search(r'(?m)^IMAGE_INSTALL:append\s*=\s*"([^"]+)"$', image)
         self.assertIsNotNone(install_line)
-        self.assertEqual(install_line.group(1).split(), ["readylinux", "readylinux-console"])
+        self.assertEqual(install_line.group(1).split(), ["readylinux-runtime", "readylinux-console"])
         self.assertNotRegex(image, r"(?m)^\s*IMAGE_INSTALL_(?:append|prepend|remove)\s*=")
         self.assertEqual(len(re.findall(r"(?m)^IMAGE_INSTALL:append\s*=", image)), 1)
 
@@ -413,7 +413,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("require recipes-core/images/core-image-minimal.bb", image)
         install_match = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^\"]+)"', image)
         self.assertIsNotNone(install_match)
-        self.assertEqual(set(install_match.group(1).split()), {"readylinux", "readylinux-console"})
+        self.assertEqual(set(install_match.group(1).split()), {"readylinux-runtime", "readylinux-console"})
         self.assertNotRegex(image, r"(?i)(?:https?://|git://|AUTOREV|gguf|safetensors)")
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
@@ -422,7 +422,7 @@ class YoctoScaffoldTests(unittest.TestCase):
     def test_image_recipe_extends_minimal_and_does_not_select_target_policy(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertRegex(image, r"(?m)^require recipes-core/images/core-image-minimal\.bb$")
-        self.assertRegex(image, r'(?m)^IMAGE_INSTALL:append = " readylinux readylinux-console"$')
+        self.assertRegex(image, r'(?m)^IMAGE_INSTALL:append = " readylinux-runtime readylinux-console"$')
         self.assertEqual(len(re.findall(r"(?m)^require ", image)), 1)
         self.assertNotRegex(image, r"(?m)^\s*(?:DISTRO|MACHINE)\s*=")
         self.assertNotRegex(image, r"(?m)^IMAGE_INSTALL_(?:append|remove|prepend)\s*=")
@@ -440,7 +440,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         entries = install_match.group(1).split()
         self.assertTrue(entries, "image must install at least one package")
         self.assertEqual(len(entries), len(set(entries)), "duplicate image package")
-        self.assertEqual(entries, ["readylinux", "readylinux-console"])
+        self.assertEqual(entries, ["readylinux-runtime", "readylinux-console"])
         self.assertFalse(any(entry != entry.strip() for entry in entries))
 
     def test_image_recipe_installs_exactly_the_expected_packages_in_declared_order(self):
@@ -448,16 +448,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         install_match = re.search(r'(?m)^IMAGE_INSTALL:append\s*=\s*"([^"]+)"$', image)
         self.assertIsNotNone(install_match)
         entries = install_match.group(1).split()
-        self.assertEqual(entries, ["readylinux", "readylinux-console"])
+        self.assertEqual(entries, ["readylinux-runtime", "readylinux-console"])
         self.assertEqual(entries, list(dict.fromkeys(entries)), "IMAGE_INSTALL package ordering has duplicates")
         self.assertEqual(image.count("IMAGE_INSTALL:append"), 1)
-        self.assertNotIn('IMAGE_INSTALL:append = " readylinux readylinux-console readylinux"', image)
-        self.assertEqual(len([token for token in entries if token == "readylinux"]), 1)
+        self.assertNotIn('IMAGE_INSTALL:append = " readylinux-runtime readylinux-console readylinux-runtime"', image)
+        self.assertEqual(len([token for token in entries if token == "readylinux-runtime"]), 1)
         self.assertEqual(len([token for token in entries if token == "readylinux-console"]), 1)
 
     def test_image_recipe_whitespace_and_recipe_line_endings_are_stable(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
-        runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        runtime = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         service = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         for name, content in (("image", image), ("runtime", runtime), ("service", service)):
             with self.subTest(recipe=name):
@@ -526,7 +526,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertTrue(any((base / source).is_file() for base in search_roots), f"{source} missing for {recipe_path.relative_to(ROOT)}")
 
     def test_recipe_includes_runtime_sources_and_no_external_fetch(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         for source in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"):
             self.assertIn(f"file://{source}", recipe)
         self.assertNotRegex(recipe, r"(?m)^\s*(?:git|https?)://")
@@ -547,7 +547,7 @@ class YoctoScaffoldTests(unittest.TestCase):
 
     def test_license_checksum_is_consistent_across_local_recipes(self):
         recipes = (
-            LAYER / "recipes-ready/readylinux/readylinux_0.3.bb",
+            LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
             LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb",
         )
         checksum_pattern = r'LIC_FILES_CHKSUM\s*=\s*"file://\$\{COMMON_LICENSE_DIR\}/MIT;md5=([0-9a-f]{32})"'
@@ -560,7 +560,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             checksums.append(match.group(1))
         self.assertEqual(len(set(checksums)), 1)
         self.assertEqual(checksums[0], "0835ade698e0bcf8506ecda2f7b4f302")
-        self.assertEqual(recipes[0].name, "readylinux_0.3.bb")
+        self.assertEqual(recipes[0].name, "readylinux-runtime_0.3.bb")
         self.assertEqual(recipes[1].name, "readylinux-console_0.1.bb")
         for recipe_path in recipes:
             recipe = recipe_path.read_text(encoding="utf-8")
@@ -577,11 +577,11 @@ class YoctoScaffoldTests(unittest.TestCase):
         inherited = re.search(r"(?m)^inherit\s+([^\n]+)$", recipe)
         self.assertIsNotNone(inherited)
         self.assertIn("systemd", inherited.group(1).split())
-        self.assertTrue({"readylinux", "systemd"}.issubset(declared))
-        self.assertEqual(declared, {"readylinux", "systemd"})
+        self.assertTrue({"readylinux-runtime", "systemd"}.issubset(declared))
+        self.assertEqual(declared, {"readylinux-runtime", "systemd"})
 
     def test_recipes_declare_license_provenance_and_runtime_dependencies(self):
-        runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        runtime = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         service = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         expected_license = 'LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"'
         for recipe in (runtime, service):
@@ -590,7 +590,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             checksum_line = re.search(r"(?m)^LIC_FILES_CHKSUM = \"([^\"]+)\"$", recipe)
             self.assertIsNotNone(checksum_line)
             self.assertTrue(checksum_line.group(1).startswith("file://${COMMON_LICENSE_DIR}/MIT;md5="))
-        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', service)
+        self.assertIn('RDEPENDS:${PN} += "readylinux-runtime systemd"', service)
         self.assertIn("USERADD_PARAM:${PN}", service)
         self.assertIn('GROUPADD_PARAM:${PN} = "--system ready"', service)
         self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', service)
@@ -598,7 +598,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
 
     def test_runtime_recipe_file_search_path_resolves_to_repository_root(self):
-        recipe_path = LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"
+        recipe_path = LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb"
         recipe = recipe_path.read_text(encoding="utf-8")
         prepend = re.search(r'(?m)^FILESEXTRAPATHS:prepend\s*:?=\s*"([^"]+)"$', recipe)
         self.assertIsNotNone(prepend)
@@ -608,7 +608,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertTrue(search_path.is_file())
 
     def test_runtime_recipe_is_allarch_and_declares_no_model_or_network_payload(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         self.assertRegex(recipe, r"(?m)^inherit\s+allarch\s*$")
         src_uri = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', recipe)
         self.assertIsNotNone(src_uri)
@@ -618,7 +618,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('RDEPENDS:${PN} += "python3-core python3-difflib python3-crypt python3-json python3-misc python3-netclient python3-shell"', recipe)
 
     def test_runtime_recipe_launcher_matches_packaged_entrypoint_path(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         launcher = re.search(r"(?ms)^\s*cat > \$\{D\}\$\{bindir\}/readylinux <<'EOF'\n(.*?)\nEOF$", recipe)
         self.assertIsNotNone(launcher)
         exec_start = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
@@ -630,7 +630,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
 
     def test_runtime_recipe_copies_each_declared_local_source_to_packaged_destination(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         src_uri = re.search(r'(?m)^SRC_URI\s*=\s*"([^"]*)"', recipe)
         self.assertIsNotNone(src_uri)
         declared = {Path(item).name for item in re.findall(r"file://([^\s\\]+)", src_uri.group(1))}
@@ -642,7 +642,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
 
     def test_recipe_installed_paths_are_covered_by_package_files(self):
-        runtime = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        runtime = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         console = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         for installed_path in ("${datadir}/readylinux", "${bindir}/readylinux"):
             self.assertIn(installed_path, runtime)
@@ -657,7 +657,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(re.findall(r"(?m)^\s*ln -s /dev/null \$\{D\}\$\{sysconfdir\}/systemd/system/getty@tty1\.service$", console)), 1)
 
     def test_recipe_dependencies_cover_non_core_stdlib_imports(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         dependency_match = re.search(r'RDEPENDS:\$\{PN\}\s*\+=\s*"([^"]+)"', recipe)
         self.assertIsNotNone(dependency_match, "RDEPENDS missing from runtime recipe")
         dependency_tokens = dependency_match.group(1).split()
@@ -684,7 +684,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         image_install = re.search(r'IMAGE_INSTALL:append\s*=\s*"([^"]+)"', image)
         self.assertIsNotNone(image_install)
-        self.assertTrue({"readylinux", "readylinux-console"}.issubset(set(image_install.group(1).split())))
+        self.assertTrue({"readylinux-runtime", "readylinux-console"}.issubset(set(image_install.group(1).split())))
 
     def test_service_user_group_and_state_directory_contract_match_recipe(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
@@ -760,7 +760,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         unit_section = service.split("[Service]", 1)[0]
         self.assertIn("After=local-fs.target", unit_section)
         self.assertNotRegex(unit_section, r"(?im)^\s*(?:After|Wants|Requires)=.*(?:network|remote-fs)")
-        self.assertIn("file://", (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8"))
+        self.assertIn("file://", (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8"))
 
     def test_systemd_service_declares_no_optional_unit_wants(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
@@ -882,7 +882,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertFalse(any(line.rstrip() != line for line in service.splitlines()), "unit directives have trailing whitespace")
 
     def test_runtime_recipe_launcher_uses_posix_shell_and_exec_replacement(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         launcher = re.search(r"(?ms)^\s*cat > \$\{D\}\$\{bindir\}/readylinux <<'EOF'\n(.*?)\nEOF$", recipe)
         self.assertIsNotNone(launcher)
         lines = launcher.group(1).splitlines()
@@ -891,7 +891,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(lines), 2, "launcher should not execute an intermediate shell command")
 
     def test_runtime_recipe_package_declares_expected_summary_and_description(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         summary = re.search(r'(?m)^SUMMARY\s*=\s*"([^"]+)"$', recipe)
         description = re.search(r'(?m)^DESCRIPTION\s*=\s*"([^"]+)"$', recipe)
         self.assertIsNotNone(summary)
@@ -904,7 +904,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(re.findall(r"(?m)^DESCRIPTION\s*=", recipe)), 1)
 
     def test_runtime_recipe_exposes_only_one_console_entrypoint_install(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         launcher_targets = re.findall(r"(?m)^\s*cat > \$\{D\}\$\{bindir\}/([^\s]+) <<'EOF'$", recipe)
         self.assertEqual(launcher_targets, ["readylinux"])
         chmod_targets = re.findall(r"(?m)^\s*chmod 0755 \$\{D\}\$\{bindir\}/([^\s]+)$", recipe)
@@ -912,7 +912,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
 
     def test_runtime_recipe_stages_all_local_sources_before_launcher(self):
-        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb").read_text(encoding="utf-8")
         install_block = recipe.split("do_install() {", 1)[1].split("\n}", 1)[0]
         source_copies = re.findall(
             r"(?m)^\s*install -m 0644 \$\{WORKDIR\}/([^\s]+) \$\{D\}\$\{datadir\}/readylinux/([^\s]+)$",
@@ -1153,12 +1153,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (LAYER / "README.md").read_text(encoding="utf-8")
         english = (LAYER / "README.en.md").read_text(encoding="utf-8")
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
-        self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', recipe)
+        self.assertIn('RDEPENDS:${PN} += "readylinux-runtime systemd"', recipe)
         for docs in (italian, english):
             self.assertIn("readylinux-console", docs)
             self.assertIn("getty@tty1.service", docs)
             self.assertIn("ready", docs)
-            self.assertIn('readylinux-console` declares `RDEPENDS:${PN} += "readylinux systemd"`', docs)
+            self.assertIn('readylinux-console` declares `RDEPENDS:${PN} += "readylinux-runtime systemd"`', docs)
             self.assertIn("`FILES:${PN}`", docs)
             self.assertIn("readylinux-console.service", docs)
         self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
@@ -1384,7 +1384,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertEqual(headings[-1], sections[-1])
 
     def test_layer_recipe_file_sources_resolve_for_runtime_recipe_and_console_recipe(self):
-        runtime_recipe = LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"
+        runtime_recipe = LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb"
         console_recipe = LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb"
 
         runtime_sources = (runtime_recipe.parent / "../../../").resolve()

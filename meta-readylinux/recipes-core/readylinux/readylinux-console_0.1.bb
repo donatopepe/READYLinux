@@ -13,7 +13,7 @@ SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 USERADD_PACKAGES = "${PN}"
 GROUPADD_PARAM:${PN} = "--system ready"
 USERADD_PARAM:${PN} = "--system --gid ready --home-dir /var/lib/readylinux --no-create-home --shell /sbin/nologin ready"
-RDEPENDS:${PN} += "readylinux systemd"
+RDEPENDS:${PN} += "readylinux-runtime systemd"
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}

@@ -1,5 +1,16 @@
 # Test Results
 
+## 2026-10-20 — First real BitBake parse (pinned Poky scarthgap)
+
+- Host: WSL Debian 13, unprivileged user. Commands: `bash scripts/check-yocto-host.sh` (19/19 `OK`, `qemu` found, `bitbake` absent, `BUILDDIR` unset before provisioning).
+- Unprivileged local provisioning: `git fetch --depth 1` of Poky commit `104772c5fd0653290cbb5e4b77813343957939cc` (scarthgap) into `~/yocto/poky-src`; missing `lz4c` solved with `apt-get download lz4` + `dpkg -x` into `~/yocto/hosttools` (no `sudo`, no system install).
+- `source oe-init-build-env ~/yocto/build` + `bitbake-layers add-layer /mnt/d/repos/ReadyLinux/meta-readylinux` + `DISTRO = "readylinux"` in `local.conf`.
+- First `bash scripts/validate-yocto-env.sh`: **failed** with 5 real QA errors in the runtime recipe — `pn-overrides` (PN `readylinux` colliding with the distro) and `pkgvarcheck` on non package-specific `RDEPENDS`/`FILES`.
+- Fix: recipe renamed to `readylinux-runtime_0.3.bb`, `IMAGE_INSTALL:append = " readylinux-runtime readylinux-console"`, console `RDEPENDS` on `readylinux-runtime`.
+- Second run: `Parsing of 923 .bb files complete (503 cached, 420 parsed). 1881 targets, 49 skipped, 0 masked, 0 errors.` exit 0; single warning: Debian 13 not validated by OE.
+- Full suite after the rename: 195 tests PASS (17 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+- Still unverified: image build, QEMU boot, guest SSH, getty mask in image, artifact hash.
+
 ## 2026-10-20 — Preflight evidence correction and 174-test baseline
 
 - `bash scripts/check-yocto-host.sh` run from the Windows shell (Git Bash) is not a Debian host: it reports `/etc/os-release` unavailable and missing tools. That output is not Yocto evidence and must not be recorded.
