@@ -293,6 +293,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', service_recipe)
         self.assertNotIn("DISTRO_FEATURES:remove", distro)
 
+    def test_image_recipe_summary_identifies_the_ready_distribution(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        summary = re.search(r'(?m)^SUMMARY\s*=\s*"([^"]+)"$', image)
+        self.assertIsNotNone(summary)
+        self.assertIn("READY Linux", summary.group(1))
+        self.assertEqual(len(re.findall(r"(?m)^SUMMARY\s*=", image)), 1)
+
     def test_image_recipe_has_license_and_minimal_local_package_contract(self):
         image_path = LAYER / "recipes-core/images/readylinux-image.bb"
         image = image_path.read_text(encoding="utf-8")
