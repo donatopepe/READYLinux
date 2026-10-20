@@ -899,6 +899,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("--no-create-home", useradd.group(1).split())
         self.assertIn("--shell /sbin/nologin", useradd.group(1))
         self.assertEqual(groupadd.group(1), "--system ready")
+        self.assertEqual(recipe.count("--shell /sbin/nologin"), 1)
+        self.assertEqual(recipe.count("--home-dir /var/lib/readylinux"), 1)
 
     def test_systemd_install_target_has_one_entry_and_recipe_enablement_matches(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
