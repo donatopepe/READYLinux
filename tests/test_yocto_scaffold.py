@@ -407,6 +407,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(entries, ["readylinux", "readylinux-console"])
         self.assertEqual(entries, list(dict.fromkeys(entries)), "IMAGE_INSTALL package ordering has duplicates")
         self.assertEqual(image.count("IMAGE_INSTALL:append"), 1)
+        self.assertNotIn('IMAGE_INSTALL:append = " readylinux readylinux-console readylinux"', image)
+        self.assertEqual(len([token for token in entries if token == "readylinux"]), 1)
+        self.assertEqual(len([token for token in entries if token == "readylinux-console"]), 1)
 
     def test_image_recipe_whitespace_and_recipe_line_endings_are_stable(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
