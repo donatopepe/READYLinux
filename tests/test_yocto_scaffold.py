@@ -1414,7 +1414,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("173", doc)
+            self.assertIn("174", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1439,12 +1439,30 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("getty@tty1.service", readme)
             self.assertRegex(readme.lower(), r"(?:no|does not provide).{0,80}(?:login|prompt)|(?:nessun|non offre).{0,80}(?:login|prompt)")
 
+    def test_status_docs_record_the_wsl_debian_probe_result_not_a_windows_shell_run(self):
+        for doc_path in (ROOT / "docs/STATUS.md", ROOT / "docs/STATUS.en.md"):
+            doc = doc_path.read_text(encoding="utf-8")
+            with self.subTest(doc=doc_path.name):
+                self.assertIn("19/19", doc, "status must record the WSL Debian preflight command tally")
+                self.assertIn("WSL Debian 13", doc)
+                self.assertIn("bitbake", doc.lower())
+                self.assertNotRegex(doc, r"(?i)comandi host[^\n]{0,40}mancanti")
+                self.assertNotRegex(doc, r"(?i)host commands[^\n]{0,40}missing")
+                self.assertRegex(doc, r"(?i)(?:shell Windows|Windows shell)")
+                self.assertIn("BUILDDIR", doc)
+                self.assertRegex(doc, r"(?i)19/19[^\n]{0,200}(?:OK|present|trovat)")
+                self.assertNotRegex(
+                    doc,
+                    r"(?i)(?:10|11)\s+(?:host commands|comandi host)\s+(?:missing|mancanti)",
+                    "Windows-shell probe output must not be recorded as Debian host evidence",
+                )
+
     def test_status_docs_state_current_build_limits_and_host_prereqs(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "173 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "173 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "174 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "174 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)
