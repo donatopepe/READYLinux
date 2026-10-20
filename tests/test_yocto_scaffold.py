@@ -908,6 +908,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(wanted_by, ["multi-user.target"])
         self.assertEqual(enabled_units, ["readylinux-console.service"])
         self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', recipe)
+        self.assertIn('FILES:${PN} += "${systemd_system_unitdir}/readylinux-console.service ${sysconfdir}/systemd/system/getty@tty1.service"', recipe)
+        self.assertEqual(len(re.findall(r"(?m)^SYSTEMD_SERVICE:\$\{PN\}", recipe)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^SYSTEMD_AUTO_ENABLE:\$\{PN\}", recipe)), 1)
 
     def test_systemd_unit_has_single_install_target_declaration(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
