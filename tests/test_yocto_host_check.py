@@ -85,6 +85,7 @@ class YoctoHostCheckTests(unittest.TestCase):
                 "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
                 "wget", "xz", "zstd", "uname", "getconf",
             )
+            required = tuple(required) + ("bitbake", "bitbake-layers")
             for name in required:
                 stub = fakebin / name
                 stub.write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
@@ -97,7 +98,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("BUILDDIR: unset", result.stdout)
         self.assertIn("Preflight: INCOMPLETE", result.stdout)
         self.assertNotIn("MISSING ", result.stdout)
-        self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
+        self.assertIn("BitBake executables found on PATH.", result.stdout)
+        self.assertNotIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "Unix directory/file semantics required")
     def test_rejects_file_as_builddir(self):
