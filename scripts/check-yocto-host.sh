@@ -3,7 +3,7 @@
 # Exit codes: 0 = required commands + BUILDDIR ready, 1 = INCOMPLETE, 2 = not a Linux host.
 set -uo pipefail
 
-required_commands=(bash git gcc g++ make python3 chrpath cpio diffstat file gawk ip ping socat texi2any unzip wget xz zstd)
+required_commands=(bash git gcc g++ make python3 chrpath cpio diffstat file gawk ip lz4c patch perl ping socat tar texi2any unzip wget xargs xz zstd)
 optional_commands=(bitbake bitbake-layers qemu-system-x86_64 sha256sum)
 missing=0
 json=0

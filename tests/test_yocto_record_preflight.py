@@ -13,8 +13,8 @@ REAL_BASH = subprocess.check_output(["bash", "-lc", "command -v bash"], text=Tru
 REAL_GIT = subprocess.check_output(["bash", "-lc", "command -v git"], text=True).strip()
 REQUIRED = (
     "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
-    "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
-    "wget", "xz", "zstd", "uname", "getconf",
+    "diffstat", "file", "gawk", "ip", "lz4c", "patch", "perl", "ping", "socat",
+    "tar", "texi2any", "unzip", "wget", "xargs", "xz", "zstd", "uname", "getconf",
 )
 
 

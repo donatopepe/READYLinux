@@ -13,8 +13,8 @@ EXAMPLE = ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json"
 RECORDER = ROOT / "scripts/record-yocto-preflight.py"
 REQUIRED_COMMANDS = (
     "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
-    "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
-    "wget", "xz", "zstd", "uname", "getconf",
+    "diffstat", "file", "gawk", "ip", "lz4c", "patch", "perl", "ping", "socat",
+    "tar", "texi2any", "unzip", "wget", "xargs", "xz", "zstd", "uname", "getconf",
 )
 
 

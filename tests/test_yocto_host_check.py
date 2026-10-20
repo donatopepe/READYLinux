@@ -72,8 +72,8 @@ class YoctoHostCheckTests(unittest.TestCase):
             builddir.mkdir()
             for name in (
                 "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
-                "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
-                "wget", "xz", "zstd", "uname", "getconf", "bitbake", "bitbake-layers",
+                "diffstat", "file", "gawk", "ip", "lz4c", "patch", "perl", "ping", "socat",
+                "tar", "texi2any", "unzip", "wget", "xargs", "xz", "zstd", "uname", "getconf", "bitbake", "bitbake-layers",
             ):
                 stub = fakebin / name
                 stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
@@ -101,8 +101,8 @@ class YoctoHostCheckTests(unittest.TestCase):
             fakebin.mkdir()
             required = (
                 "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
-                "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
-                "wget", "xz", "zstd", "uname", "getconf",
+                "diffstat", "file", "gawk", "ip", "lz4c", "patch", "perl", "ping", "socat",
+                "tar", "texi2any", "unzip", "wget", "xargs", "xz", "zstd", "uname", "getconf",
             )
             required = tuple(required) + ("bitbake", "bitbake-layers")
             for name in required:
@@ -207,8 +207,8 @@ class YoctoHostCheckTests(unittest.TestCase):
             builddir.mkdir()
             for name in (
                 "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
-                "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
-                "wget", "xz", "zstd", "uname", "getconf", "bitbake", "bitbake-layers",
+                "diffstat", "file", "gawk", "ip", "lz4c", "patch", "perl", "ping", "socat",
+                "tar", "texi2any", "unzip", "wget", "xargs", "xz", "zstd", "uname", "getconf", "bitbake", "bitbake-layers",
             ):
                 stub = fakebin / name
                 stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")

@@ -1,5 +1,13 @@
 # Test Results
 
+## 2026-10-20 — Preflight extended: `lz4c` and real BitBake tools
+
+- scarthgap BitBake requires `lz4c`, absent on Debian 13: the 19-command probe claimed `ready` while BitBake failed with `HOSTTOOLS ... lz4c unavailable`. A real false positive.
+- `required_commands` grew from 19 to 24: added `lz4c`, `patch`, `perl`, `tar`, `xargs` (all in `HOSTTOOLS` from `meta/conf/bitbake.conf`).
+- On the system PATH: `MISSING lz4c` → `INCOMPLETE` (correct). With `~/yocto/hosttools` on `PATH`: 24/24 `OK`, `bitbake` `FOUND`, `BUILDDIR=~/yocto/build`.
+- Real evidence recorded: `python3 scripts/record-yocto-preflight.py …` → `verdict: ready`, `readylinux_commit: 13800fdd…`, `recorded_utc: 2026-10-20T20:36:37Z`, `missing_required: []`, `builddir.set: true`.
+- Suite: 195 tests PASS (17 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — `usrmerge` distro feature fix and image graph (noexec)
 
 - Recipe verification via `bitbake -e` (no fetch, no build): `readylinux-runtime` resolves `PN=readylinux-runtime`, `PV=0.3`, package-specific `RDEPENDS` and `FILES` covering `/usr/share/readylinux` and `/usr/bin/readylinux`.
