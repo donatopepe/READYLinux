@@ -900,6 +900,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("--shell /sbin/nologin", useradd.group(1))
         self.assertEqual(groupadd.group(1), "--system ready")
 
+    def test_systemd_install_target_has_one_entry_and_recipe_enablement_matches(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        wanted_by = re.findall(r"(?m)^WantedBy=([^\s]+)$", service)
+        enabled_units = re.findall(r'(?m)^SYSTEMD_SERVICE:\$\{PN\}\s*=\s*"([^"]+)"$', recipe)
+        self.assertEqual(wanted_by, ["multi-user.target"])
+        self.assertEqual(enabled_units, ["readylinux-console.service"])
+        self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', recipe)
+
     def test_systemd_unit_has_single_install_target_declaration(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         install_section = service.split("[Install]", 1)
