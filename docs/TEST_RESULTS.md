@@ -13,6 +13,8 @@
 
 - Recorder più severo: un report che si dichiara `ready` con `missing_required` non vuoto o `builddir` non impostata viene rifiutato (exit 5) senza scrivere nulla; aggiunti 2 test. Suite: 190 test PASS (14 skip su Windows).
 
+- Script tracker: tutti gli `install.sh`, `setup-ai-cpu.sh`, `scripts/*.sh` e `scripts/*.py` erano committati `100644` (non eseguibili); ripristinato `100755` con `git update-index --chmod=+x` e aggiunto guard `test_tracked_scripts_keep_the_executable_bit`. Suite: 191 test PASS (14 skip su Windows).
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe test asserts `inherit allarch`, repo-local `file://` app sources, no model/network payload, and declared Python dependencies. Distro static contract also checks that systemd is appended without removing inherited features and selected as init manager.

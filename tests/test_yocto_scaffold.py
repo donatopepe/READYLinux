@@ -1,6 +1,7 @@
 import ast
 import json
 import re
+import subprocess
 import unittest
 from pathlib import Path, PurePosixPath
 
@@ -70,6 +71,24 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(set(app_sources), {"readylinux.py", "basic.py", "ai_local.py", "vibe.py"})
         for source in app_sources:
             self.assertTrue((ROOT / source).is_file(), f"recipe source missing: {source}")
+
+    def test_tracked_scripts_keep_the_executable_bit(self):
+        try:
+            listing = subprocess.run(
+                ["git", "ls-files", "-s", "scripts/", "install.sh", "setup-ai-cpu.sh"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout
+        except (OSError, subprocess.CalledProcessError) as error:
+            self.skipTest(f"git ls-files unavailable: {error}")
+        entries = [line for line in listing.splitlines() if line.strip()]
+        self.assertTrue(entries, "no tracked scripts found")
+        for line in entries:
+            mode, _object, _stage, path = line.split()
+            with self.subTest(path=path):
+                self.assertEqual(mode, "100755", f"{path} must be committed executable (git update-index --chmod=+x)")
 
     def test_scripts_and_yocto_sources_use_unix_line_endings(self):
         patterns = ("*.py", "scripts/*.sh", "scripts/*.py", "tests/*.py")
@@ -1423,7 +1442,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("190", doc)
+            self.assertIn("191", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1470,8 +1489,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "190 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "190 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "191 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "191 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)
