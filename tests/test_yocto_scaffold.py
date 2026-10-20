@@ -610,6 +610,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(unit_section, r"(?im)^\s*(?:After|Wants|Requires)=.*(?:network|remote-fs)")
         self.assertIn("file://", (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8"))
 
+    def test_systemd_service_declares_no_optional_unit_wants(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        dependency_lines = [line for line in service.splitlines() if re.match(r"^\s*(?:After|Before|Wants|Requires|BindsTo)=", line)]
+        self.assertEqual(dependency_lines, ["After=local-fs.target"], "console should not acquire network/optional ordering")
+        self.assertNotRegex("\\n".join(dependency_lines), r"(?i)(?:network|remote-fs|nfs)")
+
     def test_systemd_dependency_orders_critical_local_filesystem_before_console(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
