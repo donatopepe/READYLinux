@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Punteggio systemd misurabile e gate sulla soglia
+
+- `scripts/validate-systemd-unit.sh` accetta `--security`: esegue `systemd-analyze security --offline=yes` sulla copia temporanea con `ExecStart` sostituito, estrae il punteggio e fallisce con **exit 7** se supera `READY_MAX_EXPOSURE` (default `8.0`). Argomenti ignoti → exit 64.
+- Run reale su WSL Debian 13 (systemd 257): `Exposure level: 6.7 (limit 8.0)`, exit 0 — il valore MEDIUM/6.7 non è più solo storico nei documenti, è riproducibile con un comando.
+- Test: modulo systemd da 4 a 8 casi — stub `systemd-analyze` per 9.5 (exit 7) e 4.2 (exit 0), run reale con `--security`, argomento ignoto (exit 64).
+- Suite: 212 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Contratto artefatto verificato nel validatore
 
 - `scripts/validate-yocto-env.sh`, dopo `bitbake -p`, interroga `bitbake-getvar --recipe readylinux-image --value IMAGE_FSTYPES`; se `wic` non è presente esce con **6** e non dichiara l'ambiente valido. Se `bitbake-getvar` manca stampa un NOTE non fatale.
