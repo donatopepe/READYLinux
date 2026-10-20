@@ -418,6 +418,12 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertFalse(any(line.rstrip() != line for line in content.splitlines()), "recipe has trailing whitespace")
                 self.assertNotIn("\t", content, "recipe should use spaces, not tab indentation")
 
+    def test_image_recipe_rejects_legacy_image_install_override_assignment(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        self.assertRegex(image, r"(?m)^IMAGE_INSTALL:append\s*=")
+        self.assertNotRegex(image, r"(?m)^\s*IMAGE_INSTALL_(?:append|prepend|remove)\s*=")
+        self.assertEqual(len(re.findall(r"(?m)^IMAGE_INSTALL:append\s*=", image)), 1)
+
     def test_image_recipe_has_one_summary_license_and_minimal_image_base(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         summary = re.findall(r"(?m)^SUMMARY\s*=", image)
