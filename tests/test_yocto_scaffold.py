@@ -743,6 +743,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(chmod_targets, launcher_targets)
         self.assertIn('FILES:${PN} += "${datadir}/readylinux ${bindir}/readylinux"', recipe)
 
+    def test_runtime_recipe_stages_all_local_sources_before_launcher(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        install_block = recipe.split("do_install() {", 1)[1].split("\n}", 1)[0]
+        source_copies = re.findall(
+            r"(?m)^\s*install -m 0644 \$\{WORKDIR\}/([^\s]+) \$\{D\}\$\{datadir\}/readylinux/([^\s]+)$",
+            install_block,
+        )
+        expected = {"readylinux.py", "basic.py", "ai_local.py", "vibe.py"}
+        self.assertEqual({source for source, _dest in source_copies}, expected)
+        self.assertEqual({dest for _source, dest in source_copies}, expected)
+        self.assertEqual(source_copies, [(name, name) for name in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py")])
+
     def test_console_recipe_scopes_user_and_system_group_creation_to_package(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         self.assertEqual(len(re.findall(r"(?m)^USERADD_PACKAGES\s*=", recipe)), 1)
