@@ -41,6 +41,8 @@
     "schema_version": 1,
     "verdict": "ready"
   },
+  "preflight_command": "bash /path/to/example/check-yocto-host.sh --json",
+  "preflight_exit_code": 0,
   "readylinux_commit": "0000000000000000000000000000000000000000",
   "recorded_utc": "2000-01-01T00:00:00Z",
   "schema_version": 1,

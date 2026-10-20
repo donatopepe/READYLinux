@@ -11,6 +11,8 @@
     "recorded_utc",
     "readylinux_commit",
     "scope",
+    "preflight_command",
+    "preflight_exit_code",
     "preflight"
   ],
   "properties": {
@@ -120,6 +122,14 @@
           ]
         }
       }
+    },
+    "preflight_command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "preflight_exit_code": {
+      "const": 0,
+      "description": "only a ready preflight (exit 0) may be recorded"
     }
   }
 }

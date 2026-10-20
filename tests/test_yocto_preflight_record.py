@@ -27,6 +27,9 @@ def assert_matches_schema(test, record, schema):
     test.assertRegex(record["recorded_utc"], schema["properties"]["recorded_utc"]["pattern"])
     test.assertRegex(record["readylinux_commit"], schema["properties"]["readylinux_commit"]["pattern"])
     test.assertEqual(record["schema_version"], 1)
+    test.assertIsInstance(record["preflight_command"], str)
+    test.assertTrue(record["preflight_command"].endswith("--json"))
+    test.assertEqual(record["preflight_exit_code"], 0)
     preflight = record["preflight"]
     preflight_schema = schema["properties"]["preflight"]
     test.assertEqual(set(preflight), set(preflight_schema["required"]))
@@ -64,6 +67,8 @@ class PreflightRecordSchemaTests(unittest.TestCase):
         self.assertEqual(example["readylinux_commit"], "0" * 40)
         self.assertEqual(example["recorded_utc"], "2000-01-01T00:00:00Z")
         self.assertIn("not build evidence", example["scope"])
+        self.assertTrue(example["preflight_command"].endswith("--json"))
+        self.assertEqual(example["preflight_exit_code"], 0)
         self.assertTrue(example["preflight"]["os"]["name"].startswith("EXAMPLE"))
 
     def test_example_ready_verdict_requires_builddir_and_bitbake(self):

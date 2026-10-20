@@ -40,10 +40,14 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run_preflight(script: Path) -> subprocess.CompletedProcess:
+def preflight_argv(script: Path) -> list[str]:
     bash = os.environ.get("READYLINUX_BASH", "bash")
+    return [bash, str(script), "--json"]
+
+
+def run_preflight(script: Path) -> subprocess.CompletedProcess:
     return subprocess.run(
-        [bash, str(script), "--json"],
+        preflight_argv(script),
         capture_output=True,
         text=True,
         check=False,
@@ -105,6 +109,8 @@ def main(argv: list[str]) -> int:
         "recorded_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "readylinux_commit": repository_commit(repo),
         "scope": SCOPE,
+        "preflight_command": " ".join(preflight_argv(script)),
+        "preflight_exit_code": result.returncode,
         "preflight": report,
     }
     output = Path(args.output)

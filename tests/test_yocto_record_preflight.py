@@ -57,6 +57,8 @@ class ReadyRecorderTests(unittest.TestCase):
         self.assertRegex(record["readylinux_commit"], r"^[0-9a-f]{40}$")
         self.assertRegex(record["recorded_utc"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
         self.assertIn("not build evidence", record["scope"])
+        self.assertIn("--json", record["preflight_command"])
+        self.assertEqual(record["preflight_exit_code"], 0)
         self.assertEqual(record["preflight"]["verdict"], "ready")
         self.assertEqual(record["preflight"]["missing_required"], [])
         self.assertTrue(record["preflight"]["optional"]["bitbake"])
