@@ -1,5 +1,13 @@
 # Risultati test
 
+## 2026-10-20 — Correzione evidenza preflight e baseline 174
+
+- Il probe `bash scripts/check-yocto-host.sh` eseguito dalla shell Windows (Git Bash) non è un host Debian: riporta `/etc/os-release` assente e tool mancanti. Quell'output non è evidenza Yocto e non va registrato.
+- Comando corretto, eseguito dentro WSL Debian 13: `wsl -d Debian -- /bin/bash -c 'cd /mnt/d/repos/ReadyLinux && /bin/bash scripts/check-yocto-host.sh'`; exit 1 `INCOMPLETE`, 19/19 comandi host richiesti `OK`, `qemu-system-x86_64` e `sha256sum` trovati, `bitbake`/`bitbake-layers` assenti, `BUILDDIR` unset.
+- Aggiunto un test che impone agli STATUS IT/EN di riportare il risultato WSL Debian e vieta di registrare l'output della shell Windows come evidenza host.
+- Suite completa: 174 test PASS (8 skip platform-specific) su Windows/Python 3.11 e WSL Debian 13/Python 3.13; `compileall`, `bash -n` e `git diff --check` pass.
+- Nessun download, installazione, parse BitBake, build immagine o boot QEMU eseguito.
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe test asserts `inherit allarch`, repo-local `file://` app sources, no model/network payload, and declared Python dependencies. Distro static contract also checks that systemd is appended without removing inherited features and selected as init manager.
