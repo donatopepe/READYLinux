@@ -532,6 +532,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("AUTOREV", runtime + service)
         self.assertNotRegex(runtime + service, r"(?m)^\\s*(?:git|https?)://")
 
+    def test_runtime_recipe_file_search_path_resolves_to_repository_root(self):
+        recipe_path = LAYER / "recipes-ready/readylinux/readylinux_0.3.bb"
+        recipe = recipe_path.read_text(encoding="utf-8")
+        prepend = re.search(r'(?m)^FILESEXTRAPATHS:prepend\s*:?=\s*"([^"]+)"$', recipe)
+        self.assertIsNotNone(prepend)
+        expanded = prepend.group(1).replace("${THISDIR}", str(recipe_path.parent))
+        search_path = (Path(expanded.rstrip(":")) / "readylinux.py").resolve()
+        self.assertEqual(search_path.parent, ROOT.resolve())
+        self.assertTrue(search_path.is_file())
+
     def test_runtime_recipe_is_allarch_and_declares_no_model_or_network_payload(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         self.assertRegex(recipe, r"(?m)^inherit\s+allarch\s*$")
