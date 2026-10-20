@@ -229,6 +229,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('DISTRO = "readylinux"', distro)
         self.assertNotIn('DISTRO = "readylinux"', (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8"))
 
+    def test_generic_distro_does_not_pin_a_machine_or_bsp(self):
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        self.assertNotRegex(distro, r"(?m)^\s*MACHINE\s*[:+?]?=")
+        self.assertNotRegex(distro, r"(?im)^\s*(?:require|include)\s+conf/machine/")
+        for readme_path in (LAYER / "README.md", LAYER / "README.en.md"):
+            readme = readme_path.read_text(encoding="utf-8")
+            with self.subTest(readme=readme_path.name):
+                self.assertIn('MACHINE = "<selected-bsp-machine>"', readme)
+                self.assertIn("selected", readme.lower())
+
     def test_distro_identity_metadata_is_explicit_and_cpu_first(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         expected_settings = {
