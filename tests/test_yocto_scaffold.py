@@ -303,6 +303,17 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(image, r"(?m)^\s*(?:IMAGE_INSTALL|DISTRO_FEATURES|OVERRIDES)_(?:append|prepend|remove)\s*=")
         self.assertEqual(len(re.findall(r"(?m)^IMAGE_INSTALL:append\s*=", image)), 1)
 
+    def test_image_recipe_has_one_summary_license_and_minimal_image_base(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        summary = re.findall(r"(?m)^SUMMARY\s*=", image)
+        licenses = re.findall(r"(?m)^LICENSE\s*=", image)
+        base_includes = re.findall(r"(?m)^require\s+recipes-core/images/core-image-minimal\.bb\s*$", image)
+        self.assertEqual(len(summary), 1)
+        self.assertEqual(len(licenses), 1)
+        self.assertEqual(len(base_includes), 1)
+        self.assertEqual(image.count("IMAGE_INSTALL:append"), 1)
+        self.assertNotRegex(image, r"(?i)(?:gguf|safetensors|llama-server|https?://|git://)")
+
     def test_image_installs_every_custom_recipe_package_exactly_once(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         package_names = set()
