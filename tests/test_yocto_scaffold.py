@@ -616,6 +616,15 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(dependency_lines, ["After=local-fs.target"], "console should not acquire network/optional ordering")
         self.assertNotRegex("\\n".join(dependency_lines), r"(?i)(?:network|remote-fs|nfs)")
 
+    def test_systemd_unit_descriptions_are_present_and_bounded(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        unit_match = re.search(r"(?m)^Description=(.+)$", service)
+        self.assertIsNotNone(unit_match)
+        description = unit_match.group(1)
+        self.assertIn("READY Linux", description)
+        self.assertLessEqual(len(description), 80, "service description should remain concise for boot/status output")
+        self.assertFalse(any(ord(character) < 32 for character in description))
+
     def test_systemd_dependency_orders_critical_local_filesystem_before_console(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
