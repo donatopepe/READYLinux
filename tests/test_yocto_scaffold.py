@@ -745,6 +745,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertRegex(lines[1], r"^exec python3 /usr/share/readylinux/readylinux\.py \"\$@\"$")
         self.assertEqual(len(lines), 2, "launcher should not execute an intermediate shell command")
 
+    def test_runtime_recipe_package_declares_expected_summary_and_description(self):
+        recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
+        summary = re.search(r'(?m)^SUMMARY\s*=\s*"([^"]+)"$', recipe)
+        description = re.search(r'(?m)^DESCRIPTION\s*=\s*"([^"]+)"$', recipe)
+        self.assertIsNotNone(summary)
+        self.assertIsNotNone(description)
+        self.assertIn("READY Linux", summary.group(1))
+        self.assertIn("READY", description.group(1))
+        self.assertNotIn("llama.cpp", summary.group(1))
+        self.assertEqual(len(re.findall(r"(?m)^SUMMARY\s*=", recipe)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^DESCRIPTION\s*=", recipe)), 1)
+
     def test_runtime_recipe_exposes_only_one_console_entrypoint_install(self):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         launcher_targets = re.findall(r"(?m)^\s*cat > \$\{D\}\$\{bindir\}/([^\s]+) <<'EOF'$", recipe)
