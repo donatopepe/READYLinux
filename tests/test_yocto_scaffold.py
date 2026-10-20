@@ -252,6 +252,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
         self.assertIn('DISTRO_FEATURES:append = " systemd"', distro)
 
+    def test_image_recipe_extends_minimal_and_does_not_select_target_policy(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        self.assertRegex(image, r"(?m)^require recipes-core/images/core-image-minimal\.bb$")
+        self.assertRegex(image, r'(?m)^IMAGE_INSTALL:append = " readylinux readylinux-console"$')
+        self.assertEqual(len(re.findall(r"(?m)^require ", image)), 1)
+        self.assertNotRegex(image, r"(?m)^\s*(?:DISTRO|MACHINE)\s*=")
+        self.assertNotRegex(image, r"(?m)^IMAGE_INSTALL_(?:append|remove|prepend)\s*=")
+
     def test_image_installs_every_custom_recipe_package_exactly_once(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         package_names = set()
