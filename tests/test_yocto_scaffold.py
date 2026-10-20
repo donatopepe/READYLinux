@@ -248,6 +248,22 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn('MACHINE = "<selected-bsp-machine>"', readme)
                 self.assertIn("selected", readme.lower())
 
+    def test_distro_metadata_key_order_is_stable_and_features_append_after_identity(self):
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        identity_keys = ["DISTRO", "DISTRO_NAME", "DISTRO_VERSION"]
+        identity_lines = []
+        for key in identity_keys:
+            match = re.search(rf"(?m)^{re.escape(key)}\s*=", distro)
+            self.assertIsNotNone(match, f"missing distro key: {key}")
+            identity_lines.append(match.start())
+        self.assertEqual(identity_lines, sorted(identity_lines), "distro identity metadata should be grouped in stable order")
+        feature_line = re.search(r"(?m)^DISTRO_FEATURES:append\s*=", distro)
+        init_line = re.search(r"(?m)^VIRTUAL-RUNTIME_init_manager\s*=", distro)
+        self.assertIsNotNone(feature_line)
+        self.assertIsNotNone(init_line)
+        self.assertGreater(feature_line.start(), identity_lines[-1])
+        self.assertLess(feature_line.start(), init_line.start())
+
     def test_distro_identity_metadata_is_explicit_and_cpu_first(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         expected_settings = {
