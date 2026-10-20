@@ -1,5 +1,13 @@
 # Test Results
 
+## 2026-10-20 — User installer tests (`install.sh`, `setup-ai-cpu.sh`)
+
+- New `tests/test_install_script.py` module (5 tests) for the two scripts that were covered only by syntax checks.
+- `install.sh`: real run with temporary `HOME`/`XDG_DATA_HOME` — copies `readylinux.py`, `ai_local.py`, `vibe.py` into `$XDG_DATA_HOME/readylinux/app`, creates an executable wrapper in `$HOME/.local/bin` with a bash shebang and the absolute app path, and creates nothing outside the temporary home; fail-closed with missing `python3` (exit 1).
+- `setup-ai-cpu.sh`: opt-in CPU-only checks, pinned model SHA-256 `cc324af0…`, `sha256sum -c` verification, no `sudo`/`systemctl`, and fail-closed (exit 1, no files) when tools are missing.
+- Bug found in the tests themselves: with an emptied `PATH`, invoking `bash` failed on WSL (fixed by using the absolute path on POSIX and `bash` on Windows).
+- Suite: 201 tests PASS (17 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Verification plan realigned with real evidence
 
 - `docs/VERIFICATION_PLAN.md` still claimed "no downloads allowed", "19/19 commands" and "do not claim the layer parses": all superseded by facts. Updated with the pinned Poky `104772c5fd0653290cbb5e4b77813343957939cc`, `BUILDDIR=~/yocto/build`, `0 errors` parse, the `readylinux-runtime` and `usrmerge` fixes, 24 host commands, the `lz4c` shim and `bitbake -n readylinux-image` 5006 noexec tasks.
