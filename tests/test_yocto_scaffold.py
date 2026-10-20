@@ -603,6 +603,20 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(workspace.group(1), "/var/lib/readylinux/programs")
         self.assertTrue(workspace.group(1).startswith("/var/lib/readylinux/"))
 
+    def test_systemd_console_requests_only_the_declared_device_tty(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("TTYPath"), "/dev/tty1")
+        self.assertEqual(directives.get("StandardInput"), "tty")
+        self.assertEqual(directives.get("StandardOutput"), "tty")
+        self.assertNotIn("TTYPath=/dev/tty0", service)
+        self.assertNotIn("TTYPath=/dev/console", service)
+        self.assertEqual(len(re.findall(r"(?m)^TTYPath=", service)), 1)
+
     def test_systemd_console_tty_restart_and_logging_policy_are_explicit(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
