@@ -723,6 +723,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         sections = [line.strip() for line in service.splitlines() if line.strip().startswith("[") and line.strip().endswith("]")]
         self.assertEqual(sections, ["[Unit]", "[Service]", "[Install]"])
         self.assertEqual(len(set(sections)), len(sections), "duplicate systemd section")
+        self.assertEqual(service, service.rstrip() + "\n", "unit file should end with exactly one newline")
+        self.assertFalse(any(line.rstrip() != line for line in service.splitlines()), "unit directives have trailing whitespace")
 
     def test_console_recipe_scopes_user_and_system_group_creation_to_package(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
