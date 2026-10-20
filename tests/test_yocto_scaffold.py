@@ -1144,6 +1144,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIsNone(example["boot"]["qemu_version"])
         self.assertIsNone(example["boot"]["command"])
         self.assertIsNone(example["boot"]["console_log"])
+        for field in ("ready_console", "unprivileged_service", "persistent_state", "getty_mask", "basic_smoke", "offline_smoke"):
+            self.assertEqual(example["boot"][field], "not-run")
         self.assertEqual(example["verdict"], "not-verified")
         if example["image"]["source_cache_state"] == "not-built":
             self.assertIsNone(example["image"]["exit_code"])
