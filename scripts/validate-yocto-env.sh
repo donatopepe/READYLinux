@@ -28,6 +28,19 @@ if ! grep -Fq "${layer_dir}" "${build_dir}/conf/bblayers.conf"; then
     exit 2
 fi
 
+distro_line="$(grep -E '^[[:space:]]*DISTRO[[:space:]]*=' "${build_dir}/conf/local.conf" | tail -n 1 || true)"
+if [[ -n "${distro_line}" ]]; then
+    distro_value="${distro_line#*=}"
+    distro_value="${distro_value//\"/}"
+    distro_value="${distro_value//[[:space:]]/}"
+    if [[ "${distro_value}" != "readylinux" ]]; then
+        echo "ERROR: local.conf selects DISTRO = \"${distro_value}\"; READY requires DISTRO = \"readylinux\"." >&2
+        exit 3
+    fi
+else
+    echo "NOTE: conf/local.conf does not set DISTRO; set DISTRO = \"readylinux\" (layer README) before parse." >&2
+fi
+
 printf 'Build directory: %s\nLayer: %s\n' "${build_dir}" "${layer_dir}"
 echo "Running metadata parse only in build directory (no fetch/image build): bitbake -p"
 (

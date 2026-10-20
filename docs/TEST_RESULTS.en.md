@@ -17,6 +17,8 @@
 
 - Layer README parity: new test compares IT/EN command blocks, `scripts/*.sh|py` references, and that every referenced script exists. Suite: 192 tests PASS.
 
+- Pre-parse gate: `scripts/validate-yocto-env.sh` now rejects a `DISTRO` other than `readylinux` (exit 3) and prints a NOTE when `local.conf` sets no DISTRO; 3 dedicated tests. Suite: 195 tests PASS (17 Windows skips).
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe regression asserts `inherit allarch`, repository-local `file://` application sources, no model/network payload and declared Python dependencies. Distro test checks systemd is appended without removing inherited features and is selected as init manager.

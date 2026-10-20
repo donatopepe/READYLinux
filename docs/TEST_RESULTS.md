@@ -17,6 +17,8 @@
 
 - Parità README layer: nuovo test confronta i blocchi di comandi IT/EN, i riferimenti `scripts/*.sh|py` e verifica che ogni script citato esista. Suite: 192 test PASS.
 
+- Gate pre-parse: `scripts/validate-yocto-env.sh` ora rifiuta `DISTRO` diverso da `readylinux` (exit 3) e stampa un NOTE se `local.conf` non imposta `DISTRO`; 3 test dedicati. Suite: 195 test PASS (17 skip su Windows).
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe test asserts `inherit allarch`, repo-local `file://` app sources, no model/network payload, and declared Python dependencies. Distro static contract also checks that systemd is appended without removing inherited features and selected as init manager.

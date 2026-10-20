@@ -65,6 +65,52 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertIn("bitbake is not available", result.stderr)
         self.assertNotIn("FAKE_BITBAKE", result.stdout)
 
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_rejects_non_ready_distro_selection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "poky"\n', encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir)
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+        self.assertIn('requires DISTRO = "readylinux"', result.stderr)
+        self.assertIn("poky", result.stderr)
+        self.assertNotIn("FAKE_BITBAKE", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_notes_missing_distro_but_still_validates_environment(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
+            (conf / "local.conf").write_text("", encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir)
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("does not set DISTRO", result.stderr)
+        self.assertIn("FAKE_BITBAKE -p", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_accepts_ready_distro_selection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"\n', encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"\n', encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir)
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("does not set DISTRO", result.stderr)
+        self.assertIn("FAKE_BITBAKE -p", result.stdout)
+
     def test_script_fails_when_build_configs_are_missing(self):
         with tempfile.TemporaryDirectory() as temp:
             result, fake_root = self.run_with_builddir(Path(temp))
