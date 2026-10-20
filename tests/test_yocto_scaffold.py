@@ -327,6 +327,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(image, r"(?m)^\s*(?:IMAGE_INSTALL|DISTRO_FEATURES|OVERRIDES)_(?:append|prepend|remove)\s*=")
         self.assertEqual(len(re.findall(r"(?m)^IMAGE_INSTALL:append\s*=", image)), 1)
 
+    def test_image_recipe_package_list_has_no_whitespace_duplicate_artifacts(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        install_match = re.search(r'(?m)^IMAGE_INSTALL:append\s*=\s*"([^\"]*)"$', image)
+        self.assertIsNotNone(install_match)
+        entries = install_match.group(1).split()
+        self.assertTrue(entries, "image must install at least one package")
+        self.assertEqual(len(entries), len(set(entries)), "duplicate image package")
+        self.assertEqual(entries, ["readylinux", "readylinux-console"])
+        self.assertFalse(any(entry != entry.strip() for entry in entries))
+
     def test_image_recipe_has_one_summary_license_and_minimal_image_base(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         summary = re.findall(r"(?m)^SUMMARY\s*=", image)
