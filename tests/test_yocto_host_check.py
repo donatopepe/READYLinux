@@ -51,7 +51,7 @@ class YoctoHostCheckTests(unittest.TestCase):
             for name in (
                 "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
                 "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
-                "wget", "xz", "zstd", "uname", "getconf",
+                "wget", "xz", "zstd", "uname", "getconf", "bitbake", "bitbake-layers",
             ):
                 stub = fakebin / name
                 stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
@@ -66,7 +66,8 @@ class YoctoHostCheckTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Preflight: required Debian host commands and BUILDDIR found", result.stdout)
-        self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
+        self.assertIn("BitBake executables found on PATH.", result.stdout)
+        self.assertNotIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "PATH executable stubs require Unix")
     def test_marks_missing_builddir_incomplete_when_tools_are_present(self):
