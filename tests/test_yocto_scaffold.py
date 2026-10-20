@@ -614,6 +614,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotIn("network.target", directives.get("After", ""))
         self.assertNotIn("network-online.target", directives.get("After", ""))
 
+    def test_systemd_console_reset_and_vhangup_tty_safety_are_enabled(self):
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        directives = {
+            line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in service.splitlines()
+            if "=" in line and not line.startswith("#")
+        }
+        self.assertEqual(directives.get("TTYReset"), "yes")
+        self.assertEqual(directives.get("TTYVHangup"), "yes")
+        self.assertEqual(directives.get("TTYVTDisallocate"), "yes")
+        self.assertEqual(directives.get("TTYPath"), "/dev/tty1")
+
     def test_systemd_console_requests_only_the_declared_device_tty(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         directives = {
