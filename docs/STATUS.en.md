@@ -6,7 +6,7 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 
 - **Release**: READY Linux 0.3 application prototype.
 - **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened tty1 service; host preflight, BitBake, systemd, artifact checksum, isolated QEMU COW boot helpers.
-- **Locally verified**: 143 Windows/Python 3.11 tests (8 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Static systemd contract verifies a unique `multi-user.target` install target and recipe enablement wiring. BitBake/BUILDDIR absent.
+- **Locally verified**: 143 Windows/Python 3.11 tests (8 platform-specific skips) and WSL Debian 13/Python 3.13; compileall/shell/diff pass. Test ties `USERADD_PACKAGES` to the console package owning the unit and getty mask. BitBake/BUILDDIR absent.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, guest SSH, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: WSL Debian 13/trixie x86_64, 20 CPUs; preflight `INCOMPLETE`; no checkout/fetch/install.
 - **Git**: firing-start HEAD `1d11a30128cc7b3c4fe0ce3defdfc42d46b18044`; image/package getty-mask contract test in `afbb45b`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
