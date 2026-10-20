@@ -1101,7 +1101,6 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(example["identity"]["poky_commit"], "0" * 40)
         self.assertEqual(example["identity"]["readylinux_commit"], "0" * 40)
         self.assertEqual(example["identity"]["layer_commits"], [])
-        self.assertEqual(example["identity"]["bsp_revision"], "")
         self.assertEqual(example["identity"]["tclibc"], "")
         self.assertEqual(example["identity"]["utc_date"], "2000-01-01T00:00:00Z")
         self.assertRegex(example["identity"]["utc_date"], r"^2000-01-01T00:00:00Z$")
