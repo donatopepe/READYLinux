@@ -185,6 +185,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(series), len(set(series)), "duplicate Yocto compatibility series")
         self.assertTrue(all(re.fullmatch(r"[a-z][a-z0-9]+", item) for item in series), "compatibility tokens must be literal lowercase series names")
         self.assertNotRegex(compatibility.group(1), r"(?i)(master|latest|main)")
+        self.assertEqual(series, sorted(series), "compatibility list should use stable lexical order for review diffs")
 
     def test_readylinux_distro_is_opt_in_and_documented_for_builds(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
