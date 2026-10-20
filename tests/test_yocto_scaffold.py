@@ -181,6 +181,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         series = compatibility.group(1).split()
         self.assertGreaterEqual(len(series), 1)
         self.assertEqual(len(series), len(set(series)), "duplicate Yocto compatibility series")
+        self.assertTrue(all(re.fullmatch(r"[a-z][a-z0-9]+", item) for item in series), "compatibility tokens must be literal lowercase series names")
         self.assertNotRegex(compatibility.group(1), r"(?i)(master|latest|main)")
 
     def test_readylinux_distro_is_opt_in_and_documented_for_builds(self):
