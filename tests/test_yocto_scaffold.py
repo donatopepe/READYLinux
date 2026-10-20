@@ -496,7 +496,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         recipe = (LAYER / "recipes-ready/readylinux/readylinux_0.3.bb").read_text(encoding="utf-8")
         dependency_match = re.search(r'RDEPENDS:\$\{PN\}\s*\+=\s*"([^"]+)"', recipe)
         self.assertIsNotNone(dependency_match, "RDEPENDS missing from runtime recipe")
-        declared = set(dependency_match.group(1).split())
+        dependency_tokens = dependency_match.group(1).split()
+        declared = set(dependency_tokens)
+        self.assertEqual(len(dependency_tokens), len(declared), "duplicate runtime RDEPENDS package token")
         source_files = (ROOT / name for name in ("readylinux.py", "basic.py", "ai_local.py", "vibe.py"))
         stdlib = set()
         for source in source_files:
