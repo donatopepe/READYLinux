@@ -190,6 +190,18 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(actual_recipes, expected_paths)
         self.assertEqual(len(actual_recipes), 3)
 
+    def test_layer_metadata_has_single_collection_pattern_and_priority(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        for assignment in (
+            r"(?m)^BBFILE_COLLECTIONS\s*\+=",
+            r"(?m)^BBFILE_PATTERN_readylinux\s*=",
+            r"(?m)^BBFILE_PRIORITY_readylinux\s*=",
+        ):
+            with self.subTest(assignment=assignment):
+                self.assertEqual(len(re.findall(assignment, layer_conf)), 1)
+        self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
+        self.assertIn('BBFILE_PATTERN_readylinux = "^${LAYERDIR}/"', layer_conf)
+
     def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
         self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
