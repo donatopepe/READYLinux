@@ -505,6 +505,7 @@ class YoctoScaffoldTests(unittest.TestCase):
             checksums.append(match.group(1))
         self.assertEqual(len(set(checksums)), 1)
         self.assertEqual(checksums[0], "0835ade698e0bcf8506ecda2f7b4f302")
+        self.assertTrue(all(re.fullmatch(r"[0-9a-f]{32}", checksum) for checksum in checksums))
 
     def test_console_recipe_runtime_dependencies_include_every_required_package(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
