@@ -1053,6 +1053,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(re.findall(r"(?m)^StateDirectoryMode=", service)), 1)
         self.assertEqual(directives.get("UMask"), "0027")
         self.assertEqual(directives.get("Environment"), "XDG_DATA_HOME=/var/lib/readylinux")
+        self.assertEqual(len(re.findall(r"(?m)^Environment=", service)), 1)
         self.assertEqual(directives.get("Type"), "simple")
         self.assertEqual(directives.get("StandardInput"), "tty")
         self.assertEqual(directives.get("StandardOutput"), "tty")
