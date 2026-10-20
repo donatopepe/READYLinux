@@ -151,6 +151,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertTrue(supported)
         self.assertEqual(len(supported), len(set(supported)))
         self.assertNotRegex(compatibility.group(1), r"(?i)(master|latest|main)")
+        self.assertTrue(all(re.fullmatch(r"[a-z][a-z0-9]+", token) for token in supported))
+        self.assertEqual(len(supported), 4, "review and pin the candidate compatibility set explicitly")
         compatibility_comment = next(
             (line for line in layer_conf.splitlines() if "compatibility series" in line.lower()),
             "",
