@@ -754,6 +754,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("READY Linux", summary.group(1))
         self.assertIn("READY", description.group(1))
         self.assertNotIn("llama.cpp", summary.group(1))
+        self.assertNotRegex(summary.group(1) + description.group(1), r"(?i)(?:https?://|git://|AUTOREV|gguf|safetensors)")
         self.assertEqual(len(re.findall(r"(?m)^SUMMARY\s*=", recipe)), 1)
         self.assertEqual(len(re.findall(r"(?m)^DESCRIPTION\s*=", recipe)), 1)
 
