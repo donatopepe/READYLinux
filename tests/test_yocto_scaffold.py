@@ -196,6 +196,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         }
         self.assertEqual(actual_recipes, expected_paths)
         self.assertEqual(len(actual_recipes), 3)
+        recipe_roots = {"/".join(path.split("/")[:2]) for path in actual_recipes}
+        self.assertEqual(recipe_roots, {"recipes-core/images", "recipes-core/readylinux", "recipes-ready/readylinux"})
 
     def test_layer_metadata_has_single_collection_pattern_and_priority(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
