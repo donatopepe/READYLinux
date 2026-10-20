@@ -420,6 +420,16 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro)
         self.assertIn('DISTRO_FEATURES:append = " systemd usrmerge"', distro)
 
+    def test_image_recipe_produces_the_documented_wic_artifact(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        fstypes = re.findall(r"(?m)^IMAGE\w*FSTYPES[^=]*=", image)
+        self.assertEqual(len(fstypes), 1, image)
+        self.assertIn('IMAGE_FSTYPES:append = " wic"', image)
+        for readme in ((LAYER / "README.md"), (LAYER / "README.en.md")):
+            text = readme.read_text(encoding="utf-8")
+            self.assertIn(".wic", text)
+            self.assertIn("IMAGE_FSTYPES", text)
+
     def test_image_recipe_extends_minimal_and_does_not_select_target_policy(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertRegex(image, r"(?m)^require recipes-core/images/core-image-minimal\.bb$")
@@ -1469,7 +1479,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("205", doc)
+            self.assertIn("206", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1526,8 +1536,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "205 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "205 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "206 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "206 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

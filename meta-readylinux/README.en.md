@@ -6,7 +6,7 @@ Minimal Yocto layer scaffold for READY Linux. It is not yet a complete image and
 
 - `conf/layer.conf`: layer metadata.
 - `conf/distro/readylinux.conf`: initial distro policy inheriting Poky defaults.
-- `recipes-core/images/readylinux-image.bb`: minimal image with the READY runtime.
+- `recipes-core/images/readylinux-image.bb`: minimal image with the READY runtime. It also appends `IMAGE_FSTYPES:append = " wic"`, so the documented verification and boot steps receive a `.wic` artifact.
 - `recipes-ready/readylinux/readylinux-runtime_0.3.bb`: installs the Python console, BASIC runtime, AI client, and vibe workspace code. `FILESEXTRAPATHS` resolves `file://` sources from the repository root; the recipe does not include llama.cpp binaries or model weights.
 - `recipes-core/readylinux/`: systemd starts READY on `/dev/tty1` as a dedicated unprivileged `ready` account, with persistent writable state and systemd filesystem/kernel hardening (`NoNewPrivileges`, private tmp, protected home/system/clock/kernel settings, restricted SUID/SGID and capabilities). The service package `readylinux-console` declares `RDEPENDS:${PN} += "readylinux-runtime systemd"` and includes `readylinux-console.service` plus the getty mask in `FILES:${PN}`; the image recipe installs it. It masks `getty@tty1.service`; this image reserves tty1 for READY and therefore has no normal login prompt on that terminal.
 

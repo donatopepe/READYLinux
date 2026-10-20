@@ -1,5 +1,13 @@
 # Test Results
 
+## 2026-10-20 — `.wic` artifact aligned with the documentation
+
+- Docs and the `verify-image-artifact.sh` / `boot-image-qemu.sh` helpers consume a `.wic`, but the image recipe set no `IMAGE_FSTYPES`: `core-image-minimal` defaults to `tar.bz2 ext4`, so the documented file would never be produced.
+- Fix: `IMAGE_FSTYPES:append = " wic"` in `readylinux-image.bb`, with a comment explaining why.
+- Offline verification via `bitbake -e readylinux-image` (no fetch): `IMAGE_FSTYPES=" tar.bz2 ext4 wic"`, `IMAGE_INSTALL="packagegroup-core-boot  readylinux-runtime readylinux-console"`.
+- New `test_image_recipe_produces_the_documented_wic_artifact`: single `IMAGE_FSTYPES` assignment, `wic` present, and IT/EN READMEs mentioning `.wic` and `IMAGE_FSTYPES`.
+- Suite: 206 tests PASS (21 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — OE series compatibility verified before parsing
 
 - `scripts/validate-yocto-env.sh` reads `LAYERSERIES_COMPAT_core` from the `core` layer `conf/layer.conf` reported by `bitbake-layers show-layers` and compares it with `LAYERSERIES_COMPAT_readylinux`: no intersection exits 5 without running the parse; an unreadable `core` layer or `layer.conf` exits 4.
