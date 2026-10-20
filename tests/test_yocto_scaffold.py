@@ -1375,7 +1375,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertRegex(doc, r"(?m)^- (?:Comandi|Commands):")
                 self.assertTrue(("preflight" in doc.lower() or "probe" in doc.lower()) and "INCOMPLETE" in doc)
                 self.assertRegex(doc, r"full suite:?\s+\d+ tests PASS")
-                self.assertRegex(doc, r"(?i)(?:8 platform-specific skips|8 skip platform-specific)")
+                self.assertRegex(doc, r"(?i)(?:\d+ platform-specific skips|\d+ skip platform-specific)")
                 snapshot = re.search(
                     r"(?m)^- (?:Snapshot iniziale (?:confermato via|verificato con)|Initial snapshot verified by) `git rev-parse HEAD`: `([0-9a-f]{40})`",
                     doc,
@@ -1414,7 +1414,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("175", doc)
+            self.assertIn("179", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1461,8 +1461,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "175 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "175 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "179 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "179 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

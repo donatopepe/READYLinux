@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import tempfile
@@ -195,6 +196,88 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("Preflight: NOT-A-LINUX-HOST", result.stdout)
         self.assertNotIn("Preflight: INCOMPLETE", result.stdout)
 
+
+    @unittest.skipIf(os.name == "nt", "PATH executable stubs require Unix")
+    def test_json_report_is_machine_readable_and_ready_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fakebin = root / "bin"
+            fakebin.mkdir()
+            builddir = root / "build"
+            builddir.mkdir()
+            for name in (
+                "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
+                "diffstat", "file", "gawk", "ip", "ping", "socat", "texi2any", "unzip",
+                "wget", "xz", "zstd", "uname", "getconf", "bitbake", "bitbake-layers",
+            ):
+                stub = fakebin / name
+                stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+                stub.chmod(0o755)
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            result = subprocess.run(
+                [bash_path, str(SCRIPT), "--json"],
+                cwd=ROOT,
+                env=host_env(root, PATH=str(fakebin), BUILDDIR=str(builddir)),
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["schema_version"], 1)
+        self.assertEqual(report["verdict"], "ready")
+        self.assertEqual(report["missing_required"], [])
+        self.assertTrue(report["required"]["gcc"])
+        self.assertTrue(report["optional"]["bitbake"])
+        self.assertEqual(report["builddir"], {"set": True, "path": str(builddir)})
+        self.assertIsInstance(report["cpus"], int)
+        self.assertTrue(report["arch"])
+
+    @unittest.skipIf(os.name == "nt", "PATH executable stubs require Unix")
+    def test_json_report_lists_missing_required_tools_and_incomplete_verdict(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fakebin = root / "bin"
+            fakebin.mkdir()
+            for name in ("bash", "git", "g++", "make", "python3", "uname", "getconf"):
+                stub = fakebin / name
+                stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+                stub.chmod(0o755)
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            result = subprocess.run(
+                [bash_path, str(SCRIPT), "--json"],
+                cwd=ROOT,
+                env=host_env(root, PATH=str(fakebin)),
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["verdict"], "incomplete")
+        self.assertFalse(report["required"]["gcc"])
+        self.assertIn("gcc", report["missing_required"])
+        self.assertNotIn("git", report["missing_required"])
+        self.assertEqual(report["builddir"], {"set": False, "path": None})
+
+    def test_json_report_marks_wrong_environment_without_fake_command_claims(self):
+        with tempfile.TemporaryDirectory() as temp:
+            result = subprocess.run(
+                ["bash", str(SCRIPT), "--json"],
+                cwd=ROOT,
+                env={"READYLINUX_OS_RELEASE": str(Path(temp) / "missing-os-release")},
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["verdict"], "not-a-linux-host")
+        self.assertEqual(report["required"], {})
+        self.assertEqual(report["missing_required"], [])
+        self.assertEqual(report["builddir"], {"set": False, "path": None})
+
+    def test_rejects_unknown_argument_with_usage_exit_code(self):
+        result = subprocess.run(["bash", str(SCRIPT), "--verbose"], cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 64)
+        self.assertIn("Usage:", result.stderr)
 
 if __name__ == "__main__":
     unittest.main()
