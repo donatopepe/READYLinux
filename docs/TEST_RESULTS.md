@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-20 — Verification plan riallineato all'evidenza reale
+
+- `docs/VERIFICATION_PLAN.md` affermava ancora "nessun download consentito", "19/19 comandi" e "non dichiarare che la layer parsa": tutto superato dai fatti. Aggiornato con: Poky pinnato `104772c5fd0653290cbb5e4b77813343957939cc`, `BUILDDIR=~/yocto/build`, parse `0 errors`, fix `readylinux-runtime` e `usrmerge`, 24 comandi host, shim `lz4c`, `bitbake -n readylinux-image` 5006 task noexec.
+- Nuovo guard `test_verification_plan_records_the_pinned_parse_evidence` impedisce che il piano torni a dichiarare il parse non eseguito o a citare 19 comandi.
+- Suite: 196 test PASS (17 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Preflight esteso: `lz4c` e tool BitBake reali
 
 - `bitbake` in scarthgap richiede `lz4c`, assente in Debian 13: il probe con 19 comandi dichiarava `ready` mentre BitBake falliva con `HOSTTOOLS ... lz4c unavailable`. Falso positivo reale.
