@@ -713,6 +713,13 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(sections, ["[Unit]", "[Service]", "[Install]"])
         self.assertEqual(len(set(sections)), len(sections), "duplicate systemd section")
 
+    def test_console_recipe_scopes_user_and_system_group_creation_to_package(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        self.assertEqual(len(re.findall(r"(?m)^USERADD_PACKAGES\s*=", recipe)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^USERADD_PARAM:\$\{PN\}\s*=", recipe)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^GROUPADD_PARAM:\$\{PN\}\s*=", recipe)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^GROUPADD_PARAM(?:_[A-Za-z]|:append|:prepend|:remove)", recipe)), 0)
+
     def test_console_recipe_useradd_contract_is_scoped_and_noninteractive(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         package_scope = re.search(r"(?m)^USERADD_PACKAGES\s*=\s*\"([^\"]+)\"$", recipe)
