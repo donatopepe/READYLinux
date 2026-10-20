@@ -22,6 +22,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("BitBake executables found on PATH.", text)
         self.assertIn("Environment tools (not provided by this probe):", text)
         self.assertIn("optional_commands=(bitbake bitbake-layers", text)
+        self.assertIn("Environment tools (not provided by this probe):", text)
+        self.assertIn("Preflight: required Debian host commands and BUILDDIR found", text)
 
     def test_reports_missing_host_tools_without_modifying_system(self):
         with tempfile.TemporaryDirectory() as temp:
