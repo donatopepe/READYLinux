@@ -220,6 +220,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(sum(pattern.endswith(".bbappend") for pattern in patterns), 1)
         for pattern in patterns:
             self.assertTrue(pattern.startswith("${LAYERDIR}/recipes-"))
+            relative = pattern.replace("${LAYERDIR}/", "")
+            self.assertEqual(len(Path(relative).parts), 3, "BBFILES glob should cover exactly root/category/recipe")
         self.assertEqual(patterns[0].count("*"), 3)
         self.assertEqual(patterns[1].count("*"), 3)
         self.assertNotIn("conf/", " ".join(patterns), "BBFILES should not scan configuration directories")
