@@ -225,6 +225,10 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(patterns[0].count("*"), 3)
         self.assertEqual(patterns[1].count("*"), 3)
         self.assertNotIn("conf/", " ".join(patterns), "BBFILES should not scan configuration directories")
+        recipes = [path for path in LAYER.rglob("*.bb") if path.name != "readylinux-image.bb"]
+        appends = list(LAYER.rglob("*.bbappend"))
+        self.assertTrue(all(path.parent.parent.name.startswith("recipes-") for path in recipes))
+        self.assertEqual(appends, [], "no append files are currently expected; adding one requires inventory review")
 
     def test_layer_metadata_declares_collection_pattern_priority_and_supported_series(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
