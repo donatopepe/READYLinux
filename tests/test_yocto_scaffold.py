@@ -1172,6 +1172,32 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertTrue("cached" in doc.lower() or "cache" in doc.lower())
             self.assertLess(doc.index("DISTRO ="), doc.index("bash scripts/validate-yocto-env.sh"))
 
+    @staticmethod
+    def _fenced_command_lines(text):
+        commands = []
+        in_block = False
+        for line in text.splitlines():
+            if line.startswith("```"):
+                in_block = not in_block
+                continue
+            if not in_block:
+                continue
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            commands.append(stripped)
+        return commands
+
+    def test_layer_readme_command_blocks_match_between_languages(self):
+        italian = (LAYER / "README.md").read_text(encoding="utf-8")
+        english = (LAYER / "README.en.md").read_text(encoding="utf-8")
+        self.assertEqual(self._fenced_command_lines(italian), self._fenced_command_lines(english))
+        script_pattern = r"scripts/[A-Za-z0-9_.-]+\.(?:sh|py)"
+        self.assertEqual(set(re.findall(script_pattern, italian)), set(re.findall(script_pattern, english)))
+        for script in set(re.findall(script_pattern, italian)):
+            with self.subTest(script=script):
+                self.assertTrue((ROOT / script).is_file(), f"documented script missing: {script}")
+
     def test_layer_docs_order_environment_layer_parse_and_build(self):
         for doc_path in (LAYER / "README.md", LAYER / "README.en.md"):
             doc = doc_path.read_text(encoding="utf-8")
@@ -1442,7 +1468,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("191", doc)
+            self.assertIn("192", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1489,8 +1515,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "191 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "191 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "192 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "192 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

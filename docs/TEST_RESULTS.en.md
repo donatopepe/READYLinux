@@ -15,6 +15,8 @@
 
 - Script tracking: `install.sh`, `setup-ai-cpu.sh`, `scripts/*.sh` and `scripts/*.py` were committed as `100644` (not executable); restored `100755` via `git update-index --chmod=+x` and added the `test_tracked_scripts_keep_the_executable_bit` guard. Suite: 191 tests PASS (14 Windows skips).
 
+- Layer README parity: new test compares IT/EN command blocks, `scripts/*.sh|py` references, and that every referenced script exists. Suite: 192 tests PASS.
+
 ## 2026-10-18 — Offline Yocto contracts and regression suite
 
 - Runtime recipe regression asserts `inherit allarch`, repository-local `file://` application sources, no model/network payload and declared Python dependencies. Distro test checks systemd is appended without removing inherited features and is selected as init manager.
