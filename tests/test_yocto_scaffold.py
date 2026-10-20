@@ -739,6 +739,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertRegex(recipe, r"(?m)^SYSTEMD_SERVICE:\$\{PN\}\s*=")
         self.assertRegex(recipe, r"(?m)^SYSTEMD_AUTO_ENABLE:\$\{PN\}\s*=")
         self.assertRegex(recipe, r"(?m)^RDEPENDS:\$\{PN\}\s*\+=")
+        for variable in ("SYSTEMD_SERVICE", "SYSTEMD_AUTO_ENABLE", "RDEPENDS"):
+            self.assertEqual(len(re.findall(rf"(?m)^{variable}:\$\{{PN\}}", recipe)), 1, f"duplicate {variable}:${{PN}} override")
 
     def test_console_recipe_useradd_contract_is_scoped_and_noninteractive(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
