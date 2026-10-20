@@ -229,6 +229,25 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn('DISTRO = "readylinux"', distro)
         self.assertNotIn('DISTRO = "readylinux"', (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8"))
 
+    def test_distro_identity_metadata_is_explicit_and_cpu_first(self):
+        distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        expected_settings = {
+            "DISTRO": "readylinux",
+            "DISTRO_NAME": "READY Linux",
+            "DISTRO_VERSION": "0.3-dev",
+            "VIRTUAL-RUNTIME_init_manager": "systemd",
+        }
+        settings = {
+            match.group(1): match.group(2)
+            for line in distro.splitlines()
+            if (match := re.match(r'^([A-Za-z][A-Za-z0-9_-]*)\s*=\s*"([^"]*)"$', line))
+        }
+        for key, value in expected_settings.items():
+            self.assertEqual(settings.get(key), value, key)
+        self.assertIn("CPU-first", distro)
+        self.assertIn("No AI model weights", distro)
+        self.assertNotRegex(distro, r"(?i)(?:https?://|git://|AUTOREV|gguf|safetensors)")
+
     def test_ready_distro_selects_systemd_without_forcing_service_runtime(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         service_recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
