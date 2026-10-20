@@ -210,6 +210,8 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertEqual(len(re.findall(assignment, layer_conf)), 1)
         self.assertIn('BBFILE_COLLECTIONS += "readylinux"', layer_conf)
         self.assertIn('BBFILE_PATTERN_readylinux = "^${LAYERDIR}/"', layer_conf)
+        self.assertEqual(len(re.findall(r"(?m)^BBFILE_PRIORITY_readylinux\s*=", layer_conf)), 1)
+        self.assertEqual(len(re.findall(r"(?m)^LAYERSERIES_COMPAT_readylinux\s*=", layer_conf)), 1)
 
     def test_layer_metadata_bbfiles_patterns_are_distinct_and_recipe_focused(self):
         layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
