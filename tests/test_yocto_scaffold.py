@@ -882,6 +882,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         schema_path = ROOT / "docs/YOCTO_BUILD_EVIDENCE.schema.json"
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         self.assertEqual(schema["$schema"], "https://json-schema.org/draft/2020-12/schema")
+        self.assertNotIn("$data", json.dumps(schema), "schema must not depend on extension keywords to express shape")
         self.assertEqual(schema["type"], "object")
         self.assertFalse(schema["additionalProperties"])
         for section in ("identity", "environment", "image", "boot", "verdict"):
