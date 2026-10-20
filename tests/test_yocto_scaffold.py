@@ -196,6 +196,21 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn('DISTRO = "readylinux"', readme)
             self.assertIn('MACHINE = "<selected-bsp-machine>"', readme)
 
+    def test_layer_series_comments_and_readme_candidate_list_match_conf(self):
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        compatibility = re.search(r"(?m)^LAYERSERIES_COMPAT_readylinux = \"([^\"]+)\"$", layer_conf)
+        self.assertIsNotNone(compatibility)
+        candidates = compatibility.group(1).split()
+        readmes = ((LAYER / "README.md").read_text(encoding="utf-8"),
+                   (LAYER / "README.en.md").read_text(encoding="utf-8"))
+        for readme_path, readme in zip((LAYER / "README.md", LAYER / "README.en.md"), readmes):
+            with self.subTest(readme=readme_path.name):
+                for candidate in candidates:
+                    self.assertIn(candidate, readme)
+                self.assertIn("candidate series", readme.lower())
+                self.assertIn("release-pinned `bitbake -p`", readme.lower())
+                self.assertRegex(readme.lower(), r"has not yet been verified")
+
     def test_distro_feature_append_preserves_defaults_and_selects_systemd_init(self):
         distro = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
         feature_append = re.search(r'(?m)^DISTRO_FEATURES:append\s*=\s*"([^"]+)"$', distro)
