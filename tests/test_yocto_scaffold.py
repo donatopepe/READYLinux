@@ -31,7 +31,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         }
         actual = {path.relative_to(LAYER).as_posix() for path in LAYER.rglob("*.bb")}
         self.assertEqual(actual, expected)
-        self.assertFalse(list(LAYER.rglob("*.bbappend")), "unexpected append files require explicit audit")
+        append_files = list(LAYER.rglob("*.bbappend"))
+        self.assertFalse(append_files, "unexpected append files require explicit audit")
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        bbfiles = re.search(r'(?m)^BBFILES\s*\+=\s*"([^"]+)"$', layer_conf)
+        self.assertIsNotNone(bbfiles)
+        self.assertEqual(len([token for token in bbfiles.group(1).split() if token.endswith(".bbappend")]), 1)
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         self.assertIn('IMAGE_INSTALL:append = " readylinux readylinux-console"', image)
         packaged = actual - {"recipes-core/images/readylinux-image.bb"}
