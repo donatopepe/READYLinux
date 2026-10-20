@@ -1414,6 +1414,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
+            self.assertIn("173", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)

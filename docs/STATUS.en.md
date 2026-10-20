@@ -6,7 +6,7 @@ Note: local ZIP archives are ignored by Git (`*.zip`) and may remain untracked.
 
 - **Release**: READY Linux 0.3 application prototype.
 - **Implemented**: console, vibe/BASIC, Yocto scaffold, hardened tty1 service; host preflight, BitBake, systemd, artifact checksum, isolated QEMU COW boot helpers.
-- **Locally verified**: 173 Windows/Python 3.11 tests (8 platform-specific skips) and WSL Debian 13/Python 3.13; suite, compileall and shell syntax pass. Probe contract requires read-only `INCOMPLETE` when mandatory host tools or build directory are absent.
+- **Locally verified**: 173 Windows/Python 3.11 tests (8 platform-specific skips) and WSL Debian 13/Python 3.13; suite, compileall and shell syntax pass. Host preflight distinguishes missing required commands, optional BitBake executables, and an unset `BUILDDIR`.
 - **Not verified**: real BitBake/Yocto parse/build, READY QEMU image boot, guest SSH, getty mask in image, real unit runtime, READY artifact hash, GGUF, sandbox, GPU/ARM64/benchmarks.
 - **Host**: WSL Debian 13/trixie x86_64, 20 CPUs; preflight `INCOMPLETE`; no checkout/fetch/install.
 - **Git**: firing-start HEAD `cc7c8ccf4363022dba5e009d68178cffe8ea8a06`; package-override syntax/uniqueness guard in `2c3452a`. `.pi-loop.json` and `raw` (0 bytes) untracked; ZIPs ignored.
