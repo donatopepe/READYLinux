@@ -18,6 +18,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("Installs/downloads nothing", text)
         self.assertIn("release-pinned Poky/OE-Core", text)
         self.assertNotRegex(text, r"(?m)^\s*(?:apt-get|apt|dnf|yum|zypper|curl|wget)\s+(?:install|download|fetch)")
+        self.assertIn("if command -v bitbake >/dev/null 2>&1 && command -v bitbake-layers >/dev/null 2>&1", text)
+        self.assertIn("BitBake executables found on PATH.", text)
 
     def test_reports_missing_host_tools_without_modifying_system(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -88,6 +90,7 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("BUILDDIR: unset", result.stdout)
         self.assertIn("Preflight: INCOMPLETE", result.stdout)
         self.assertNotIn("MISSING ", result.stdout)
+        self.assertIn("BitBake must be supplied by a release-pinned Poky/OE-Core checkout", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "Unix directory/file semantics required")
     def test_rejects_file_as_builddir(self):

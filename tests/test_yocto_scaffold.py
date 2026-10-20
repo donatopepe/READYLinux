@@ -559,6 +559,9 @@ class YoctoScaffoldTests(unittest.TestCase):
         for recipe in (runtime, service):
             self.assertIn('LICENSE = "MIT"', recipe)
             self.assertIn(expected_license, recipe)
+            checksum_line = re.search(r"(?m)^LIC_FILES_CHKSUM = \"([^\"]+)\"$", recipe)
+            self.assertIsNotNone(checksum_line)
+            self.assertTrue(checksum_line.group(1).startswith("file://${COMMON_LICENSE_DIR}/MIT;md5="))
         self.assertIn('RDEPENDS:${PN} += "readylinux systemd"', service)
         self.assertIn("USERADD_PARAM:${PN}", service)
         self.assertIn('GROUPADD_PARAM:${PN} = "--system ready"', service)

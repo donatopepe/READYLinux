@@ -15,7 +15,11 @@ else
 fi
 printf 'Architecture: %s\n' "$(uname -m 2>/dev/null || echo unknown)"
 printf 'CPUs: %s\n' "$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo unknown)"
-printf 'BitBake must be supplied by a release-pinned Poky/OE-Core checkout.\n'
+if command -v bitbake >/dev/null 2>&1 && command -v bitbake-layers >/dev/null 2>&1; then
+    printf 'BitBake executables found on PATH.\n'
+else
+    printf 'BitBake must be supplied by a release-pinned Poky/OE-Core checkout.\n'
+fi
 if command -v dpkg-query >/dev/null 2>&1; then
     printf 'Installed key package versions:\n'
     for package in gcc python3 git qemu-system-x86 chrpath gawk; do
