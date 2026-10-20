@@ -807,6 +807,10 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(install_statement.group(1), unit_name.group(1))
         self.assertEqual(install_statement.group(2), unit_name.group(1))
         self.assertIn("multi-user.target", unit_install.group(1))
+        packaged_units = re.search(r'(?m)^FILES:\$\{PN\} \+= "([^"]+)"$', recipe)
+        self.assertIsNotNone(packaged_units)
+        self.assertIn("${systemd_system_unitdir}/readylinux-console.service", packaged_units.group(1))
+        self.assertIn("${sysconfdir}/systemd/system/getty@tty1.service", packaged_units.group(1))
 
     def test_systemd_description_matches_console_identity_metadata(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
