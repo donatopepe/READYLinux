@@ -750,6 +750,14 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertEqual(len(re.findall(r"(?m)^GROUPADD_PARAM:\$\{PN\}\s*=", recipe)), 1)
         self.assertEqual(len(re.findall(r"(?m)^GROUPADD_PARAM(?:_[A-Za-z]|:append|:prepend|:remove)", recipe)), 0)
 
+    def test_console_recipe_has_unique_package_scoped_systemd_settings(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        for variable in ("SYSTEMD_SERVICE", "SYSTEMD_AUTO_ENABLE"):
+            pattern = rf"(?m)^{variable}:\$\{{PN\}}\s*="
+            self.assertEqual(len(re.findall(pattern, recipe)), 1, f"expected exactly one {variable}:${{PN}} setting")
+        self.assertIn('SYSTEMD_SERVICE:${PN} = "readylinux-console.service"', recipe)
+        self.assertIn('SYSTEMD_AUTO_ENABLE:${PN} = "enable"', recipe)
+
     def test_console_recipe_package_paths_do_not_use_legacy_override_syntax(self):
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
         modern_variables = r"(?:SYSTEMD_SERVICE|SYSTEMD_AUTO_ENABLE|RDEPENDS|FILES|USERADD_PARAM|GROUPADD_PARAM)"
