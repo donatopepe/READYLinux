@@ -953,6 +953,21 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("deviations", schema["required"])
         self.assertNotEqual(set(missing_deviations), set(schema["required"]))
 
+    def test_build_evidence_example_marks_every_execution_stage_unverified(self):
+        schema = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.schema.json").read_text(encoding="utf-8"))
+        example = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.example.json").read_text(encoding="utf-8"))
+        self.assertEqual(example["environment"]["parse_exit_code"], None)
+        self.assertEqual(example["environment"]["parse_log"], "NOT-RUN")
+        self.assertEqual(example["image"]["source_cache_state"], "not-built")
+        self.assertIsNone(example["image"]["exit_code"])
+        self.assertIsNone(example["image"]["artifact_path"])
+        self.assertIsNone(example["image"]["sha256"])
+        self.assertEqual(example["boot"]["status"], "not-run")
+        self.assertEqual(example["verdict"], "not-verified")
+        allowed_verdicts = schema["properties"]["verdict"]["enum"]
+        self.assertIn(example["verdict"], allowed_verdicts)
+        self.assertNotEqual(example["verdict"], "reproducible-and-booted")
+
     def test_build_evidence_templates_include_required_provenance_and_results(self):
         docs = (
             ROOT / "docs/YOCTO_BUILD_EVIDENCE_TEMPLATE.md",
