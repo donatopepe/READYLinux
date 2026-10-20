@@ -260,6 +260,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertNotRegex(image, r"(?m)^\s*(?:DISTRO|MACHINE)\s*=")
         self.assertNotRegex(image, r"(?m)^IMAGE_INSTALL_(?:append|remove|prepend)\s*=")
 
+    def test_image_recipe_override_syntax_is_modern_and_not_legacy(self):
+        image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        self.assertRegex(image, r'(?m)^IMAGE_INSTALL:append\s*=\s*"[^\"]+"$')
+        self.assertNotRegex(image, r"(?m)^\s*(?:IMAGE_INSTALL|DISTRO_FEATURES|OVERRIDES)_(?:append|prepend|remove)\s*=")
+        self.assertEqual(len(re.findall(r"(?m)^IMAGE_INSTALL:append\s*=", image)), 1)
+
     def test_image_installs_every_custom_recipe_package_exactly_once(self):
         image = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
         package_names = set()
