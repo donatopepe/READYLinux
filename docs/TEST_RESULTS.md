@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Compatibilità serie OE verificata prima del parse
+
+- `scripts/validate-yocto-env.sh` legge `LAYERSERIES_COMPAT_core` dal `conf/layer.conf` del layer `core` riportato da `bitbake-layers show-layers` e lo confronta con `LAYERSERIES_COMPAT_readylinux`: se non c'è intersezione esce con 5 e non lancia il parse; se il layer `core` o il suo `layer.conf` non sono leggibili esce con 4.
+- Run reale su WSL/Poky scarthgap: `Layer collection: readylinux (priority 8)` + `OE series: scarthgap`, poi `bitbake -p` senza errori.
+- Test: helper aggiornato con layer `core` sintetico; due nuovi casi (serie compatibile → stampa `OE series: styhead`; serie `kirkstone` non elencata → exit 5). Modulo validatore: 17 test.
+- Suite: 205 test PASS (21 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Gate di registrazione layer prima del parse
 
 - `scripts/validate-yocto-env.sh` ora interroga `bitbake-layers show-layers`: richiede che il path del layer compaia nel report, che la collection sia `readylinux` e che la priority sia numerica; altrimenti exit 4. Se `bitbake-layers` manca, exit 2.

@@ -54,6 +54,40 @@ if ! [[ "${layer_priority}" =~ ^[0-9]+$ ]]; then
 fi
 printf 'Layer collection: %s (priority %s)\n' "${layer_collection}" "${layer_priority}"
 
+core_line="$(printf '%s
+' "${layers_report}" | awk '$1 == "core" {print; exit}')"
+if [[ -z "${core_line}" ]]; then
+    echo "ERROR: bitbake-layers does not report a 'core' layer; cannot verify the OE release series." >&2
+    exit 4
+fi
+core_path="$(printf '%s' "${core_line}" | awk '{print $2}')"
+core_conf="${core_path}/conf/layer.conf"
+if [[ ! -f "${core_conf}" ]]; then
+    echo "ERROR: missing ${core_conf}; cannot read LAYERSERIES_COMPAT_core." >&2
+    exit 4
+fi
+core_series_raw="$(grep -E '^[[:space:]]*LAYERSERIES_COMPAT_core[[:space:]]*=' "${core_conf}" | tail -n 1 || true)"
+core_series_raw="${core_series_raw#*=}"
+core_series_raw="${core_series_raw//\"/}"
+layer_series_raw="$(grep -E '^[[:space:]]*LAYERSERIES_COMPAT_readylinux[[:space:]]*=' "${layer_dir}/conf/layer.conf" | tail -n 1 || true)"
+layer_series_raw="${layer_series_raw#*=}"
+layer_series_raw="${layer_series_raw//\"/}"
+matched_series=""
+for series in ${core_series_raw}; do
+    for supported in ${layer_series_raw}; do
+        if [[ "${series}" == "${supported}" ]]; then
+            matched_series="${series}"
+            break 2
+        fi
+    done
+done
+if [[ -z "${matched_series}" ]]; then
+    echo "ERROR: OE series (${core_series_raw:-unknown}) is not among LAYERSERIES_COMPAT_readylinux (${layer_series_raw:-none})." >&2
+    exit 5
+fi
+printf 'OE series: %s
+' "${matched_series}"
+
 distro_line="$(grep -E '^[[:space:]]*DISTRO[[:space:]]*=' "${build_dir}/conf/local.conf" | tail -n 1 || true)"
 if [[ -n "${distro_line}" ]]; then
     distro_value="${distro_line#*=}"

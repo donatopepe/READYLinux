@@ -42,7 +42,7 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertIn("source the target build environment first", result.stderr)
         self.assertNotIn("bitbake -p", result.stdout)
 
-    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0, collection="readylinux", registered_layer=None):
+    def run_with_builddir(self, builddir, *, with_bitbake=True, bitbake_exit=0, collection="readylinux", registered_layer=None, core_series="scarthgap styhead"):
         temp_path = tempfile.TemporaryDirectory()
         bindir = Path(temp_path.name) / "bin"
         bindir.mkdir()
@@ -57,6 +57,11 @@ class YoctoValidationScriptTests(unittest.TestCase):
                 "printf 'layer path priority\n%s %s 8\n' '" + collection + "' '" + layer_path + "'",
                 "",
             ]
+            core_dir = Path(temp_path.name) / "core-meta"
+            (core_dir / "conf").mkdir(parents=True, exist_ok=True)
+            (core_dir / "conf/layer.conf").write_text(
+                'LAYERSERIES_COMPAT_core = "' + core_series + '"' + chr(10), encoding="utf-8")
+            stub_lines.insert(1, "printf 'core %s 5" + chr(92) + "n' '" + shell_pwd(core_dir) + "'")
             layer_stub.write_text(chr(10).join(stub_lines), encoding="utf-8")
             layer_stub.chmod(0o755)
         env = {"PATH": f"{bindir}:/usr/bin:/bin", "BUILDDIR": to_shell_path(builddir)}
@@ -72,6 +77,36 @@ class YoctoValidationScriptTests(unittest.TestCase):
             self.addCleanup(fake_root.cleanup)
         self.assertEqual(result.returncode, 2)
         self.assertIn("bitbake is not available", result.stderr)
+        self.assertNotIn("FAKE_BITBAKE", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_reports_the_matched_oe_series(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"' + chr(10), encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"' + chr(10), encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, core_series="styhead walnascar")
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("OE series: styhead", result.stdout)
+        self.assertIn("FAKE_BITBAKE -p", result.stdout)
+
+    @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
+    def test_script_rejects_unlisted_oe_series(self):
+        with tempfile.TemporaryDirectory() as temp:
+            builddir = Path(temp)
+            conf = builddir / "conf"
+            conf.mkdir()
+            layer_path = shell_pwd(ROOT / "meta-readylinux")
+            (conf / "bblayers.conf").write_text(f'BBLAYERS += "{layer_path}"' + chr(10), encoding="utf-8")
+            (conf / "local.conf").write_text('DISTRO = "readylinux"' + chr(10), encoding="utf-8")
+            result, fake_root = self.run_with_builddir(builddir, core_series="kirkstone")
+            self.addCleanup(fake_root.cleanup)
+        self.assertEqual(result.returncode, 5, result.stdout + result.stderr)
+        self.assertIn("is not among LAYERSERIES_COMPAT_readylinux", result.stderr)
         self.assertNotIn("FAKE_BITBAKE", result.stdout)
 
     @unittest.skipIf(os.name == "nt", "POSIX path and grep semantics required")
