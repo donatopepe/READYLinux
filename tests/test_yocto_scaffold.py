@@ -1635,6 +1635,12 @@ class YoctoScaffoldTests(unittest.TestCase):
         for doc in (results_it, results_en):
             self.assertIn("MEDIUM/6.7", doc)
             self.assertIn("UMask 0027", doc)
+        security_it = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
+        security_en = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
+        for doc in (security_it, security_en):
+            self.assertIn("--security", doc)
+            self.assertIn("8.0", doc)
+            self.assertIn("exit 7", doc)
 
     def test_layer_documentation_warns_build_not_verified(self):
         readme = (LAYER / "README.md").read_text(encoding="utf-8")
