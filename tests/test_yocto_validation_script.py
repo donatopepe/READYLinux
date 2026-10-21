@@ -301,9 +301,14 @@ class YoctoValidationScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 37)
         self.assertIn("FAKE_BITBAKE -p", result.stdout)
 
-    def test_script_checks_build_confs_and_layer_registration(self):
+    def test_script_checks_build_confs_layer_registration_series_and_image_artifact(self):
         text = SCRIPT.read_text(encoding="utf-8")
-        for check in ("BUILDDIR", "conf/bblayers.conf", "conf/local.conf", "bitbake", "bblayers.conf", "bitbake -p"):
+        for check in (
+            "BUILDDIR", "conf/bblayers.conf", "conf/local.conf", "bitbake",
+            "bitbake-layers show-layers", "LAYERSERIES_COMPAT_core",
+            "LAYERSERIES_COMPAT_readylinux", "bitbake -p", "bitbake-getvar",
+            "IMAGE_FSTYPES", "Image fstypes:",
+        ):
             self.assertIn(check, text)
         self.assertNotRegex(text, r"(?m)^\s*(?:git clone|curl|wget)\b")
 
