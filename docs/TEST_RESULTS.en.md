@@ -1,5 +1,12 @@
 # Test Results
 
+## 2026-10-20 — Roadmap M1 aligned with the real console and BASIC
+
+- `docs/ROADMAP.en.md` M1 still claimed: "standalone `basic.py` plus 9 focused tests; console integration, persistence commands, bilingual user docs, and full green suite remain incomplete". All four statements were false: `readylinux.py` integrates `BasicProgram` with `SAVE`/`LOAD`, `docs/BASIC.md` and `docs/BASIC.en.md` exist, BASIC tests are 11 and the suite is green.
+- The EN text was rewritten to match the IT one: reduced implementation with tests, console integration with persistence, bilingual docs, green suite, full Commodore compatibility not claimed.
+- New `test_roadmap_m1_claims_match_console_and_basic_reality`: requires `BasicProgram`/`SAVE`/`LOAD` in the console, both BASIC docs, and forbids "remain incomplete" or a missing caveat.
+- Suite: 220 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — OE series recorded in build evidence
 
 - `docs/YOCTO_BUILD_EVIDENCE.schema.json` now requires `identity.oe_series`, matching the validator gate that reads `LAYERSERIES_COMPAT_core`: a build record can no longer omit the OE series it was produced against.

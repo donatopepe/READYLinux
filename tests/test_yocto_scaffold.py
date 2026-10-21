@@ -1494,7 +1494,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("219", doc)
+            self.assertIn("220", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1518,6 +1518,20 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("/dev/tty1", readme)
             self.assertIn("getty@tty1.service", readme)
             self.assertRegex(readme.lower(), r"(?:no|does not provide).{0,80}(?:login|prompt)|(?:nessun|non offre).{0,80}(?:login|prompt)")
+
+    def test_roadmap_m1_claims_match_console_and_basic_reality(self):
+        console = (ROOT / "readylinux.py").read_text(encoding="utf-8")
+        self.assertIn("BasicProgram", console)
+        self.assertIn("SAVE", console)
+        self.assertIn("LOAD", console)
+        for doc in ("docs/BASIC.md", "docs/BASIC.en.md"):
+            self.assertTrue((ROOT / doc).is_file(), doc)
+        italian = (ROOT / "docs/ROADMAP.md").read_text(encoding="utf-8").lower()
+        english = (ROOT / "docs/ROADMAP.en.md").read_text(encoding="utf-8").lower()
+        for text, language in ((italian, "it"), (english, "en")):
+            with self.subTest(language=language):
+                self.assertNotIn("remain incomplete", text)
+                self.assertRegex(text, r"not (?:claimed|dichiarata)|non dichiarata")
 
     def test_roadmap_states_parse_verified_and_build_unverified(self):
         for path in (ROOT / "docs/ROADMAP.md", ROOT / "docs/ROADMAP.en.md"):
@@ -1561,8 +1575,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "219 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "219 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "220 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "220 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)
