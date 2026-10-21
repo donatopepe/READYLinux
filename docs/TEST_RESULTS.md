@@ -1,5 +1,10 @@
 # Risultati test
 
+## 2026-10-20 — Contratto persistente systemd statico
+
+- Nuovo `test_layer_service_preserves_state_directory_for_service_user`: verifica service `StateDirectory=readylinux`, mode 0750, UMask 0027, utente/gruppo `ready` e `USERADD_PARAM` con home persistente `/var/lib/readylinux`; controlla inoltre le direttive di hardening `NoNewPrivileges` e `ProtectSystem=strict`.
+- Suite: 249 test PASS (27 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Versioni distro/pacchetti come provenienza macchina
 
 - `check-yocto-host.sh --json` aggiunge `os.version_id` e `packages` (gcc, g++, git, python3, QEMU, chrpath, gawk); `dpkg-query` opzionale: versioni stringa se disponibili, `null` altrimenti. Il caso non-Linux usa `version_id:null`, `packages:{}`.

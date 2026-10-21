@@ -1,3 +1,8 @@
+## 2026-10-20 — Static systemd persistent-state contract
+
+- New `test_layer_service_preserves_state_directory_for_service_user`: verifies `StateDirectory=readylinux`, mode 0750, UMask 0027, `ready` user/group and `USERADD_PARAM` with persistent home `/var/lib/readylinux`; also checks `NoNewPrivileges` and `ProtectSystem=strict` hardening.
+- Suite: 249 tests PASS (27 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Distro and host package provenance in preflight JSON
 
 - `check-yocto-host.sh --json` now includes `os.version_id` and a `packages` map for GCC, G++, Git, Python 3, QEMU, chrpath and gawk. Versions come from `dpkg-query` when available, `null` otherwise; the `not-a-linux-host` report uses `version_id: null` and `packages: {}`.
