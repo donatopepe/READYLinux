@@ -1,5 +1,6 @@
 import ast
 import json
+import os
 import re
 import subprocess
 import unittest
@@ -89,6 +90,22 @@ class YoctoScaffoldTests(unittest.TestCase):
             mode, _object, _stage, path = line.split()
             with self.subTest(path=path):
                 self.assertEqual(mode, "100755", f"{path} must be committed executable (git update-index --chmod=+x)")
+
+    def test_critical_yocto_metadata_files_are_not_accidentally_executable(self):
+        paths = (
+            LAYER / "recipes-core/images/readylinux-image.bb",
+            LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb",
+            LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
+            LAYER / "recipes-core/readylinux/readylinux-console.service",
+            LAYER / "conf/layer.conf",
+            LAYER / "conf/distro/readylinux.conf",
+        )
+        for path in paths:
+            with self.subTest(path=str(path.relative_to(ROOT))):
+                self.assertTrue(path.is_file(), "required Yocto source is missing")
+                if os.name == "nt" or "/mnt/" in str(path).replace("\\", "/"):
+                    continue
+                self.assertFalse(os.access(path, os.X_OK), "data/metadata files must not gain executable mode")
 
     def test_scripts_and_yocto_sources_use_unix_line_endings(self):
         patterns = ("*.py", "scripts/*.sh", "scripts/*.py", "tests/*.py")
@@ -1499,7 +1516,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("235", doc)
+            self.assertIn("236", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1580,8 +1597,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "235 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "235 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "236 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "236 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

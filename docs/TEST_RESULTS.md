@@ -88,6 +88,12 @@
 - Test: helper aggiornato con stub `bitbake-layers`; due nuovi casi (collection errata → exit 4; report con path diverso → exit 4). Totale modulo 15 test.
 - Suite: 203 test PASS (19 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
 
+## 2026-10-20 — Permessi execute dei file metadata Yocto
+
+- Aggiunto `test_critical_yocto_metadata_files_are_not_accidentally_executable`: controlla sei file `.bb`, `.service`, `.conf` critici; su filesystem POSIX locali devono essere file dati non eseguibili. Su Windows e mount WSL `/mnt/*` salta il check dei mode bit perché le ACL DrvFs possono far risultare `os.access(X_OK)` vero nonostante Git registri mode `100644`.
+- Il guard `test_tracked_scripts_keep_the_executable_bit` separato controlla gli script con `git ls-files -s` e richiede mode `100755` cross-platform.
+- Suite: 236 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Test degli installer utente (`install.sh`, `setup-ai-cpu.sh`)
 
 - Nuovo modulo `tests/test_install_script.py` (5 test) per i due script finora coperti solo dalla sintassi.
