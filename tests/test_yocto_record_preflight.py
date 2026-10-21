@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORDER = ROOT / "scripts/record-yocto-preflight.py"
+EXAMPLE = ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json"
 PREFLIGHT = ROOT / "scripts/check-yocto-host.sh"
 REAL_BASH = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
 REAL_GIT = subprocess.check_output(["bash", "-lc", "command -v git"], text=True).strip()
@@ -209,9 +210,17 @@ class UnsafeRecorderTests(unittest.TestCase):
             self.assertFalse(output.exists())
 
     def test_check_accepts_the_documented_example(self):
-        example = ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json"
+        example = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+        self.assertEqual(set(example), {"schema_version", "recorded_utc", "readylinux_commit", "scope", "preflight_command", "preflight_exit_code", "preflight"})
+        self.assertEqual(set(example["preflight"]), {"schema_version", "os", "arch", "cpus", "required", "missing_required", "optional", "builddir", "verdict"})
+        self.assertRegex(example["readylinux_commit"], r"^[0-9a-f]{40}$")
+        self.assertEqual(example["preflight_exit_code"], 0)
+        self.assertEqual(example["preflight"]["verdict"], "ready")
+        self.assertTrue(example["preflight"]["builddir"]["set"])
+        self.assertTrue(example["preflight"]["optional"]["bitbake"])
+        self.assertTrue(example["preflight"]["optional"]["bitbake-layers"])
         result = subprocess.run(
-            [sys.executable, str(RECORDER), "--check", str(example)],
+            [sys.executable, str(RECORDER), "--check", str(EXAMPLE)],
             cwd=ROOT,
             capture_output=True,
             text=True,

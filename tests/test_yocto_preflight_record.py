@@ -64,6 +64,8 @@ class PreflightRecordSchemaTests(unittest.TestCase):
         schema = load(SCHEMA)
         example = load(EXAMPLE)
         assert_matches_schema(self, example, schema)
+        self.assertEqual(set(example), set(schema["required"]))
+        self.assertEqual(set(example["preflight"]), set(schema["properties"]["preflight"]["required"]))
         self.assertEqual(example["readylinux_commit"], "0" * 40)
         self.assertEqual(example["recorded_utc"], "2000-01-01T00:00:00Z")
         self.assertIn("not build evidence", example["scope"])
