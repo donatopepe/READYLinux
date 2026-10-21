@@ -1512,6 +1512,24 @@ class YoctoScaffoldTests(unittest.TestCase):
                 self.assertIn("scarthgap is verified", doc)
                 self.assertIn("104772c5fd0653290cbb5e4b77813343957939cc", doc)
 
+    def test_layer_service_account_and_state_ownership_align(self):
+        recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
+        service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
+        user = re.search(r"(?m)^USERADD_PARAM:\$\{PN\} = \"([^\"]+)\"$", recipe)
+        self.assertIsNotNone(user)
+        args = user.group(1)
+        self.assertIn("--system", args)
+        self.assertIn("--gid ready", args)
+        self.assertIn("--home-dir /var/lib/readylinux", args)
+        self.assertIn("--no-create-home", args)
+        self.assertIn("--shell /sbin/nologin", args)
+        group = re.search(r"(?m)^GROUPADD_PARAM:\$\{PN\} = \"([^\"]+)\"$", recipe)
+        self.assertIsNotNone(group)
+        self.assertIn("--system ready", group.group(1))
+        for directive in ("User=ready", "Group=ready", "StateDirectory=readylinux"):
+            self.assertIn(directive, service)
+        self.assertEqual(user.group(1).split("--home-dir ", 1)[1].split()[0], "/var/lib/readylinux")
+
     def test_layer_service_preserves_state_directory_for_service_user(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
@@ -1527,7 +1545,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("249", doc)
+            self.assertIn("250", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1608,8 +1626,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "249 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "249 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "250 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "250 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

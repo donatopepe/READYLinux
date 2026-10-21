@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-20 — Coerenza tra utente systemd, home e stato
+
+- Nuovo `test_layer_service_account_and_state_ownership_align`: lega il `USERADD_PARAM` della recipe (`--system`, `--gid ready`, `--home-dir /var/lib/readylinux`, `--no-create-home`, `--shell /sbin/nologin`) ai directive `User=ready`, `Group=ready`, `StateDirectory=readylinux` del servizio.
+- Rileva regressioni che potrebbero lasciare stato persistente senza account proprietario o reintrodurre home/creazione login impliciti.
+- Suite: 250 test PASS (27 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Contratto persistente systemd statico
 
 - Nuovo `test_layer_service_preserves_state_directory_for_service_user`: verifica service `StateDirectory=readylinux`, mode 0750, UMask 0027, utente/gruppo `ready` e `USERADD_PARAM` con home persistente `/var/lib/readylinux`; controlla inoltre le direttive di hardening `NoNewPrivileges` e `ProtectSystem=strict`.

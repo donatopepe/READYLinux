@@ -1,7 +1,13 @@
+## 2026-10-20 — Systemd account/home/state consistency
+
+- New `test_layer_service_account_and_state_ownership_align` binds the recipe `USERADD_PARAM` (`--system`, `--gid ready`, `--home-dir /var/lib/readylinux`, `--no-create-home`, `--shell /sbin/nologin`) to the service directives `User=ready`, `Group=ready`, `StateDirectory=readylinux`.
+- Prevents regressions that could leave persistent state without its service account or reintroduce implicit home/login creation.
+- Suite: 250 tests PASS (27 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Static systemd persistent-state contract
 
 - New `test_layer_service_preserves_state_directory_for_service_user`: verifies `StateDirectory=readylinux`, mode 0750, UMask 0027, `ready` user/group and `USERADD_PARAM` with persistent home `/var/lib/readylinux`; also checks `NoNewPrivileges` and `ProtectSystem=strict` hardening.
-- Suite: 249 tests PASS (27 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+- Suite: 250 tests PASS (27 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
 
 ## 2026-10-20 — Distro and host package provenance in preflight JSON
 
