@@ -15,7 +15,7 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 SCHEMA_VERSION = 1
@@ -43,8 +43,17 @@ def validate_record(record: dict) -> list[str]:
         problems.append(f"unexpected top-level keys: {', '.join(sorted(extra))}")
     if record.get("schema_version") != SCHEMA_VERSION:
         problems.append("schema_version must be 1")
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", str(record.get("recorded_utc", ""))):
+    recorded_utc = record.get("recorded_utc", "")
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", str(recorded_utc)):
         problems.append("recorded_utc must look like 2026-10-20T00:00:00Z")
+    else:
+        try:
+            parsed_utc = datetime.strptime(recorded_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        except ValueError:
+            problems.append("recorded_utc is not a valid calendar timestamp")
+        else:
+            if parsed_utc > datetime.now(timezone.utc) + timedelta(minutes=5):
+                problems.append("recorded_utc is in the future")
     if not re.fullmatch(r"[0-9a-f]{40}", str(record.get("readylinux_commit", ""))):
         problems.append("readylinux_commit must be a 40-character lowercase hex commit")
     if "not build evidence" not in str(record.get("scope", "")):

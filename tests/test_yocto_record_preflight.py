@@ -265,6 +265,36 @@ class UnsafeRecorderTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("is a valid preflight record", result.stdout)
 
+    def test_check_rejects_future_timestamp(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["recorded_utc"] = "2999-12-31T23:59:59Z"
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("recorded_utc is in the future", result.stderr)
+
+    def test_check_rejects_impossible_calendar_timestamp(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["recorded_utc"] = "2026-02-30T12:00:00Z"
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("not a valid calendar timestamp", result.stderr)
+
     def test_check_rejects_a_record_that_claims_ready_without_builddir(self):
         with tempfile.TemporaryDirectory() as temp:
             record_path = Path(temp) / "record.json"

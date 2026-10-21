@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Sanità temporale dei record preflight
+
+- `--check` accettava timestamp che rispettavano solo la regex: date impossibili (es. `2026-02-30`) e timestamp molto futuri potevano essere convalidati.
+- Fix in `validate_record`: parsing calendario UTC effettivo, rifiuto date impossibili e timestamp oltre 5 minuti nel futuro.
+- Due nuovi test offline coprono `2999-12-31T23:59:59Z` e `2026-02-30T12:00:00Z`, entrambi exit 8; i timestamp validi restano accettati.
+- Suite: 240 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Preflight JSON ora coerente con il report testuale
 
 - `check-yocto-host.sh --json` usava `json_status_object` con `$(...)`: gli status con codici esito POSIX perdono i byte finali newline, così `command -v` riceve il nome del comando senza il newline atteso. Risultato: tutti i comandi JSON risultavano `false`, mentre il probe testuale riportava `OK`.
