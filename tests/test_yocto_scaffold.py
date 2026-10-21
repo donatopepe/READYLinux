@@ -1531,6 +1531,18 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn(directive, service)
         self.assertEqual(user.group(1).split("--home-dir ", 1)[1].split()[0], "/var/lib/readylinux")
 
+    def test_image_artifact_verification_remains_a_separate_explicit_gate(self):
+        image_recipe = (LAYER / "recipes-core/images/readylinux-image.bb").read_text(encoding="utf-8")
+        validator = (ROOT / "scripts/validate-yocto-env.sh").read_text(encoding="utf-8")
+        verifier = (ROOT / "scripts/verify-image-artifact.sh").read_text(encoding="utf-8")
+        self.assertIn('IMAGE_FSTYPES:append = " wic"', image_recipe)
+        self.assertIn("bitbake-getvar", validator)
+        self.assertIn("IMAGE_FSTYPES", validator)
+        self.assertIn("does not include wic", validator)
+        self.assertIn("sha256sum", verifier)
+        self.assertIn("SHA-256 mismatch", verifier)
+        self.assertIn("IMAGE_FSTYPES", validator, "metadata gate checks the declared WIC type; built artifact hash is a later independent gate")
+
     def test_layer_service_preserves_state_directory_for_service_user(self):
         service = (LAYER / "recipes-core/readylinux/readylinux-console.service").read_text(encoding="utf-8")
         recipe = (LAYER / "recipes-core/readylinux/readylinux-console_0.1.bb").read_text(encoding="utf-8")
@@ -1547,7 +1559,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("250", doc)
+            self.assertIn("256", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1628,8 +1640,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "250 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "250 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "256 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "256 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

@@ -1,5 +1,10 @@
 # Risultati test
 
+## 2026-10-20 — Gate statico tra preflight metadata e verifica artifact
+
+- Aggiunto `test_image_artifact_verification_remains_a_separate_explicit_gate`: richiede che image recipe dichiari `.wic`, il validatore controlli `IMAGE_FSTYPES` via `bitbake-getvar`, e il verifier artifact controlli SHA-256 reale/mismatch; evita di confondere il preflight metadata con la verifica di un file immagine costruito.
+- Suite: 256 test PASS (28 skip su Windows; 27 Windows-only + 1 check POSIX nuovo) e 0 skip su WSL Debian 13; il nuovo test passa su entrambi.
+
 ## 2026-10-20 — Coerenza tra utente systemd, home e stato
 
 - Nuovo `test_layer_service_account_and_state_ownership_align`: lega il `USERADD_PARAM` della recipe (`--system`, `--gid ready`, `--home-dir /var/lib/readylinux`, `--no-create-home`, `--shell /sbin/nologin`) ai directive `User=ready`, `Group=ready`, `StateDirectory=readylinux` del servizio.

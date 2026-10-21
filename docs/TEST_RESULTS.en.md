@@ -1,3 +1,8 @@
+## 2026-10-20 — Static gate separating metadata preflight from artifact verification
+
+- Added `test_image_artifact_verification_remains_a_separate_explicit_gate`: requires the image recipe to declare `.wic`, the validator to check `IMAGE_FSTYPES` via `bitbake-getvar`, and the artifact verifier to check actual SHA-256/mismatch; prevents confusing metadata preflight with verification of a built image file.
+- Suite: 256 tests PASS (28 Windows skips: 27 Windows-only plus 1 new POSIX check) and 0 skips on WSL Debian 13; new test passes on both.
+
 ## 2026-10-20 — Systemd account/home/state consistency
 
 - New `test_layer_service_account_and_state_ownership_align` binds the recipe `USERADD_PARAM` (`--system`, `--gid ready`, `--home-dir /var/lib/readylinux`, `--no-create-home`, `--shell /sbin/nologin`) to the service directives `User=ready`, `Group=ready`, `StateDirectory=readylinux`.
