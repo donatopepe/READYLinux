@@ -1,3 +1,8 @@
+## 2026-10-20 — READY source round-trip with literal newline escapes and UTF-8
+
+- New `test_save_load_roundtrip_preserves_literal_newlines_and_utf8`: saves/loads through the READY Python API a source line with a literal `\n` escape and UTF-8 text `caffè`; checks that exported file bytes/characters remain correct and the in-memory source is identical after round-trip.
+- Suite: 259 tests PASS (28 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Static gate separating metadata preflight from artifact verification
 
 - Added `test_image_artifact_verification_remains_a_separate_explicit_gate`: requires the image recipe to declare `.wic`, the validator to check `IMAGE_FSTYPES` via `bitbake-getvar`, and the artifact verifier to check actual SHA-256/mismatch; prevents confusing metadata preflight with verification of a built image file.

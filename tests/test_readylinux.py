@@ -50,6 +50,14 @@ class ReadyLinuxTests(unittest.TestCase):
             self.app.command("print(x + 2)")
         self.assertEqual(stdout.getvalue(), "42\n")
 
+    def test_save_load_roundtrip_preserves_literal_newlines_and_utf8(self):
+        self.app.program[10] = 'text = "prima\\nseconda\"\\ncaffè"'
+        saved = self.app.save("unicode")
+        self.app.program.clear()
+        self.app.load("unicode")
+        self.assertEqual(self.app.program[10], 'text = "prima\\nseconda\"\\ncaffè"')
+        self.assertIn("caffè", saved.read_text(encoding="utf-8"))
+
     def test_load_is_atomic_on_invalid_file(self):
         self.app.program[10] = "print('SAFE')"
         (Path(self.temp.name) / "broken.rdy").write_text("not a program\n", encoding="utf-8")

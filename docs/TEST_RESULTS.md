@@ -1,5 +1,10 @@
 # Risultati test
 
+## 2026-10-20 — Round-trip READY source con newline letterale e UTF-8
+
+- Nuovo `test_save_load_roundtrip_preserves_literal_newlines_and_utf8`: salva/carica tramite la API READY Python una stringa che contiene l'escape `\n` nel sorgente e testo UTF-8 `caffè`; controlla che il file export continui a contenere i byte/caratteri attesi e che il sorgente in memoria sia identico dopo il round-trip.
+- Suite: 259 test PASS (28 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — BASIC LOAD fail-closed e atomico
 
 - Due test nuovi per `LOAD`: file `.bas` malformato → errore stampato, programma in memoria preservato; nome con path traversal `../outside` → rifiutato prima di leggere file esterni, programma preservato.
