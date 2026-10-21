@@ -55,6 +55,7 @@ class SystemdValidationScriptTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 7, result.stdout + result.stderr)
         self.assertIn("Exposure level: 9.5 (limit 8.0)", result.stdout)
+        self.assertIn("u.service", result.stdout)
         self.assertIn("exceeds the configured limit", result.stderr)
 
     @unittest.skipIf(os.name == "nt", "PATH executable stubs require Unix")
@@ -76,6 +77,7 @@ class SystemdValidationScriptTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Exposure level: 4.2 (limit 8.0)", result.stdout)
+        self.assertIn("u.service", result.stdout)
 
     def test_runtime_security_score_when_available(self):
         probe = subprocess.run(["bash", "-lc", "command -v systemd-analyze"], capture_output=True, text=True)
