@@ -1,3 +1,10 @@
+## 2026-10-20 — Preflight JSON now agrees with the text report
+
+- `check-yocto-host.sh --json` used `json_status_object` through `$(...)`: POSIX command substitution strips trailing newlines, so `command -v` received command names without the expected newline. Result: every JSON command status became `false`, while the text report showed `OK`.
+- Fix: compute the boolean inside the loop and emit `printf '"%s": %s'` without command-substituting the boolean; JSON fixtures and ready-host tests now report `required.gcc=true`.
+- Recorder hardened: rejects a `ready` verdict if even one entry in the `required` map is `false`, in addition to `missing_required`/`BUILDDIR` consistency; tests cover inconsistent maps and missing/spurious names.
+- Suite: 238 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — LocalAI log cleanup verified for an exited child
 
 - The previous commit had added the test but its result entry was not recorded. `test_start_logs_child_exit_without_leaking_log_handle`: simulates `Popen` exiting immediately with code 9; verifies `AIError`, `_log_file=None`, retained log file and `status()` reporting code 9.

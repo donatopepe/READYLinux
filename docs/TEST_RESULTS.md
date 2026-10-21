@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Preflight JSON ora coerente con il report testuale
+
+- `check-yocto-host.sh --json` usava `json_status_object` con `$(...)`: gli status con codici esito POSIX perdono i byte finali newline, così `command -v` riceve il nome del comando senza il newline atteso. Risultato: tutti i comandi JSON risultavano `false`, mentre il probe testuale riportava `OK`.
+- Fix: calcola il booleano nel loop ed emette `printf '"%s": %s'` senza command substitution del booleano; fixture/test-ready e report JSON ora mostrano `required.gcc=true`.
+- Recorder più difensivo: rifiuta verdict `ready` se la mappa `required` contiene anche un solo `false`, oltre ai controlli su `missing_required`/`BUILDDIR`; test added per map inconsistente e nome mancante/extra.
+- Suite: 238 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Cleanup del log LocalAI verificato con child terminato
 
 - Commit precedente aveva già introdotto il test, ma la entry era rimasta non registrata nei risultati. `test_start_logs_child_exit_without_leaking_log_handle`: simula `Popen` con exit 9 immediato, verifica `AIError`, `_log_file=None`, file log conservato e `status()` con codice 9.

@@ -69,8 +69,14 @@ def validate_record(record: dict) -> list[str]:
         block = report.get(mapping)
         if not isinstance(block, dict) or not all(isinstance(value, bool) for value in block.values()):
             problems.append(f"preflight.{mapping} must map command names to booleans")
-    if not isinstance(report.get("missing_required"), list):
-        problems.append("preflight.missing_required must be a list")
+    missing_required = report.get("missing_required")
+    if not isinstance(missing_required, list) or not all(isinstance(item, str) and item for item in missing_required):
+        problems.append("preflight.missing_required must be a list of non-empty command names")
+    required_tools = report.get("required")
+    if isinstance(required_tools, dict) and isinstance(missing_required, list):
+        derived_missing = sorted(name for name, available in required_tools.items() if not available)
+        if sorted(missing_required) != derived_missing:
+            problems.append("preflight.missing_required does not match false entries in preflight.required")
     builddir = report.get("builddir")
     if not isinstance(builddir, dict) or set(builddir) != {"set", "path"}:
         problems.append("preflight.builddir must contain exactly set and path")
@@ -132,6 +138,9 @@ def inconsistent_ready_report(report: dict) -> str | None:
         return None
     if report.get("missing_required"):
         return "verdict is ready but missing_required is not empty"
+    required_tools = report.get("required")
+    if isinstance(required_tools, dict) and any(not available for available in required_tools.values()):
+        return "verdict is ready but a required host command is unavailable"
     builddir = report.get("builddir") or {}
     if not builddir.get("set"):
         return "verdict is ready but builddir is not set"

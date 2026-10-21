@@ -46,6 +46,8 @@ def assert_matches_schema(test, record, schema):
     for name in preflight["missing_required"]:
         test.assertIsInstance(name, str)
         test.assertTrue(name)
+    derived_missing = sorted(name for name, available in preflight["required"].items() if not available)
+    test.assertEqual(sorted(preflight["missing_required"]), derived_missing)
     test.assertEqual(set(preflight["builddir"]), {"set", "path"})
     test.assertIsInstance(preflight["builddir"]["set"], bool)
 

@@ -63,6 +63,7 @@ class ReadyRecorderTests(unittest.TestCase):
         self.assertEqual(record["preflight"]["verdict"], "ready")
         self.assertEqual(record["preflight"]["missing_required"], [])
         self.assertTrue(record["preflight"]["optional"]["bitbake"])
+        self.assertEqual(record["preflight"]["required"]["gcc"], True)
 
     def test_refuses_to_overwrite_without_force(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -120,6 +121,42 @@ class UnsafeRecorderTests(unittest.TestCase):
             self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
             self.assertIn("refusing to write", result.stderr)
             self.assertIn("incomplete", result.stderr)
+            self.assertFalse(output.exists())
+
+    def test_refuses_report_where_required_map_hides_missing_command(self):
+        report = json.dumps({
+            "schema_version": 1,
+            "os": {"name": "Debian", "id": "debian"},
+            "arch": "x86_64",
+            "cpus": 2,
+            "required": {"gcc": False},
+            "missing_required": [],
+            "optional": {},
+            "builddir": {"set": True, "path": "/build"},
+            "verdict": "ready",
+        })
+        with tempfile.TemporaryDirectory() as temp:
+            result, output = self._run_fake_preflight(Path(temp), report)
+            self.assertEqual(result.returncode, 5, result.stdout + result.stderr)
+            self.assertIn("required host command is unavailable", result.stderr)
+            self.assertFalse(output.exists())
+
+    def test_refuses_report_with_spurious_missing_command_name(self):
+        report = json.dumps({
+            "schema_version": 1,
+            "os": {"name": "Debian", "id": "debian"},
+            "arch": "x86_64",
+            "cpus": 2,
+            "required": {"gcc": True},
+            "missing_required": ["gcc"],
+            "optional": {},
+            "builddir": {"set": True, "path": "/build"},
+            "verdict": "ready",
+        })
+        with tempfile.TemporaryDirectory() as temp:
+            result, output = self._run_fake_preflight(Path(temp), report)
+            self.assertEqual(result.returncode, 5, result.stdout + result.stderr)
+            self.assertIn("missing_required is not empty", result.stderr)
             self.assertFalse(output.exists())
 
     def test_refuses_non_linux_environment(self):

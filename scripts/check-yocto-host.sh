@@ -40,7 +40,7 @@ json_string_array() {
 }
 
 json_status_object() {
-    local first=1 item
+    local first=1 item boolean
     printf '{'
     for item in "$@"; do
         if (( first )); then
@@ -49,10 +49,11 @@ json_status_object() {
             printf ', '
         fi
         if command -v "${item}" >/dev/null 2>&1; then
-            printf '"%s": true' "$(json_escape "${item}")"
+            boolean=true
         else
-            printf '"%s": false' "$(json_escape "${item}")"
+            boolean=false
         fi
+        printf '"%s": %s' "$(json_escape "${item}")" "${boolean}"
     done
     printf '}'
 }
