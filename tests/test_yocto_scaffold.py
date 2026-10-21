@@ -118,6 +118,11 @@ class YoctoScaffoldTests(unittest.TestCase):
             LAYER / "recipes-ready/readylinux/readylinux-runtime_0.3.bb",
         )
         self.assertIn("LAYERSERIES_COMPAT_readylinux", layer_conf)
+        distro_conf = (LAYER / "conf/distro/readylinux.conf").read_text(encoding="utf-8")
+        required_distro_features = re.search(r'(?m)^DISTRO_FEATURES:append\s*=\s*"([^"]+)"$', distro_conf)
+        self.assertIsNotNone(required_distro_features)
+        self.assertEqual(set(required_distro_features.group(1).split()), {"systemd", "usrmerge"})
+        self.assertIn('VIRTUAL-RUNTIME_init_manager = "systemd"', distro_conf)
         recipe_tokens = "\n".join(recipe_path.read_text(encoding="utf-8") for recipe_path in recipes)
         self.assertNotRegex(recipe_tokens, r"(?m)^\s*(?:OVERRIDES|DISTRO_FEATURES|IMAGE_INSTALL)_(?:append|prepend|remove)\s*=")
         legacy_assignment = re.compile(
