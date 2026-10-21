@@ -1,3 +1,10 @@
+## 2026-10-20 — Distro and host package provenance in preflight JSON
+
+- `check-yocto-host.sh --json` now includes `os.version_id` and a `packages` map for GCC, G++, Git, Python 3, QEMU, chrpath and gawk. Versions come from `dpkg-query` when available, `null` otherwise; the `not-a-linux-host` report uses `version_id: null` and `packages: {}`.
+- The preflight record retains these nested fields so the recorder and `--check` preserve and validate distro/package-version provenance in the evidence artifact.
+- WSL Debian 13 validation: `os.version_id=13`; actual packages GCC `4:14.2.0-1`, Python `3.13.5-1`, Git `1:2.47.3-0+deb13u1`, QEMU `1:10.0.13+ds-0+deb13u1`, chrpath `0.18-1`, gawk `1:5.2.1-2+b1`.
+- Suite: 247 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Strict type consistency for preflight records
 
 - Hardened `scripts/record-yocto-preflight.py --check`: scope must be a string (an object containing the phrase is not coerced); verdict must be `ready` because records are intentionally only for ready hosts; `preflight_exit_code` must be integer 0, not string `"0"`; `arch` must be non-empty. Existing checks cover boolean `cpus`, OS identity, command→bool maps and builddir consistency.

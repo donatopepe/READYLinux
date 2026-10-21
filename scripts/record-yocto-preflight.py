@@ -72,12 +72,21 @@ def validate_record(record: dict) -> list[str]:
     if report.get("verdict") != "ready":
         problems.append("preflight.verdict must be ready for a recorded host-evidence artifact")
     os_block = report.get("os")
-    if not isinstance(os_block, dict) or set(os_block) != {"name", "id"}:
-        problems.append("preflight.os must contain exactly name and id")
+    if not isinstance(os_block, dict) or set(os_block) != {"name", "id", "version_id"}:
+        problems.append("preflight.os must contain exactly name, id and version_id")
     elif any(not isinstance(os_block[key], str) or not os_block[key].strip() for key in ("name", "id")):
         problems.append("preflight.os name and id must be non-empty strings")
     if isinstance(report.get("cpus"), bool) or not isinstance(report.get("cpus"), int) or report["cpus"] < 0:
         problems.append("preflight.cpus must be a non-negative integer, not a boolean")
+    version_id = os_block.get("version_id") if isinstance(os_block, dict) else None
+    if version_id is not None and (not isinstance(version_id, str) or not version_id.strip()):
+        problems.append("preflight.os.version_id must be null or a non-empty string")
+    packages = report.get("packages")
+    if not isinstance(packages, dict) or not all(
+        isinstance(name, str) and name.strip() and (value is None or isinstance(value, str) and value.strip())
+        for name, value in packages.items()
+    ):
+        problems.append("preflight.packages must map non-empty package names to non-empty versions or null")
     if not isinstance(report.get("arch"), str) or not report["arch"].strip():
         problems.append("preflight.arch must be a non-empty string")
     for mapping in ("required", "optional"):

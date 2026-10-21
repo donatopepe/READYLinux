@@ -126,9 +126,10 @@ class UnsafeRecorderTests(unittest.TestCase):
     def test_refuses_report_where_required_map_hides_missing_command(self):
         report = json.dumps({
             "schema_version": 1,
-            "os": {"name": "Debian", "id": "debian"},
+            "os": {"name": "Debian", "id": "debian", "version_id": "13"},
             "arch": "x86_64",
             "cpus": 2,
+            "packages": {},
             "required": {"gcc": False},
             "missing_required": [],
             "optional": {},
@@ -144,9 +145,10 @@ class UnsafeRecorderTests(unittest.TestCase):
     def test_refuses_report_with_spurious_missing_command_name(self):
         report = json.dumps({
             "schema_version": 1,
-            "os": {"name": "Debian", "id": "debian"},
+            "os": {"name": "Debian", "id": "debian", "version_id": "13"},
             "arch": "x86_64",
             "cpus": 2,
+            "packages": {},
             "required": {"gcc": True},
             "missing_required": ["gcc"],
             "optional": {},
@@ -210,9 +212,10 @@ class UnsafeRecorderTests(unittest.TestCase):
         report = json.dumps(
             {
                 "schema_version": 1,
-                "os": {"name": "x", "id": "debian"},
+                "os": {"name": "x", "id": "debian", "version_id": "13"},
                 "arch": "x86_64",
                 "cpus": 1,
+                "packages": {},
                 "required": {},
                 "missing_required": [],
                 "optional": {},
@@ -230,9 +233,10 @@ class UnsafeRecorderTests(unittest.TestCase):
         report = json.dumps(
             {
                 "schema_version": 1,
-                "os": {"name": "x", "id": "debian"},
+                "os": {"name": "x", "id": "debian", "version_id": "13"},
                 "arch": "x86_64",
                 "cpus": 1,
+                "packages": {},
                 "required": {"gcc": False},
                 "missing_required": ["gcc"],
                 "optional": {},
@@ -249,7 +253,7 @@ class UnsafeRecorderTests(unittest.TestCase):
     def test_check_accepts_the_documented_example(self):
         example = json.loads(EXAMPLE.read_text(encoding="utf-8"))
         self.assertEqual(set(example), {"schema_version", "recorded_utc", "readylinux_commit", "scope", "preflight_command", "preflight_exit_code", "preflight"})
-        self.assertEqual(set(example["preflight"]), {"schema_version", "os", "arch", "cpus", "required", "missing_required", "optional", "builddir", "verdict"})
+        self.assertEqual(set(example["preflight"]), {"schema_version", "os", "arch", "cpus", "packages", "required", "missing_required", "optional", "builddir", "verdict"})
         self.assertRegex(example["readylinux_commit"], r"^[0-9a-f]{40}$")
         self.assertEqual(example["preflight_exit_code"], 0)
         self.assertEqual(example["preflight"]["verdict"], "ready")
@@ -431,7 +435,7 @@ class UnsafeRecorderTests(unittest.TestCase):
                 text=True,
             )
         self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
-        self.assertIn("os name and id must be non-empty", result.stderr)
+        self.assertIn("preflight.os name and id must be non-empty strings", result.stderr)
         self.assertIn("required must map non-empty command names to booleans", result.stderr)
 
     def test_check_requires_builddir_path_to_match_its_set_flag(self):

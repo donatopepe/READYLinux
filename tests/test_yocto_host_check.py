@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/check-yocto-host.sh"
 DEBIAN_OS_RELEASE = (
-    'PRETTY_NAME="Debian GNU/Linux 13 (trixie)"\nID=debian\nID_LIKE=debian\n'
+    'PRETTY_NAME="Debian GNU/Linux 13 (trixie)"\nID=debian\nID_LIKE=debian\nVERSION_ID="13"\n'
 )
 
 
@@ -38,6 +38,9 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertIn("BitBake executables found on PATH.", text)
         self.assertIn("Environment tools (not provided by this probe):", text)
         self.assertIn("optional_commands=(bitbake bitbake-layers", text)
+        self.assertIn("package_versions_json()", text)
+        self.assertIn("version_id", text)
+        self.assertIn("packages", text)
         self.assertIn("Environment tools (not provided by this probe):", text)
         self.assertIn("Preflight: required Debian host commands and BUILDDIR found", text)
         self.assertIn("Preflight: INCOMPLETE (read-only; no package changes made).", text)
@@ -225,6 +228,9 @@ class YoctoHostCheckTests(unittest.TestCase):
         report = json.loads(result.stdout)
         self.assertEqual(report["schema_version"], 1)
         self.assertEqual(report["verdict"], "ready")
+        self.assertEqual(report["os"]["version_id"], "13")
+        self.assertIn("gcc", report["packages"])
+        self.assertIn("qemu-system-x86", report["packages"])
         self.assertEqual(report["missing_required"], [])
         self.assertTrue(report["required"]["gcc"])
         self.assertTrue(report["optional"]["bitbake"])
@@ -253,6 +259,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         report = json.loads(result.stdout)
         self.assertEqual(report["verdict"], "incomplete")
+        self.assertEqual(report["os"]["version_id"], "13")
+        self.assertIn("gcc", report["packages"])
         self.assertFalse(report["required"]["gcc"])
         self.assertIn("gcc", report["missing_required"])
         self.assertNotIn("git", report["missing_required"])
@@ -271,6 +279,8 @@ class YoctoHostCheckTests(unittest.TestCase):
         report = json.loads(result.stdout)
         self.assertEqual(report["verdict"], "not-a-linux-host")
         self.assertEqual(report["required"], {})
+        self.assertEqual(report["packages"], {})
+        self.assertEqual(report["os"]["version_id"], None)
         self.assertEqual(report["missing_required"], [])
         self.assertEqual(report["builddir"], {"set": False, "path": None})
 

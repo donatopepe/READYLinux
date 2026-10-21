@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Provenienza release e pacchetti host nel preflight JSON
+
+- `check-yocto-host.sh --json` include ora `os.version_id` e la mappa `packages` per GCC, G++, Git, Python 3, QEMU, chrpath e gawk. Versioni lette da `dpkg-query` se disponibile, `null` altrimenti; il report `not-a-linux-host` usa `version_id: null` e `packages: {}`.
+- Il record preflight conserva questi campi annidati, così il recorder e la modalità `--check` preservano e verificano versione distro e versioni pacchetti nel documento d'evidenza.
+- Verifica WSL Debian 13: `os.version_id=13`; packages reali GCC `4:14.2.0-1`, Python `3.13.5-1`, Git `1:2.47.3-0+deb13u1`, QEMU `1:10.0.13+ds-0+deb13u1`, chrpath `0.18-1`, gawk `1:5.2.1-2+b1`.
+- Suite: 247 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Coerenza stretta dei tipi nel record preflight
 
 - Indurito `scripts/record-yocto-preflight.py --check`: lo scope deve essere stringa (non viene coercito un oggetto che contiene la frase); `verdict` deve essere `ready` perché il record è deliberatamente solo per host pronti; `preflight_exit_code` deve essere l'intero 0, non la stringa `"0"`; `arch` deve essere non vuota. Restano i controlli su booleano `cpus`, identità OS, mappe command→bool e coerenza builddir.

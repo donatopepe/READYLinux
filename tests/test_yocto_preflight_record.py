@@ -33,7 +33,12 @@ def assert_matches_schema(test, record, schema):
     preflight = record["preflight"]
     preflight_schema = schema["properties"]["preflight"]
     test.assertEqual(set(preflight), set(preflight_schema["required"]))
-    test.assertEqual(set(preflight["os"]), {"name", "id"})
+    test.assertIsInstance(preflight["packages"], dict)
+    for package, version in preflight["packages"].items():
+        test.assertIsInstance(package, str)
+        test.assertTrue(version is None or isinstance(version, str))
+    test.assertEqual(set(preflight["os"]), {"name", "id", "version_id"})
+    test.assertTrue(preflight["os"]["version_id"] is None or isinstance(preflight["os"]["version_id"], str))
     test.assertIsInstance(preflight["cpus"], int)
     test.assertGreaterEqual(preflight["cpus"], 0)
     test.assertIn(preflight["verdict"], preflight_schema["properties"]["verdict"]["enum"])

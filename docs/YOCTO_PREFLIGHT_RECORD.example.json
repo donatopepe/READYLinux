@@ -15,7 +15,17 @@
     },
     "os": {
       "id": "example",
-      "name": "EXAMPLE-DISTRO"
+      "name": "EXAMPLE-DISTRO",
+      "version_id": "UNVERIFIED"
+    },
+    "packages": {
+      "chrpath": "UNVERIFIED",
+      "g++": "UNVERIFIED",
+      "gawk": "UNVERIFIED",
+      "gcc": "UNVERIFIED",
+      "git": "UNVERIFIED",
+      "python3": "UNVERIFIED",
+      "qemu-system-x86": "UNVERIFIED"
     },
     "required": {
       "bash": true,
