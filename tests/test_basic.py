@@ -1,3 +1,5 @@
+import contextlib
+import io
 import sys
 import tempfile
 import unittest
@@ -94,6 +96,37 @@ class BasicTests(unittest.TestCase):
     def test_bare_print_emits_an_empty_line(self):
         out, _ = self.run_program(prog('10 PRINT', '20 PRINT "X"'))
         self.assertEqual(out, ["", "X"])
+
+    def test_ready_basic_load_rejects_corrupt_file_without_replacing_current_program(self):
+        with tempfile.TemporaryDirectory() as temp:
+            app = ReadyLinux(Path(temp))
+            with patch("builtins.print"):
+                app.command("BASIC")
+                app.command("10 PRINT 7")
+            (Path(temp) / "broken.bas").write_text("not a numbered program\\n", encoding="utf-8")
+            before = app.basic.listing()
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                app.command("LOAD broken")
+            self.assertEqual(app.basic.listing(), before)
+            self.assertIn("BASIC ERROR:", output.getvalue())
+
+    def test_ready_basic_load_rejects_path_traversal_without_reading_outside_workspace(self):
+        with tempfile.TemporaryDirectory() as temp:
+            workspace = Path(temp) / "workspace"
+            workspace.mkdir()
+            outside = Path(temp) / "outside.bas"
+            outside.write_text("10 PRINT \\\"OUTSIDE\\\"\\n", encoding="utf-8")
+            app = ReadyLinux(workspace)
+            with patch("builtins.print"):
+                app.command("BASIC")
+                app.command("10 PRINT 7")
+            before = app.basic.listing()
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                app.command("LOAD ../outside")
+            self.assertEqual(app.basic.listing(), before)
+            self.assertIn("valid program name", output.getvalue())
 
     def test_ready_basic_save_load_round_trip(self):
         with tempfile.TemporaryDirectory() as temp:

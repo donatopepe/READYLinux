@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-20 — BASIC LOAD fail-closed e atomico
+
+- Due test nuovi per `LOAD`: file `.bas` malformato → errore stampato, programma in memoria preservato; nome con path traversal `../outside` → rifiutato prima di leggere file esterni, programma preservato.
+- Confermato comportamento atomico implementato in `basic_command`: `load_source()` analizza su una mappa temporanea e assegna a `self.lines` solo dopo parse riuscito; i nomi console sono verificati da `PROGRAM_NAME` e `_file()`.
+- Suite: 258 test PASS (28 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Gate statico tra preflight metadata e verifica artifact
 
 - Aggiunto `test_image_artifact_verification_remains_a_separate_explicit_gate`: richiede che image recipe dichiari `.wic`, il validatore controlli `IMAGE_FSTYPES` via `bitbake-getvar`, e il verifier artifact controlli SHA-256 reale/mismatch; evita di confondere il preflight metadata con la verifica di un file immagine costruito.

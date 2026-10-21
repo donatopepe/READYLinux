@@ -68,6 +68,12 @@
 
 # Test Results
 
+## 2026-10-20 — BASIC LOAD fails closed and remains atomic
+
+- Two new `LOAD` tests: malformed `.bas` file → error printed and in-memory program preserved; `../outside` traversal name → rejected before external file read, current program preserved.
+- Confirmed existing atomic behavior in `basic_command`: `load_source()` parses into a temporary map and assigns `self.lines` only after successful parsing; console filenames are checked by `PROGRAM_NAME` and `_file()`.
+- Suite: 258 tests PASS (28 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — BASIC coverage for REM/END/STOP, booleans and false IF; `NOT` bug
 
 - Six new tests in `tests/test_basic.py`: ignored `REM` lines, `END` and `STOP` halting execution, `AND`/`OR`/`NOT` and `<>` operators, a false `IF` that does not jump, string comparison with assignment, and bare `PRINT` emitting an empty line.
