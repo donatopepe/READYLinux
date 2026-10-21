@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-20 — Cleanup LocalAI con processo llama-server terminato all'avvio
+
+- `LocalAI.start()` chiude il log in `finally`, anche quando il child termina subito e viene sollevato `AIError`; nuovo test intercetta `Popen`/`sleep`, simula exit code 9, verifica log, `_log_file=None` e codice riportato da `status()`.
+- Nuovo test verifica che un processo già posseduto e vivo sia idempotente: niente risoluzione binario, seconda `Popen` o log.
+- Suite finale del firing: 233 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Copertura BASIC su REM/END/STOP, booleani e IF falso; bug su `NOT`
 
 - Sei nuovi test in `tests/test_basic.py`: righe `REM` ignorate, `END` e `STOP` che fermano l'esecuzione, operatori `AND`/`OR`/`NOT` e `<>`, `IF` falso che non salta, confronto stringhe con assegnazione, `PRINT` nudo che emette riga vuota.

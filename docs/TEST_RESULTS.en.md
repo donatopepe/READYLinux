@@ -1,3 +1,9 @@
+## 2026-10-20 — LocalAI cleanup when llama-server exits during startup
+
+- `LocalAI.start()` closes the log in `finally`, including when the child exits immediately and raises `AIError`; new test intercepts `Popen`/`sleep`, simulates exit code 9, verifies the retained log, `_log_file=None`, and exit code shown by `status()`.
+- New test verifies idempotence when an already owned process is alive: no binary resolution, second `Popen`, or log.
+- Final suite for this firing: 233 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Local AI startup when the port is occupied
 
 - Two `LocalAI.start()` tests: refuses an occupied loopback port without calling `subprocess.Popen` or creating `llama-server.log`; if READY already owns the running server process, it does not launch a duplicate.
