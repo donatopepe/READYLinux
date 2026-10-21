@@ -1,3 +1,9 @@
+## 2026-10-20 — Local AI startup when the port is occupied
+
+- Two `LocalAI.start()` tests: refuses an occupied loopback port without calling `subprocess.Popen` or creating `llama-server.log`; if READY already owns the running server process, it does not launch a duplicate.
+- Test uses an OS-assigned ephemeral IPv4 `127.0.0.1` socket; no external network or real model.
+- Suite: 233 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 # Test Results
 
 ## 2026-10-20 — BASIC coverage for REM/END/STOP, booleans and false IF; `NOT` bug
@@ -11,7 +17,7 @@
 
 - New `tests/test_basic_docs.py` module (5 tests): compares the keywords claimed by both IT/EN documents, checks that every language keyword exists in `basic.py`, that the console commands (`LIST`, `RUN`, `NEW`, `HELP`, `STOP`, `SAVE`, `LOAD`, `EDIT`) exist in `readylinux.py`, and that both documents keep the "not full Commodore compatibility" disclaimer and the "this restriction is not a sandbox" warning.
 - Bugs found in the tests themselves during the firing: `RUN` is a console command, not a language keyword → extraction limited to the "## Language implemented" line; the Italian sandbox regex contained an accented character that did not match → replaced with `non.{0,20}una sandbox`.
-- Suite: 225 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+- Suite: 233 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
 
 ## 2026-10-20 — Roadmap M1 aligned with the real console and BASIC
 

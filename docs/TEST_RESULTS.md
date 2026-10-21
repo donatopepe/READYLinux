@@ -11,7 +11,7 @@
 
 - Nuovo modulo `tests/test_basic_docs.py` (5 test): confronta i keyword rivendicati nei due documenti IT/EN, verifica che ogni keyword del linguaggio esista in `basic.py`, che i comandi console (`LIST`, `RUN`, `NEW`, `HELP`, `STOP`, `SAVE`, `LOAD`, `EDIT`) esistano in `readylinux.py`, e che entrambi i documenti mantengano il disclaimer "non piena compatibilità Commodore" e l'avviso "questa restrizione non è una sandbox".
 - Bug trovato nei test stessi durante il firing: `RUN` è un comando console, non un keyword del linguaggio → l'estrazione è stata limitata alla riga "## Linguaggio implementato"; la regex italiana sulla sandbox conteneva un carattere accentato interpretato male → sostituita con `non.{0,20}una sandbox`.
-- Suite: 225 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+- Suite: 233 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
 
 ## 2026-10-20 — Roadmap M1 allineata a console e BASIC reali
 
