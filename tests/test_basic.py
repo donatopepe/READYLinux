@@ -9,6 +9,10 @@ from basic import BasicError, BasicProgram
 from readylinux import ReadyLinux
 
 
+def prog(*lines):
+    return chr(10).join(lines)
+
+
 class BasicTests(unittest.TestCase):
     def run_program(self, source, **kwargs):
         program = BasicProgram(**kwargs)
@@ -65,6 +69,31 @@ class BasicTests(unittest.TestCase):
             self.run_program("10 GOTO 999")
         with self.assertRaisesRegex(BasicError, "RETURN without"):
             self.run_program("10 RETURN")
+
+    def test_rem_lines_are_ignored_and_end_stops_execution(self):
+        out, _ = self.run_program(prog('10 REM ignored', '20 PRINT "A"', '30 END', '40 PRINT "B"'))
+        self.assertEqual(out, ["A"])
+
+    def test_stop_behaves_like_end(self):
+        out, _ = self.run_program(prog('10 PRINT "A"', '20 STOP', '30 PRINT "B"'))
+        self.assertEqual(out, ["A"])
+
+    def test_boolean_operators_and_comparisons(self):
+        out, _ = self.run_program(prog('10 PRINT 1 AND 0', '20 PRINT 1 OR 0', '30 PRINT NOT 0', '40 PRINT 2 <> 3'))
+        self.assertEqual(out, ["False", "True", "True", "True"])
+
+    def test_if_false_does_not_jump(self):
+        out, _ = self.run_program(prog('10 LET A=5', '20 IF A < 3 THEN 40', '30 PRINT "STAY"', '40 PRINT "AFTER"'))
+        self.assertEqual(out, ["STAY", "AFTER"])
+
+    def test_string_variables_and_equality(self):
+        out, vars_ = self.run_program(prog('10 LET S="AB"', '20 IF S = "AB" THEN 40', '30 PRINT "NO"', '40 PRINT S'))
+        self.assertEqual(out, ["AB"])
+        self.assertEqual(vars_["S"], "AB")
+
+    def test_bare_print_emits_an_empty_line(self):
+        out, _ = self.run_program(prog('10 PRINT', '20 PRINT "X"'))
+        self.assertEqual(out, ["", "X"])
 
     def test_ready_basic_save_load_round_trip(self):
         with tempfile.TemporaryDirectory() as temp:

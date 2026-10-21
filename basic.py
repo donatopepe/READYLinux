@@ -41,6 +41,7 @@ def _expression(source: str, variables: dict[str, object]) -> object:
     source = re.sub(r"\bAND\b", " and ", source, flags=re.I)
     source = re.sub(r"\bOR\b", " or ", source, flags=re.I)
     source = re.sub(r"\bNOT\b", " not ", source, flags=re.I)
+    source = source.strip()
     try:
         node = ast.parse(source, mode="eval").body
     except SyntaxError as exc:

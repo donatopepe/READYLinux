@@ -1,5 +1,12 @@
 # Test Results
 
+## 2026-10-20 — BASIC coverage for REM/END/STOP, booleans and false IF; `NOT` bug
+
+- Six new tests in `tests/test_basic.py`: ignored `REM` lines, `END` and `STOP` halting execution, `AND`/`OR`/`NOT` and `<>` operators, a false `IF` that does not jump, string comparison with assignment, and bare `PRINT` emitting an empty line.
+- **Real bug found**: `PRINT NOT 0` failed with "invalid expression:  not  0" because the `NOT` substitution added leading spaces and `ast.parse(..., mode="eval")` rejects indentation. Fix: `source.strip()` before parsing.
+- **Newly documented behaviour**: boolean results print `True`/`False`, not 1/0 — added to `docs/BASIC.md` and `docs/BASIC.en.md`.
+- Suite: 231 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — BASIC documentation ↔ implementation parity
 
 - New `tests/test_basic_docs.py` module (5 tests): compares the keywords claimed by both IT/EN documents, checks that every language keyword exists in `basic.py`, that the console commands (`LIST`, `RUN`, `NEW`, `HELP`, `STOP`, `SAVE`, `LOAD`, `EDIT`) exist in `readylinux.py`, and that both documents keep the "not full Commodore compatibility" disclaimer and the "this restriction is not a sandbox" warning.

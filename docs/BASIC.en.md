@@ -12,6 +12,8 @@ READY BASIC is an explicit optional mode; existing numbered Python mode remains 
 
 ## Language implemented
 
+Boolean results print as `True`/`False`, not as 1/0.
+
 `LET`/assignment, `PRINT`, `INPUT`, arithmetic, comparisons, boolean `AND`/`OR`/`NOT`, `IF condition THEN line`, `GOTO`, `GOSUB`/`RETURN`, `FOR`/`NEXT` with optional `STEP`, `REM`, `END`, `STOP`.
 
 Expressions use an allowlisted AST evaluator; Python calls/attributes and unsupported syntax are rejected. Execution has a configurable statement-step limit. This is a safety restriction, **not** a sandbox for other generated code.

@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Copertura BASIC su REM/END/STOP, booleani e IF falso; bug su `NOT`
+
+- Sei nuovi test in `tests/test_basic.py`: righe `REM` ignorate, `END` e `STOP` che fermano l'esecuzione, operatori `AND`/`OR`/`NOT` e `<>`, `IF` falso che non salta, confronto stringhe con assegnazione, `PRINT` nudo che emette riga vuota.
+- **Bug reale trovato**: `PRINT NOT 0` falliva con "invalid expression:  not  0" perché la sostituzione di `NOT` aggiungeva spazi iniziali e `ast.parse(..., mode="eval")` rifiuta l'indentazione. Fix: `source.strip()` prima del parse.
+- **Comportamento documentato ex novo**: i risultati booleani stampano `True`/`False`, non 1/0 — aggiunto in `docs/BASIC.md` e `docs/BASIC.en.md`.
+- Suite: 231 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Parità documentazione BASIC ↔ implementazione
 
 - Nuovo modulo `tests/test_basic_docs.py` (5 test): confronta i keyword rivendicati nei due documenti IT/EN, verifica che ogni keyword del linguaggio esista in `basic.py`, che i comandi console (`LIST`, `RUN`, `NEW`, `HELP`, `STOP`, `SAVE`, `LOAD`, `EDIT`) esistano in `readylinux.py`, e che entrambi i documenti mantengano il disclaimer "non piena compatibilità Commodore" e l'avviso "questa restrizione non è una sandbox".

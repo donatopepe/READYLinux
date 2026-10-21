@@ -12,6 +12,8 @@ READY BASIC è una modalità opzionale esplicita; la modalità esistente di righ
 
 ## Linguaggio implementato
 
+I risultati booleani vengono stampati come `True`/`False`, non come 1/0.
+
 `LET`/assegnazione, `PRINT`, `INPUT`, aritmetica, confronti, booleani `AND`/`OR`/`NOT`, `IF condizione THEN riga`, `GOTO`, `GOSUB`/`RETURN`, `FOR`/`NEXT` con `STEP` opzionale, `REM`, `END`, `STOP`.
 
 Le espressioni usano un valutatore AST con allowlist; chiamate/attributi Python e sintassi non supportata vengono rifiutati. L'esecuzione ha un limite configurabile di istruzioni. Questa restrizione **non** è una sandbox per altro codice generato.
