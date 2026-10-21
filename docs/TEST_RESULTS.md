@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-20 — Parità documentazione BASIC ↔ implementazione
+
+- Nuovo modulo `tests/test_basic_docs.py` (5 test): confronta i keyword rivendicati nei due documenti IT/EN, verifica che ogni keyword del linguaggio esista in `basic.py`, che i comandi console (`LIST`, `RUN`, `NEW`, `HELP`, `STOP`, `SAVE`, `LOAD`, `EDIT`) esistano in `readylinux.py`, e che entrambi i documenti mantengano il disclaimer "non piena compatibilità Commodore" e l'avviso "questa restrizione non è una sandbox".
+- Bug trovato nei test stessi durante il firing: `RUN` è un comando console, non un keyword del linguaggio → l'estrazione è stata limitata alla riga "## Linguaggio implementato"; la regex italiana sulla sandbox conteneva un carattere accentato interpretato male → sostituita con `non.{0,20}una sandbox`.
+- Suite: 225 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Roadmap M1 allineata a console e BASIC reali
 
 - `docs/ROADMAP.en.md` M1 affermava ancora: "standalone `basic.py` plus 9 focused tests; console integration, persistence commands, bilingual user docs, and full green suite remain incomplete". Tutte e quattro le affermazioni erano false: `readylinux.py` integra `BasicProgram` con `SAVE`/`LOAD`, esistono `docs/BASIC.md` e `docs/BASIC.en.md`, i test BASIC sono 11 e la suite è verde.
