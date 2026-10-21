@@ -1,6 +1,7 @@
 import contextlib
 import io
 import json
+import socket
 import tempfile
 import threading
 import unittest
@@ -95,6 +96,42 @@ class LocalAITests(unittest.TestCase):
 
     def test_stop_does_not_kill_external_process(self):
         self.assertIn('non arresto', self.app.ai.stop())
+
+    def test_start_refuses_an_occupied_port_before_spawning(self):
+        model = self.root / "occupied.gguf"
+        model.write_bytes(b"GGUF")
+        binary = self.root / "llama-server"
+        binary.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        binary.chmod(0o700)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen(1)
+            port = listener.getsockname()[1]
+            ai = LocalAI(AIConfig(model=model, server=str(binary), port=port), self.root / "occupied-logs")
+            with patch("ai_local.subprocess.Popen") as popen:
+                with self.assertRaisesRegex(AIError, "gia' occupata"):
+                    ai.start()
+            popen.assert_not_called()
+        self.assertFalse((self.root / "occupied-logs/llama-server.log").exists())
+
+    def test_start_accepts_its_owned_live_server_without_spawning_duplicate(self):
+        model = self.root / "owned.gguf"
+        model.write_bytes(b"GGUF")
+        binary = self.root / "llama-server"
+        binary.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        binary.chmod(0o700)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen(1)
+            port = listener.getsockname()[1]
+            ai = LocalAI(AIConfig(model=model, server=str(binary), port=port), self.root / "owned-logs")
+            fake_process = type("FakeProcess", (), {"returncode": None, "poll": lambda self: None})()
+            ai.process = fake_process
+            with patch("ai_local.subprocess.Popen") as popen:
+                result = ai.start()
+            popen.assert_not_called()
+        self.assertIn("gia' avviato da READY", result)
+        self.assertIs(ai.process, fake_process)
 
     def test_cpu_only_server_flags(self):
         model = self.root / 'model.gguf'
