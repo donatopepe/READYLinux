@@ -39,6 +39,25 @@ json_string_array() {
     printf ']'
 }
 
+package_versions_json() {
+    local first=1 package version
+    local packages=(gcc g++ git python3 qemu-system-x86 chrpath gawk)
+    printf '{'
+    for package in "${packages[@]}"; do
+        if (( first )); then first=0; else printf ', '; fi
+        version=""
+        if command -v dpkg-query >/dev/null 2>&1; then
+            version="$(dpkg-query -W -f='${Version}' "${package}" 2>/dev/null || true)"
+        fi
+        if [[ -n "${version}" ]]; then
+            printf '"%s": "%s"' "$(json_escape "${package}")" "$(json_escape "${version}")"
+        else
+            printf '"%s": null' "$(json_escape "${package}")"
+        fi
+    done
+    printf '}'
+}
+
 json_status_object() {
     local first=1 item boolean
     printf '{'
@@ -60,7 +79,7 @@ json_status_object() {
 
 emit_not_a_linux_host() {
     if (( json )); then
-        printf '{"schema_version": 1, "os": {"name": "unavailable", "id": "unavailable"}, "arch": "%s", "cpus": %s, "required": {}, "missing_required": [], "optional": {}, "builddir": {"set": false, "path": null}, "verdict": "not-a-linux-host"}\n' \
+        printf '{"schema_version": 1, "os": {"name": "unavailable", "id": "unavailable", "version_id": null}, "arch": "%s", "cpus": %s, "packages": {}, "required": {}, "missing_required": [], "optional": {}, "builddir": {"set": false, "path": null}, "verdict": "not-a-linux-host"}\n' \
             "$(json_escape "$(uname -m 2>/dev/null || echo unknown)")" \
             "$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 0)"
         exit 2
@@ -108,11 +127,13 @@ if (( json )); then
     else
         builddir_json='{"set": false, "path": null}'
     fi
-    printf '{"schema_version": 1, "os": {"name": "%s", "id": "%s"}, "arch": "%s", "cpus": %s, "required": %s, "missing_required": %s, "optional": %s, "builddir": %s, "verdict": "%s"}\n' \
+    printf '{"schema_version": 1, "os": {"name": "%s", "id": "%s", "version_id": "%s"}, "arch": "%s", "cpus": %s, "packages": %s, "required": %s, "missing_required": %s, "optional": %s, "builddir": %s, "verdict": "%s"}\n' \
         "$(json_escape "${PRETTY_NAME:-unknown}")" \
         "$(json_escape "${ID:-unknown}")" \
+        "$(json_escape "${VERSION_ID:-unknown}")" \
         "$(json_escape "${arch}")" \
         "${cpus}" \
+        "$(package_versions_json)" \
         "$(json_status_object "${required_commands[@]}")" \
         "$(json_string_array "${missing_required[@]}")" \
         "$(json_status_object "${optional_commands[@]}")" \
