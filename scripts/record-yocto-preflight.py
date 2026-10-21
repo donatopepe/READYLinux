@@ -56,10 +56,10 @@ def validate_record(record: dict) -> list[str]:
                 problems.append("recorded_utc is in the future")
     if not re.fullmatch(r"[0-9a-f]{40}", str(record.get("readylinux_commit", ""))):
         problems.append("readylinux_commit must be a 40-character lowercase hex commit")
-    if "not build evidence" not in str(record.get("scope", "")):
+    if not isinstance(record.get("scope"), str) or "not build evidence" not in record["scope"].lower():
         problems.append("scope must state that the record is not build evidence")
-    if record.get("preflight_exit_code") != 0:
-        problems.append("preflight_exit_code must be 0")
+    if isinstance(record.get("preflight_exit_code"), bool) or record.get("preflight_exit_code") != 0:
+        problems.append("preflight_exit_code must be integer 0")
 
     report = record.get("preflight")
     if not isinstance(report, dict):
@@ -69,6 +69,8 @@ def validate_record(record: dict) -> list[str]:
             problems.append(f"missing preflight key: {key}")
     if report.get("verdict") not in VERDICTS:
         problems.append(f"preflight.verdict must be one of {', '.join(VERDICTS)}")
+    if report.get("verdict") != "ready":
+        problems.append("preflight.verdict must be ready for a recorded host-evidence artifact")
     os_block = report.get("os")
     if not isinstance(os_block, dict) or set(os_block) != {"name", "id"}:
         problems.append("preflight.os must contain exactly name and id")
@@ -76,6 +78,8 @@ def validate_record(record: dict) -> list[str]:
         problems.append("preflight.os name and id must be non-empty strings")
     if isinstance(report.get("cpus"), bool) or not isinstance(report.get("cpus"), int) or report["cpus"] < 0:
         problems.append("preflight.cpus must be a non-negative integer, not a boolean")
+    if not isinstance(report.get("arch"), str) or not report["arch"].strip():
+        problems.append("preflight.arch must be a non-empty string")
     for mapping in ("required", "optional"):
         block = report.get(mapping)
         if not isinstance(block, dict) or not all(
@@ -84,8 +88,10 @@ def validate_record(record: dict) -> list[str]:
         ):
             problems.append(f"preflight.{mapping} must map non-empty command names to booleans")
     missing_required = report.get("missing_required")
-    if not isinstance(missing_required, list) or not all(isinstance(item, str) and item for item in missing_required):
+    if not isinstance(missing_required, list) or not all(isinstance(item, str) and item.strip() for item in missing_required):
         problems.append("preflight.missing_required must be a list of non-empty command names")
+    elif len(missing_required) != len(set(missing_required)):
+        problems.append("preflight.missing_required must not contain duplicate command names")
     required_tools = report.get("required")
     if isinstance(required_tools, dict) and isinstance(missing_required, list):
         derived_missing = sorted(name for name, available in required_tools.items() if not available)

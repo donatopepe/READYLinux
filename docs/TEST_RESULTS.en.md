@@ -1,3 +1,10 @@
+## 2026-10-20 — Strict type consistency for preflight records
+
+- Hardened `scripts/record-yocto-preflight.py --check`: scope must be a string (an object containing the phrase is not coerced); verdict must be `ready` because records are intentionally only for ready hosts; `preflight_exit_code` must be integer 0, not string `"0"`; `arch` must be non-empty. Existing checks cover boolean `cpus`, OS identity, command→bool maps and builddir consistency.
+- Draft 2020-12 schema: scope requires the phrase "not build evidence"; `missing_required` now has `uniqueItems` and rejects empty/whitespace strings.
+- Four new tests: non-ready verdict, string exit code, empty arch and object scope (in addition to prior inconsistent type tests).
+- Suite: 247 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Structural hardening of the preflight JSON record
 
 - `--check` now rejects `cpus: true` (Python `bool` subclasses `int`), empty `os.name/id`, `required`/`optional` maps with empty names or non-boolean values, and `builddir.path` inconsistent with `builddir.set`.

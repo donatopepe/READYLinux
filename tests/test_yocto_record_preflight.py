@@ -265,6 +265,66 @@ class UnsafeRecorderTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("is a valid preflight record", result.stdout)
 
+    def test_check_rejects_non_ready_verdict_record(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["preflight"]["verdict"] = "incomplete"
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("verdict must be ready", result.stderr)
+
+    def test_check_rejects_string_preflight_exit_code(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["preflight_exit_code"] = "0"
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("preflight_exit_code must be integer 0", result.stderr)
+
+    def test_check_rejects_empty_architecture(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["preflight"]["arch"] = "  "
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("preflight.arch must be a non-empty string", result.stderr)
+
+    def test_check_rejects_non_string_scope(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["scope"] = {"claim": "not build evidence"}
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("scope must state that the record is not build evidence", result.stderr)
+
     def test_check_rejects_future_timestamp(self):
         with tempfile.TemporaryDirectory() as temp:
             record_path = Path(temp) / "record.json"

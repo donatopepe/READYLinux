@@ -1,5 +1,19 @@
 # Risultati test
 
+## 2026-10-20 — Coerenza stretta dei tipi nel record preflight
+
+- Indurito `scripts/record-yocto-preflight.py --check`: lo scope deve essere stringa (non viene coercito un oggetto che contiene la frase); `verdict` deve essere `ready` perché il record è deliberatamente solo per host pronti; `preflight_exit_code` deve essere l'intero 0, non la stringa `"0"`; `arch` deve essere non vuota. Restano i controlli su booleano `cpus`, identità OS, mappe command→bool e coerenza builddir.
+- Schema draft 2020-12: `scope` richiede la frase "not build evidence"; `missing_required` ora dichiara `uniqueItems` e vieta stringhe vuote/whitespace.
+- Quattro test aggiunti: verdict non-ready, exit code stringa, arch vuota e scope oggetto (più i test dei firing precedenti per tipi incoerenti).
+- Suite: 247 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
+## 2026-10-20 — Coerenza stretta dei tipi nel record preflight
+
+- Indurito `scripts/record-yocto-preflight.py --check`: lo scope deve essere stringa (non viene coercito un oggetto che contiene la frase); `verdict` deve essere `ready` perché il record è deliberatamente solo per host pronti; `preflight_exit_code` deve essere l'intero 0, non la stringa `"0"`; `arch` deve essere non vuota. Restano i controlli su booleano `cpus`, identità OS, mappe command→bool e coerenza builddir.
+- Schema draft 2020-12: `scope` richiede la frase "not build evidence"; `missing_required` ora dichiara `uniqueItems` e vieta stringhe vuote/whitespace.
+- Quattro test aggiunti: verdict non-ready, exit code stringa, arch vuota e scope oggetto (più i test dei firing precedenti per tipi incoerenti).
+- Suite: 247 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Hardening strutturale del record JSON preflight
 
 - `--check` ora rifiuta `cpus: true` (in Python `bool` è sottoclasse di `int`), campi `os.name/id` vuoti, mappe `required`/`optional` con nomi vuoti o valori non booleani, e `builddir.path` incoerente col flag `builddir.set`.

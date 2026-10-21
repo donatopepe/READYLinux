@@ -29,7 +29,8 @@
     },
     "scope": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "(?i)not build evidence"
     },
     "preflight": {
       "type": "object",
@@ -84,9 +85,11 @@
         },
         "missing_required": {
           "type": "array",
+          "uniqueItems": true,
           "items": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "pattern": "\\\\S"
           }
         },
         "optional": {
