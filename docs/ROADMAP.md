@@ -10,7 +10,7 @@ Accettazione: parser/runtime effettivo; numeri di riga, variabili, espressioni, 
 
 ## M2 — Build OS minimo
 
-Scaffolding iniziale `meta-readylinux` aggiunto (layer config, distro, image, runtime recipe, servizio systemd tty1 e test statici). BitBake parse/build e boot QEMU non verificati. WSL Debian 13 preflight osservato: 19/19 comandi host richiesti OK, QEMU disponibile, ma BitBake/bitbake-layers assenti e BUILDDIR non inizializzato (vedi [verification plan](VERIFICATION_PLAN.md)). Accettazione restante: release/MACHINE pin, parse, build x86-64 e boot QEMU su host OE provisionato. Niente ottimizzazioni kernel senza benchmark.
+Scaffolding `meta-readylinux` (layer config, distro, image, runtime recipe `readylinux-runtime`, servizio systemd tty1) con test statici. **Parse verificato**: Poky scarthgap pinnato a `104772c5fd0653290cbb5e4b77813343957939cc`, `bitbake -p` con 0 errori, `bitbake -e` risolve le due recipe e `bitbake -n readylinux-image` completa 5006 task noexec; preflight a 24 comandi con `lz4c` (shim locale). Build immagine, boot QEMU, guest SSH e getty mask nell'immagine **non verificati**; MACHINE non ancora scelta. Vedi [verification plan](VERIFICATION_PLAN.md). Accettazione restante: MACHINE pin, build `.wic` e boot su host OE provisionato. Niente ottimizzazioni kernel senza benchmark.
 
 ## M3 — READY Stable
 

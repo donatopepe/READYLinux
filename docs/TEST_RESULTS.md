@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Roadmap e README layer allineati al parse verificato
+
+- `meta-readylinux/README.md` e `README.en.md` affermavano che **nessuna** serie era verificata: ora dichiarano scarthgap verificato su Poky pinnato `104772c5fd06…` con `bitbake -p` a 0 errori, e lasciano styhead/walnascar/wrynose esplicitamente non verificate.
+- `docs/ROADMAP.md` / `ROADMAP.en.md` M2 riportavano "parse non verificato" e la tally obsoleta `19/19`: aggiornati con parse verificato, 24 comandi host, `lz4c` shim, `bitbake -n` 5006 task e lista aggiornata dei residui (build `.wic`, boot, guest SSH, getty mask, MACHINE).
+- Test aggiornati: la regex sul claim di verifica accetta sia "has" sia "have"; nuovo `test_roadmap_states_parse_verified_and_build_unverified` vieta il ritorno di `19/19` e richiede il commit pinnato e la menzione `.wic`.
+- Suite: 213 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Punteggio systemd misurabile e gate sulla soglia
 
 - `scripts/validate-systemd-unit.sh` accetta `--security`: esegue `systemd-analyze security --offline=yes` sulla copia temporanea con `ExecStart` sostituito, estrae il punteggio e fallisce con **exit 7** se supera `READY_MAX_EXPOSURE` (default `8.0`). Argomenti ignoti → exit 64.

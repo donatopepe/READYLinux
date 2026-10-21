@@ -304,7 +304,7 @@ class YoctoScaffoldTests(unittest.TestCase):
                     self.assertIn(candidate, readme)
                 self.assertIn("candidate series", readme.lower())
                 self.assertIn("release-pinned `bitbake -p`", readme.lower())
-                self.assertRegex(readme.lower(), r"has not yet been verified")
+                self.assertRegex(readme.lower(), r"(?:has|have) not yet been verified")
                 self.assertIn("LAYERSERIES_COMPAT_readylinux", readme)
                 self.assertIn("conf/layer.conf", readme)
 
@@ -1473,13 +1473,15 @@ class YoctoScaffoldTests(unittest.TestCase):
             with self.subTest(doc="Italian" if doc == italian else "English"):
                 for series in supported_series:
                     self.assertIn(series, doc)
-                self.assertIn("has not yet been verified", doc.lower())
+                self.assertRegex(doc.lower(), r"(?:has|have) not yet been verified")
+                self.assertIn("scarthgap is verified", doc)
+                self.assertIn("104772c5fd0653290cbb5e4b77813343957939cc", doc)
 
     def test_status_records_current_test_baseline_and_bitbake_limitation(self):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("212", doc)
+            self.assertIn("213", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1503,6 +1505,16 @@ class YoctoScaffoldTests(unittest.TestCase):
             self.assertIn("/dev/tty1", readme)
             self.assertIn("getty@tty1.service", readme)
             self.assertRegex(readme.lower(), r"(?:no|does not provide).{0,80}(?:login|prompt)|(?:nessun|non offre).{0,80}(?:login|prompt)")
+
+    def test_roadmap_states_parse_verified_and_build_unverified(self):
+        for path in (ROOT / "docs/ROADMAP.md", ROOT / "docs/ROADMAP.en.md"):
+            with self.subTest(doc=path.name):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("104772c5fd0653290cbb5e4b77813343957939cc", text)
+                self.assertRegex(text, r"0 (?:errors|errori)")
+                self.assertRegex(text.lower(), r"unverified|non verificat")
+                self.assertNotIn("19/19", text, "the stale 19-command tally must not come back")
+                self.assertIn("wic", text)
 
     def test_verification_plan_records_the_pinned_parse_evidence(self):
         plan = (ROOT / "docs/VERIFICATION_PLAN.md").read_text(encoding="utf-8")
@@ -1536,8 +1548,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "212 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "212 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "213 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "213 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

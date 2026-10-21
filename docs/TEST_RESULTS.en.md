@@ -1,5 +1,12 @@
 # Test Results
 
+## 2026-10-20 — Roadmap and layer README aligned with the verified parse
+
+- `meta-readylinux/README.md` and `README.en.md` claimed **no** series was verified: they now state scarthgap is verified on pinned Poky `104772c5fd06…` with `bitbake -p` at 0 errors, leaving styhead/walnascar/wrynose explicitly unverified.
+- `docs/ROADMAP.md` / `ROADMAP.en.md` M2 said "parse not verified" and carried the stale `19/19` tally: updated with the verified parse, 24 host commands, the `lz4c` shim, `bitbake -n` 5006 tasks and the current remaining list (`.wic` build, boot, guest SSH, getty mask, MACHINE).
+- Tests updated: the verification-claim regex accepts both "has" and "have"; new `test_roadmap_states_parse_verified_and_build_unverified` forbids `19/19` from returning and requires the pinned commit and the `.wic` mention.
+- Suite: 213 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Measurable systemd exposure and threshold gate
 
 - `scripts/validate-systemd-unit.sh` accepts `--security`: it runs `systemd-analyze security --offline=yes` on the temporary copy with the substituted `ExecStart`, extracts the score and exits **7** when it exceeds `READY_MAX_EXPOSURE` (default `8.0`). Unknown arguments → exit 64.

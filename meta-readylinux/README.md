@@ -1,6 +1,6 @@
 # meta-readylinux
 
-Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete image and does not pin a Yocto release or fetch sources. `LAYERSERIES_COMPAT_readylinux` currently lists candidate series scarthgap, styhead, walnascar, and wrynose; compatibility with these series has not yet been verified by a release-pinned `bitbake -p`.
+Minimal Yocto layer scaffold for READY Linux. This layer is not yet a complete image and does not pin a Yocto release or fetch sources. `LAYERSERIES_COMPAT_readylinux` currently lists candidate series scarthgap, styhead, walnascar, and wrynose. scarthgap is verified: `bitbake -p` on Poky pinned at `104772c5fd0653290cbb5e4b77813343957939cc` completes with 0 errors. styhead, walnascar and wrynose have not yet been verified by a release-pinned `bitbake -p`.
 
 ## Current contents
 
