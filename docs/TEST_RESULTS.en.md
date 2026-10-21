@@ -1,3 +1,9 @@
+## 2026-10-20 — Structural hardening of the preflight JSON record
+
+- `--check` now rejects `cpus: true` (Python `bool` subclasses `int`), empty `os.name/id`, `required`/`optional` maps with empty names or non-boolean values, and `builddir.path` inconsistent with `builddir.set`.
+- Three new tests corrupt valid fixtures to cover these cases; exit 8 with a reason. No network access needed.
+- Suite: 243 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Preflight record timestamp sanity
 
 - `--check` previously accepted timestamps matching only the regex: impossible dates (e.g. `2026-02-30`) and far-future timestamps could pass validation.

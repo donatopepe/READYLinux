@@ -342,6 +342,53 @@ class UnsafeRecorderTests(unittest.TestCase):
         self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
         self.assertIn("not build evidence", result.stderr)
 
+    def test_check_rejects_boolean_cpu_count(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["preflight"]["cpus"] = True
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("must be a non-negative integer, not a boolean", result.stderr)
+
+    def test_check_rejects_empty_os_identity_and_invalid_command_maps(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["preflight"]["os"]["id"] = ""
+            record["preflight"]["required"] = {"": True, "gcc": 1}
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("os name and id must be non-empty", result.stderr)
+        self.assertIn("required must map non-empty command names to booleans", result.stderr)
+
+    def test_check_requires_builddir_path_to_match_its_set_flag(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+            record["preflight"]["builddir"] = {"set": False, "path": "/contradiction"}
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("path must be null when set is false", result.stderr)
+
     def test_check_rejects_invalid_json_and_missing_files(self):
         with tempfile.TemporaryDirectory() as temp:
             broken = Path(temp) / "broken.json"

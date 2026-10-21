@@ -72,12 +72,17 @@ def validate_record(record: dict) -> list[str]:
     os_block = report.get("os")
     if not isinstance(os_block, dict) or set(os_block) != {"name", "id"}:
         problems.append("preflight.os must contain exactly name and id")
-    if not isinstance(report.get("cpus"), int) or report["cpus"] < 0:
-        problems.append("preflight.cpus must be a non-negative integer")
+    elif any(not isinstance(os_block[key], str) or not os_block[key].strip() for key in ("name", "id")):
+        problems.append("preflight.os name and id must be non-empty strings")
+    if isinstance(report.get("cpus"), bool) or not isinstance(report.get("cpus"), int) or report["cpus"] < 0:
+        problems.append("preflight.cpus must be a non-negative integer, not a boolean")
     for mapping in ("required", "optional"):
         block = report.get(mapping)
-        if not isinstance(block, dict) or not all(isinstance(value, bool) for value in block.values()):
-            problems.append(f"preflight.{mapping} must map command names to booleans")
+        if not isinstance(block, dict) or not all(
+            isinstance(name, str) and name.strip() and isinstance(value, bool)
+            for name, value in block.items()
+        ):
+            problems.append(f"preflight.{mapping} must map non-empty command names to booleans")
     missing_required = report.get("missing_required")
     if not isinstance(missing_required, list) or not all(isinstance(item, str) and item for item in missing_required):
         problems.append("preflight.missing_required must be a list of non-empty command names")
@@ -89,6 +94,12 @@ def validate_record(record: dict) -> list[str]:
     builddir = report.get("builddir")
     if not isinstance(builddir, dict) or set(builddir) != {"set", "path"}:
         problems.append("preflight.builddir must contain exactly set and path")
+    elif not isinstance(builddir["set"], bool):
+        problems.append("preflight.builddir.set must be a boolean")
+    elif builddir["set"] and (not isinstance(builddir["path"], str) or not builddir["path"].strip()):
+        problems.append("preflight.builddir.path must be a non-empty string when set is true")
+    elif not builddir["set"] and builddir["path"] is not None:
+        problems.append("preflight.builddir.path must be null when set is false")
     contradiction = inconsistent_ready_report(report)
     if contradiction is not None:
         problems.append(contradiction)

@@ -1,5 +1,11 @@
 # Risultati test
 
+## 2026-10-20 — Hardening strutturale del record JSON preflight
+
+- `--check` ora rifiuta `cpus: true` (in Python `bool` è sottoclasse di `int`), campi `os.name/id` vuoti, mappe `required`/`optional` con nomi vuoti o valori non booleani, e `builddir.path` incoerente col flag `builddir.set`.
+- Tre nuovi test malformano fixture valide per coprire i casi; exit 8 con motivazione. Nessun accesso rete necessario.
+- Suite: 243 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Sanità temporale dei record preflight
 
 - `--check` accettava timestamp che rispettavano solo la regex: date impossibili (es. `2026-02-30`) e timestamp molto futuri potevano essere convalidati.
