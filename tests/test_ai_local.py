@@ -133,6 +133,36 @@ class LocalAITests(unittest.TestCase):
         self.assertIn("gia' avviato da READY", result)
         self.assertIs(ai.process, fake_process)
 
+    def test_start_logs_child_exit_without_leaking_log_handle(self):
+        model = self.root / "early-exit.gguf"
+        model.write_bytes(b"GGUF")
+        binary = self.root / "llama-server"
+        binary.write_text("#!/bin/sh\nexit 9\n", encoding="utf-8")
+        binary.chmod(0o700)
+        process = type("ExitedProcess", (), {"returncode": 9, "poll": lambda self: 9})()
+        ai = LocalAI(AIConfig(model=model, server=str(binary), port=18082), self.root / "early-exit-logs")
+        with patch("ai_local.subprocess.Popen", return_value=process):
+            with patch("ai_local.time.sleep"):
+                with self.assertRaisesRegex(AIError, "terminato subito.*codice 9"):
+                    ai.start()
+        self.assertIsNone(ai._log_file)
+        self.assertTrue((self.root / "early-exit-logs/llama-server.log").is_file())
+        self.assertIn("terminato (codice 9)", ai.status())
+
+    def test_start_returns_idempotently_for_a_live_owned_process(self):
+        model = self.root / "already-running.gguf"
+        model.write_bytes(b"GGUF")
+        cfg = AIConfig(model=model, server="missing-binary-is-not-looked-up", port=18083)
+        ai = LocalAI(cfg, self.root / "unused-log")
+        process = type("LiveProcess", (), {"returncode": None, "poll": lambda self: None})()
+        ai.process = process
+        with patch("ai_local.subprocess.Popen") as popen, patch.object(ai, "_server_binary") as resolve:
+            message = ai.start()
+        popen.assert_not_called()
+        resolve.assert_not_called()
+        self.assertIs(ai.process, process)
+        self.assertIn("gia' avviato da READY", message)
+
     def test_cpu_only_server_flags(self):
         model = self.root / 'model.gguf'
         model.write_bytes(b'GGUF')

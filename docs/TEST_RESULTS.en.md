@@ -1,3 +1,9 @@
+## 2026-10-20 — LocalAI log cleanup verified for an exited child
+
+- The previous commit had added the test but its result entry was not recorded. `test_start_logs_child_exit_without_leaking_log_handle`: simulates `Popen` exiting immediately with code 9; verifies `AIError`, `_log_file=None`, retained log file and `status()` reporting code 9.
+- `test_start_returns_idempotently_for_a_live_owned_process`: no second binary resolution or spawn when `self.process` is alive.
+- Reran both targeted tests on Windows and WSL: 2/2 PASS on each. Full suite: 233 PASS (26 skips) on each.
+
 ## 2026-10-20 — LocalAI cleanup when llama-server exits during startup
 
 - `LocalAI.start()` closes the log in `finally`, including when the child exits immediately and raises `AIError`; new test intercepts `Popen`/`sleep`, simulates exit code 9, verifies the retained log, `_log_file=None`, and exit code shown by `status()`.
