@@ -7,6 +7,7 @@ Copy this file per build run to `docs/build-evidence/<run-id>.md`, using a uniqu
 - Run ID / UTC date:
 - Host OS and architecture:
 - Poky/OE-Core repository URL and exact commit:
+- OE release series (from `LAYERSERIES_COMPAT_core`, e.g. scarthgap):
 - Other layer URLs and exact commits:
 - READY Linux repository commit:
 - BitBake version:

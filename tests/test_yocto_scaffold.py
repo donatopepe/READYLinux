@@ -1321,6 +1321,19 @@ class YoctoScaffoldTests(unittest.TestCase):
         self.assertIn("deviations", schema["required"])
         self.assertNotEqual(set(missing_deviations), set(schema["required"]))
 
+    def test_build_evidence_records_the_oe_release_series(self):
+        schema = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.schema.json").read_text(encoding="utf-8"))
+        example = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.example.json").read_text(encoding="utf-8"))
+        self.assertIn("oe_series", schema["properties"]["identity"]["required"])
+        self.assertEqual(example["identity"]["oe_series"], "UNVERIFIED")
+        layer_conf = (LAYER / "conf/layer.conf").read_text(encoding="utf-8")
+        match = re.search(r"(?m)^LAYERSERIES_COMPAT_readylinux = \"([^\"]+)\"$", layer_conf)
+        self.assertIsNotNone(match)
+        for name in ("YOCTO_BUILD_EVIDENCE_TEMPLATE.md", "YOCTO_BUILD_EVIDENCE_TEMPLATE.en.md"):
+            template = (ROOT / "docs" / name).read_text(encoding="utf-8")
+            self.assertIn("OE release series", template, name)
+            self.assertIn("LAYERSERIES_COMPAT_core", template, name)
+
     def test_build_evidence_example_marks_every_execution_stage_unverified(self):
         schema = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.schema.json").read_text(encoding="utf-8"))
         example = json.loads((ROOT / "docs/YOCTO_BUILD_EVIDENCE.example.json").read_text(encoding="utf-8"))
@@ -1481,7 +1494,7 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         for doc in (italian, english):
-            self.assertIn("218", doc)
+            self.assertIn("219", doc)
             self.assertIn("**Verificato localmente**" if "Stato READY" in doc else "**Locally verified**", doc)
             self.assertTrue("qemu" in doc.lower() or "hardware" in doc.lower() or "BUILDDIR" in doc or "FIFO" in doc or "IMAGE_INSTALL" in doc or "recipe" in doc.lower() or "file://" in doc or "validator" in doc.lower())
             self.assertIn("BitBake", doc)
@@ -1548,8 +1561,8 @@ class YoctoScaffoldTests(unittest.TestCase):
         italian = (ROOT / "docs/STATUS.md").read_text(encoding="utf-8")
         english = (ROOT / "docs/STATUS.en.md").read_text(encoding="utf-8")
         cases = (
-            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "218 test Windows/Python 3.11"),
-            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "218 Windows/Python 3.11 tests"),
+            (italian, "Non verificato", r"(?m)^- \*\*Verificato localmente\*\*", "219 test Windows/Python 3.11"),
+            (english, "Not verified", r"(?m)^- \*\*Locally verified\*\*", "219 Windows/Python 3.11 tests"),
         )
         for doc, localized_status, baseline_heading, expected_count in cases:
             self.assertIn("BitBake", doc)

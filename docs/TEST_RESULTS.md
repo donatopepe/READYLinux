@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Serie OE registrata nell'evidenza build
+
+- Lo schema `docs/YOCTO_BUILD_EVIDENCE.schema.json` richiede ora `identity.oe_series`, allineato al gate del validatore che legge `LAYERSERIES_COMPAT_core`: un record di build non può più omettere la serie OE su cui è stato prodotto.
+- Esempio aggiornato con il placeholder `"oe_series": "UNVERIFIED"`; template IT/EN riportano la riga "OE release series (from `LAYERSERIES_COMPAT_core`, e.g. scarthgap)".
+- Nuovo test `test_build_evidence_records_the_oe_release_series` verifica campo obbligatorio, placeholder dell'esempio e presenza della riga nei due template.
+- Suite: 219 test PASS (26 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Verifica offline di record di evidenza esistenti
 
 - `scripts/record-yocto-preflight.py --check PATH` valida un record già scritto contro le stesse regole del recorder: chiavi esatte (nessuna mancante o extra), `schema_version=1`, `recorded_utc` in forma UTC, commit 40 hex, `scope` che dichiari "not build evidence", `preflight_exit_code=0`, struttura di `preflight` (os/arch/cpus/required/optional/builddir/verdict) e coerenza `ready` ⇒ builddir impostata e `missing_required` vuoto. Exit 0 valido, 8 invalido (anche JSON rotto o file assente).

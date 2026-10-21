@@ -7,6 +7,7 @@ This is the English companion to `YOCTO_BUILD_EVIDENCE_TEMPLATE.md`; use one cop
 - Run ID / UTC date:
 - Host OS and architecture:
 - Poky/OE-Core repository URL and exact commit:
+- OE release series (from `LAYERSERIES_COMPAT_core`, e.g. scarthgap):
 - Other layer URLs and exact commits:
 - READY Linux repository commit:
 - BitBake version:

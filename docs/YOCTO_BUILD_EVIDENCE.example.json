@@ -12,7 +12,8 @@
     "machine": "UNSELECTED",
     "bsp_revision": "",
     "tclibc": "",
-    "init_system": "systemd"
+    "init_system": "systemd",
+    "oe_series": "UNVERIFIED"
   },
   "environment": {
     "build_dir": "",
@@ -43,6 +44,8 @@
     "basic_smoke": "not-run",
     "offline_smoke": "not-run"
   },
-  "deviations": ["Example only; no Yocto parse, image build, or QEMU boot performed."],
+  "deviations": [
+    "Example only; no Yocto parse, image build, or QEMU boot performed."
+  ],
   "verdict": "not-verified"
 }
