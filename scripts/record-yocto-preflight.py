@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -24,9 +25,69 @@ SCOPE = (
 )
 
 
+RECORD_KEYS = ("schema_version", "recorded_utc", "readylinux_commit", "scope", "preflight_command", "preflight_exit_code", "preflight")
+REPORT_KEYS = ("schema_version", "os", "arch", "cpus", "required", "missing_required", "optional", "builddir", "verdict")
+VERDICTS = ("ready", "incomplete", "not-a-linux-host")
+
+
+def validate_record(record: dict) -> list[str]:
+    """Return structural problems found in a stored record (empty when valid)."""
+    problems: list[str] = []
+    if not isinstance(record, dict):
+        return ["record is not a JSON object"]
+    for key in RECORD_KEYS:
+        if key not in record:
+            problems.append(f"missing top-level key: {key}")
+    extra = set(record) - set(RECORD_KEYS)
+    if extra:
+        problems.append(f"unexpected top-level keys: {', '.join(sorted(extra))}")
+    if record.get("schema_version") != SCHEMA_VERSION:
+        problems.append("schema_version must be 1")
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", str(record.get("recorded_utc", ""))):
+        problems.append("recorded_utc must look like 2026-10-20T00:00:00Z")
+    if not re.fullmatch(r"[0-9a-f]{40}", str(record.get("readylinux_commit", ""))):
+        problems.append("readylinux_commit must be a 40-character lowercase hex commit")
+    if "not build evidence" not in str(record.get("scope", "")):
+        problems.append("scope must state that the record is not build evidence")
+    if record.get("preflight_exit_code") != 0:
+        problems.append("preflight_exit_code must be 0")
+
+    report = record.get("preflight")
+    if not isinstance(report, dict):
+        return problems + ["preflight must be a JSON object"]
+    for key in REPORT_KEYS:
+        if key not in report:
+            problems.append(f"missing preflight key: {key}")
+    if report.get("verdict") not in VERDICTS:
+        problems.append(f"preflight.verdict must be one of {', '.join(VERDICTS)}")
+    os_block = report.get("os")
+    if not isinstance(os_block, dict) or set(os_block) != {"name", "id"}:
+        problems.append("preflight.os must contain exactly name and id")
+    if not isinstance(report.get("cpus"), int) or report["cpus"] < 0:
+        problems.append("preflight.cpus must be a non-negative integer")
+    for mapping in ("required", "optional"):
+        block = report.get(mapping)
+        if not isinstance(block, dict) or not all(isinstance(value, bool) for value in block.values()):
+            problems.append(f"preflight.{mapping} must map command names to booleans")
+    if not isinstance(report.get("missing_required"), list):
+        problems.append("preflight.missing_required must be a list")
+    builddir = report.get("builddir")
+    if not isinstance(builddir, dict) or set(builddir) != {"set", "path"}:
+        problems.append("preflight.builddir must contain exactly set and path")
+    contradiction = inconsistent_ready_report(report)
+    if contradiction is not None:
+        problems.append(contradiction)
+    return problems
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Record a read-only Yocto host preflight as JSON.")
-    parser.add_argument("output", help="path of the JSON record to write")
+    parser.add_argument("output", nargs="?", help="path of the JSON record to write")
+    parser.add_argument(
+        "--check",
+        metavar="PATH",
+        help="validate an existing record instead of writing a new one",
+    )
     parser.add_argument(
         "--preflight-script",
         default=None,
@@ -100,6 +161,29 @@ def write_record(output: Path, record: dict) -> None:
 
 def main(argv: list[str]) -> int:
     args = build_parser().parse_args(argv)
+
+    if args.check:
+        path = Path(args.check)
+        if not path.is_file():
+            print(f"record-yocto-preflight: no such record: {path}", file=sys.stderr)
+            return 8
+        try:
+            stored = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            print(f"record-yocto-preflight: {path} is not valid JSON: {error}", file=sys.stderr)
+            return 8
+        problems = validate_record(stored)
+        if problems:
+            for problem in problems:
+                print(f"record-yocto-preflight: invalid record: {problem}", file=sys.stderr)
+            return 8
+        print(f"record-yocto-preflight: {path} is a valid preflight record")
+        return 0
+
+    if not args.output:
+        print("record-yocto-preflight: OUTPUT path is required unless --check is used", file=sys.stderr)
+        return 64
+
     script = Path(args.preflight_script) if args.preflight_script else Path(__file__).resolve().parent / "check-yocto-host.sh"
     repo = Path(args.repo) if args.repo else script.resolve().parent.parent
 

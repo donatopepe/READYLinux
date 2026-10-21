@@ -208,6 +208,84 @@ class UnsafeRecorderTests(unittest.TestCase):
             self.assertIn("missing_required is not empty", result.stderr)
             self.assertFalse(output.exists())
 
+    def test_check_accepts_the_documented_example(self):
+        example = ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json"
+        result = subprocess.run(
+            [sys.executable, str(RECORDER), "--check", str(example)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("is a valid preflight record", result.stdout)
+
+    def test_check_rejects_a_record_that_claims_ready_without_builddir(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads((ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json").read_text(encoding="utf-8"))
+            record["preflight"]["builddir"] = {"set": False, "path": None}
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("builddir is not set", result.stderr)
+
+    def test_check_rejects_missing_and_unexpected_keys(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads((ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json").read_text(encoding="utf-8"))
+            record.pop("preflight_command")
+            record["unexpected"] = True
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("missing top-level key: preflight_command", result.stderr)
+        self.assertIn("unexpected top-level keys: unexpected", result.stderr)
+
+    def test_check_rejects_scope_that_hides_the_evidence_limit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            record_path = Path(temp) / "record.json"
+            record = json.loads((ROOT / "docs/YOCTO_PREFLIGHT_RECORD.example.json").read_text(encoding="utf-8"))
+            record["scope"] = "full build and boot verified"
+            record_path.write_text(json.dumps(record), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(record_path)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 8, result.stdout + result.stderr)
+        self.assertIn("not build evidence", result.stderr)
+
+    def test_check_rejects_invalid_json_and_missing_files(self):
+        with tempfile.TemporaryDirectory() as temp:
+            broken = Path(temp) / "broken.json"
+            broken.write_text("{not json", encoding="utf-8")
+            bad_json = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(broken)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            missing = subprocess.run(
+                [sys.executable, str(RECORDER), "--check", str(Path(temp) / "absent.json")],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(bad_json.returncode, 8, bad_json.stdout + bad_json.stderr)
+        self.assertIn("not valid JSON", bad_json.stderr)
+        self.assertEqual(missing.returncode, 8, missing.stdout + missing.stderr)
+        self.assertIn("no such record", missing.stderr)
 
 if __name__ == "__main__":
     unittest.main()

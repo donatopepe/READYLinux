@@ -1,5 +1,11 @@
 # Test Results
 
+## 2026-10-20 — Offline validation of stored evidence records
+
+- `scripts/record-yocto-preflight.py --check PATH` validates an already written record against the recorder's own rules: exact keys (none missing or extra), `schema_version=1`, UTC-shaped `recorded_utc`, 40-hex commit, a `scope` stating "not build evidence", `preflight_exit_code=0`, the `preflight` structure (os/arch/cpus/required/optional/builddir/verdict) and `ready` implying a set builddir and empty `missing_required`. Exit 0 valid, 8 invalid (also broken JSON or a missing file).
+- The documented `docs/YOCTO_PREFLIGHT_RECORD.example.json` validates; five new tests cover the valid example, `ready` without builddir, missing/extra keys, a misleading scope, broken JSON and a missing file.
+- Suite: 218 tests PASS (26 Windows skips) on Windows/Python 3.11 and WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Roadmap and layer README aligned with the verified parse
 
 - `meta-readylinux/README.md` and `README.en.md` claimed **no** series was verified: they now state scarthgap is verified on pinned Poky `104772c5fd06…` with `bitbake -p` at 0 errors, leaving styhead/walnascar/wrynose explicitly unverified.
