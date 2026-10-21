@@ -266,6 +266,38 @@ class YoctoHostCheckTests(unittest.TestCase):
         self.assertNotIn("git", report["missing_required"])
         self.assertEqual(report["builddir"], {"set": False, "path": None})
 
+    @unittest.skipIf(os.name == "nt", "PATH command stubs require Unix")
+    def test_json_package_versions_are_null_when_dpkg_query_is_unavailable(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fakebin = root / "bin"
+            fakebin.mkdir()
+            builddir = root / "build"
+            builddir.mkdir()
+            commands = (
+                "bash", "git", "gcc", "g++", "make", "python3", "chrpath", "cpio",
+                "diffstat", "file", "gawk", "ip", "lz4c", "patch", "perl", "ping",
+                "socat", "tar", "texi2any", "unzip", "wget", "xargs", "xz", "zstd",
+                "uname", "getconf", "bitbake", "bitbake-layers",
+            )
+            for name in commands:
+                stub = fakebin / name
+                stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+                stub.chmod(0o755)
+            bash_path = subprocess.check_output(["bash", "-lc", "command -v bash"], text=True).strip()
+            result = subprocess.run(
+                [bash_path, str(SCRIPT), "--json"],
+                cwd=ROOT,
+                env=host_env(root, PATH=f"{fakebin}:/usr/bin:/bin", BUILDDIR=str(builddir)),
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["verdict"], "ready")
+        self.assertTrue(report["packages"])
+        self.assertTrue(all(isinstance(v, str) or v is None for v in report["packages"].values()))
+
     def test_json_report_marks_wrong_environment_without_fake_command_claims(self):
         with tempfile.TemporaryDirectory() as temp:
             result = subprocess.run(

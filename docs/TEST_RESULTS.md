@@ -1,5 +1,12 @@
 # Risultati test
 
+## 2026-10-20 — Versioni distro/pacchetti come provenienza macchina
+
+- `check-yocto-host.sh --json` aggiunge `os.version_id` e `packages` (gcc, g++, git, python3, QEMU, chrpath, gawk); `dpkg-query` opzionale: versioni stringa se disponibili, `null` altrimenti. Il caso non-Linux usa `version_id:null`, `packages:{}`.
+- Test JSON ora verifica i campi su fixture Debian 13 e il ramo senza `dpkg-query`; il record e lo schema conservano la provenienza annidata già validata dal recorder.
+- WSL reale: Debian `13`, gcc `4:14.2.0-1`, python `3.13.5-1`, git `1:2.47.3-0+deb13u1`, qemu `1:10.0.13+ds-0+deb13u1`, chrpath `0.18-1`, gawk `1:5.2.1-2+b1`.
+- Suite: 248 test PASS (27 skip su Windows) su Windows/Python 3.11 e WSL Debian 13/Python 3.13.
+
 ## 2026-10-20 — Provenienza release e pacchetti host nel preflight JSON
 
 - `check-yocto-host.sh --json` include ora `os.version_id` e la mappa `packages` per GCC, G++, Git, Python 3, QEMU, chrpath e gawk. Versioni lette da `dpkg-query` se disponibile, `null` altrimenti; il report `not-a-linux-host` usa `version_id: null` e `packages: {}`.
